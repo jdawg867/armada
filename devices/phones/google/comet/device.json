@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "device_id": "google-comet",
+  "manufacturer": "Google",
+  "model": "Pixel 9 Pro Fold",
+  "codename": "comet",
+  "device_class": "phone",
+  "architecture": "aarch64",
+  "soc": "Google Tensor G4",
+  "gpu": "Mali-G715",
+  "status": "planned",
+  "boot_image": {
+    "format": "android",
+    "verified": false
+  },
+  "kernel": {
+    "source_verified": false,
+    "build_verified": false
+  }
+}

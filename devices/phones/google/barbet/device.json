@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "device_id": "google-barbet",
+  "manufacturer": "Google",
+  "model": "Pixel 5a",
+  "codename": "barbet",
+  "device_class": "phone",
+  "architecture": "aarch64",
+  "soc": "Qualcomm SM7250",
+  "gpu": "Adreno 620",
+  "status": "planned",
+  "boot_image": {
+    "format": "android",
+    "verified": false
+  },
+  "kernel": {
+    "source_verified": false,
+    "build_verified": false
+  }
+}
