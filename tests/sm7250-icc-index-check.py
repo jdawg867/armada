@@ -19,11 +19,11 @@ PREFIXES = ("MASTER_", "SLAVE_")
 # Lightweight comment stripping for source-only index evidence. This is
 # intentionally not a full C lexer; string-literal false positives remain
 # outside the validator's supported subset.
-COMMENT = re.compile(r"/\\*[\\s\\S]*?\\*/|//[^\\n]*")
+COMMENT = re.compile(r"/\*[\s\S]*?\*/|//[^\n]*")
 
 
 def without_comments(text: str) -> str:
-    return COMMENT.sub(lambda m: re.sub(r"[^\\n]", " ", m.group()), text)
+    return COMMENT.sub(lambda m: re.sub(r"[^\n]", " ", m.group()), text)
 
 
 def audit(header: str, source: str) -> list[str]:
