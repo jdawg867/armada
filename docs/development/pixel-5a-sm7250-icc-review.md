@@ -56,6 +56,18 @@ The 17 declared `qcom_icc_desc` structures divide as follows:
 
 **Remaining gating evidence**: inspect the exact pinned `icc-rpmh.c` / `icc-rpmh.h` definitions of `qcom_icc_rpmh_probe`, `qcom_icc_rpmh_remove`, `qcom_icc_bcm_init`, and `icc_sync_state`; trace failures, teardown, shared-BCM initialization, and votes with concrete code citations before proposing changes. Neither a passing source scan nor the presence of function pointers constitutes runtime verification. Do not enable this driver or add consumer DT nodes.
 
+## Pinned generic RPMh core inspection (Linux commit `500df175a7f9e6bc1a9c328590ca5150f84f9ff0`)
+
+Read upstream `drivers/interconnect/qcom/icc-rpmh.c`, `icc-rpmh.h`, and `bcm-voter.c` at the **exact pinned commit** through GitHub. These facts are source observations, **not** proof the SM7250 prototype can safely probe.
+
+- `qcom_icc_rpmh_probe` loads descriptor data with `of_device_get_match_data`, copies `desc->bcms`/`desc->num_bcms`, obtains a voter using `of_bcm_voter_get(dev, NULL)`, and calls `qcom_icc_bcm_init(qp->bcms[i], dev)` in a loop. The inspected loop did **not** consume the BCM init return value. Investigate whether command DB lookup or auxiliary-data failures can allow later incomplete BCM references to persist.
+- `qcom_icc_bcm_init` uses `if (bcm->addr) return 0` to skip a previously initialized BCM. It fetches the RPMh address and aux data by BCM name, initializes `list` and `ws_list`, and attaches BCM pointers to `qn->bcms[qn->num_bcms]` before incrementing `num_bcms`. For the shared `sm7250_bcm_cn1` object, confirm first-probe, concurrent-probe, failure and removal ordering; the early-return check alone does not establish safe ownership or locking.
+- `qcom_icc_rpmh_remove` calls `icc_provider_deregister` and `icc_nodes_remove`. The observed removal routine does not explicitly undo shared BCM node attachments or reset `bcm->addr`. Assess retained static state and reprobe behavior before enabling providers.
+- `of_bcm_voter_get` resolves `qcom,bcm-voters` and may defer probe; `qcom_icc_bcm_voter_add` adds BCMs to shared commit/wake-sleep lists under a mutex. `qcom_icc_bcm_voter_commit` performs RPMh writes and manages those lists. This requires exact inspection of error handling and cross-provider voter identity, particularly when a shared BCM is referenced in two descriptors.
+- The inspected `qcom_icc_rpmh_probe` also uses `icc_node_create_dyn`, node-name initialization and linking with error cleanup labels. The remainder of its failure branches and the voter commit failure/teardown paths were **not exhaustively audited** here. A further GitHub fetch encountered a rate limit. Treat those paths as **pending**, not approved.
+
+**Gate:** do not activate `CONFIG_INTERCONNECT_QCOM_SM7250`, introduce SM7250 ICC DT consumers, or change BCM votes based on these observations. Follow-up source work should check every `qcom_icc_bcm_init` failure path, per-node BCM capacity, shared `cn1` reference ownership, and probe/teardown/reprobe sequencing in the pinned code.
+
 ## Verification checklist
 
 | Gate | Required evidence before enablement | Status |
