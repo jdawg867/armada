@@ -44,6 +44,18 @@ The following scan uses the added lines of `drivers/interconnect/qcom/sm7250.c` 
 - Found **six repeated firmware BCM names across distinct C objects**, each in display and non-display variants: `ACV`, `MC0`, `SH0`, `MM0`, `MM1`, and `MM2`. Their display variants are not referenced by the 12 identified BCM-pointer arrays (see previous section). Equal firmware names are not necessarily a defect; aliasing, shared membership and separate display paths must be checked against the downstream design.
 - **No hardware-readiness conclusion:** matching literal indices does not establish contiguous IDs, complete endpoint graphs, safe BCM voting or working provider registration. Keep `CONFIG_INTERCONNECT_QCOM_SM7250` disabled in the preserved configuration, and do not add DT consumers or activate providers.
 
+## RPMh lifecycle wiring review (preserved SM7250 patch)
+
+The backed-up `drivers/interconnect/qcom/sm7250.c` registers a `platform_driver` with `.probe = qcom_icc_rpmh_probe`, `.remove = qcom_icc_rpmh_remove`, `.sync_state = icc_sync_state`, and `module_platform_driver(qnoc_driver)`. These are *references to generic RPMh core functions*, not evidence that probe, error unwind, shared BCM ownership, or removal is safe. The preserved integration patch does **not** change `drivers/interconnect/qcom/icc-rpmh.c`; the generic helper implementation must be reviewed independently at the pinned Linux base.
+
+The 17 declared `qcom_icc_desc` structures divide as follows:
+
+- **12** set `.bcms` and reference BCM pointer arrays.
+- **5** omit `.bcms`: the three display-only descriptors `sm7250_mc_virt_display_desc`, `sm7250_gem_noc_display_desc`, `sm7250_mmss_noc_display_desc`, plus the matched `sm7250_npu_noc_desc` and `sm7250_dc_noc_desc`. For the two matched descriptors, empty BCM membership may be intentional but must be checked against required RPMh vote semantics.
+- The shared `sm7250_bcm_cn1` object is referenced by A1NOC and CNOC arrays. Review whether generic probe initializes it repeatedly, how its `voter_idx` and ownership are managed, and whether remove/unwind can invalidate a BCM still referenced by another provider.
+
+**Remaining gating evidence**: inspect the exact pinned `icc-rpmh.c` / `icc-rpmh.h` definitions of `qcom_icc_rpmh_probe`, `qcom_icc_rpmh_remove`, `qcom_icc_bcm_init`, and `icc_sync_state`; trace failures, teardown, shared-BCM initialization, and votes with concrete code citations before proposing changes. Neither a passing source scan nor the presence of function pointers constitutes runtime verification. Do not enable this driver or add consumer DT nodes.
+
 ## Verification checklist
 
 | Gate | Required evidence before enablement | Status |
