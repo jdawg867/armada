@@ -1,0 +1,47 @@
+name: Android phone port validation
+
+on:
+  pull_request:
+    branches: [development]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-phone-validation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-and-test-safety:
+    name: Android phone / source-only baseline
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Verify baseline tests exist
+        shell: bash
+        run: |
+          set -euo pipefail
+          for test in tests/bootimg-regen-test.sh tests/build-channel-test.sh; do
+            test -f "$test"
+            bash -n "$test"
+          done
+
+      - name: Boot image regeneration regression
+        shell: bash
+        run: bash tests/bootimg-regen-test.sh
+
+      - name: Build channel safety regression
+        shell: bash
+        run: bash tests/build-channel-test.sh
+
+      - name: Confirm no device or release access
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "This validation job has read-only repository permissions."
+          echo "No device connected; no ADB, fastboot, firmware flashing, image publication, or SMMU/BCM activation."
