@@ -26,6 +26,15 @@ Concrete findings from the **added lines in the patch**, not from a compiled ker
 
 **Required reconciliation:** update review assumptions to reflect the *actual source* while retaining the disabled configuration and no hardware-activation rule. Existing synthetic-only CI is not a substitute for checking these 17 descriptors, 14 matches, provider-local IDs, BCM references, and downstream fabric evidence.
 
+## Descriptor, OF-match and BCM reconciliation (source snapshot follow-up)
+
+This comparison inspects the **added C source lines** in `patches/sm7250-linux-7.2.6-integration.patch` on private backup branch `feature/sm7250-source-snapshot`. It does not parse a reconstructed compiled tree or verify downstream hardware.
+
+- All **14** `qcom,sm7250-*` OF-match entries reference names among the **17** declared `qcom_icc_desc` structures. The three descriptors with no OF match are `sm7250_mc_virt_display_desc`, `sm7250_gem_noc_display_desc`, and `sm7250_mmss_noc_display_desc`. Their absence from the match table may be deliberate deferral; determine intent before adding compatibles.
+- The file declares **32** `qcom_icc_bcm` objects and **12** arrays of BCM pointers. All references in those 12 arrays resolve to declared BCM objects. For each of the 32 BCM objects, its literal `.num_nodes` agrees with the number of listed node-address references, based on a narrow regular-expression scan.
+- Six display-specific BCM declarations are **not referenced by those arrays**: `sm7250_bcm_acv_display`, `sm7250_bcm_mc0_display`, `sm7250_bcm_sh0_display`, `sm7250_bcm_mm0_display`, `sm7250_bcm_mm1_display`, and `sm7250_bcm_mm2_display`. This correlates with the three unmatched display descriptors; it does **not** prove that array/descriptor wiring is otherwise complete.
+- **Open source questions:** whether these three display providers are intentionally inactive; whether 17 node arrays have correct provider-local binding indices and topology; whether BCM shared ownership and `keepalive`/vote semantics are safe; whether QoS, probe, remove and firmware requirements are satisfied. The saved Kconfig remains disabled, and no hardware enablement is authorized.
+
 ## Verification checklist
 
 | Gate | Required evidence before enablement | Status |
