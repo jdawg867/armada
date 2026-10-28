@@ -6,9 +6,26 @@
 
 - Target: Google Pixel 5a (`barbet`), Qualcomm SM7250/Lito.
 - Target integration: Armada OS fork, feature branches into `development`.
-- Research inputs: separate *local* mainline Linux and Qualcomm vendor kernel trees. They are **not** committed to this repository. Audit observations below must be revalidated against those exact sources before code changes.
+- Research inputs: pinned mainline Linux and Qualcomm vendor kernel trees, now preserved as patch series and audit artifacts in the private `jdawg867/linux-sm7250-armada-integration` repository. Full kernel trees are **not** committed to Armada. Audit observations must be revalidated against those exact bases before code changes.
 - Latest recorded local audit: Step 708, source and repository integrity **PASS**. This was a read-only inspection; CI on this repository does not rerun the local kernel audits.
 - GitHub Actions: `.github/workflows/android-phone-validation.yml` executes Armada boot-image regeneration and build-channel baseline tests, not a device boot test.
+
+## GitHub research handoff (October 2026)
+
+Local kernel research checkouts were retired after the relevant modifications and audit artifacts were uploaded to the **private** repository `jdawg867/linux-sm7250-armada-integration`. The separate Ubuntu Touch vendor kernel checkout is **retained** because its local path is used by that project's adaptation workflow. GitHub backups preserve changes, not a complete standalone kernel source history.
+
+| Backup branch in private research repository | Preserved materials |
+| --- | --- |
+| `feature/sm7250-source-snapshot` | Linux 7.2.6 SM7250 integration patch; base `500df175a7f9e6bc1a9c328590ca5150f84f9ff0`, original snapshot `5867fa09dec9a1ac54a9cf8b07345c8d446b6548` |
+| `feature/rpmh-research-backup` | Independent Linux 7.2.6 and mainline RPMh async-failure cleanup patches (research only; not approved for upstreaming) |
+| `feature/pixel5a-vendor-backup` | Two Ubuntu Touch / Pixel 5a vendor kernel commits as patches |
+| `feature/sm7250-audit-backup` | UFS PHY calibration tables/manifests, numbered audit patches, and prerequisite patches |
+| `feature/kernel-build-config-backup` | Five saved build configurations |
+| `feature/sm7250-validation-evidence` | Device-tree/TLMM validation files and previous configuration |
+
+**Integrity gates completed locally before checkout retirement:** matching local/remote Git commit IDs for all six backup branches; SHA-256 verification of five build configurations and 22 validation evidence files; clean forward application of the SM7250 integration patch to its exact Linux 7.2.6 base with reconstructed tree hash `5fc4b475bef24d74b3469cc284415de283cad864`; and exact reconstruction of the mainline RPMh research patch with tree hash `b43a5f9456ce50375300e4f6daa3aa96907fed6b`. These are **source-provenance checks**, not runtime/hardware validation.
+
+**Next GitHub-first checkpoint:** review the inactive SM7250 interconnect prototype and RPMh BCM ownership/lifecycle against the preserved patch and pinned base. Document provider-registration, node/index, QoS/BCM, and DTS binding gaps before proposing any enablement. Keep UFS PHY and modem/IPA/SMMU dependencies separate and deferred. Do not introduce a device-tree compatible or enable BCM voting based solely on a successful source reconstruction.
 
 ## Observed hardware and driver differences
 
