@@ -87,12 +87,12 @@ class SyntheticTests(unittest.TestCase):
                                   "[MASTER_A] = &a, [MASTER_A] = &b")))
 
     def test_commented_entries_not_counted(self):
-        header = "#define MASTER_A 0\\n#define SLAVE_B 1"
+        header = "#define MASTER_A 0\n#define SLAVE_B 1"
         source = "/* [MASTER_A] = &fake, */ [SLAVE_B] = &real, // [SLAVE_B] = &fake"
         self.assertEqual(audit(header, source), [])
 
     def test_commented_definitions_not_counted(self):
-        header = "/* #define MASTER_A 0 */\\n#define SLAVE_B 1"
+        header = "/* #define MASTER_A 0 */\n#define SLAVE_B 1"
         self.assertTrue(any("undefined" in p for p in
                             audit(header, "[MASTER_A] = &a, [SLAVE_B] = &b")))
 
