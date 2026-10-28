@@ -31,6 +31,10 @@ jobs:
             bash -n "$test"
           done
 
+      - name: Pixel 5a evidence consistency (static only)
+        shell: bash
+        run: python3 tests/android-phone-audit-test.py
+
       - name: Boot image regeneration regression
         shell: bash
         run: bash tests/bootimg-regen-test.sh
