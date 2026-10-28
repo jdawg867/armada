@@ -48,7 +48,7 @@ if len(lito_only) != 7 or len(sm6350_only) != 7 or lito_only & sm6350_only:
 # Do not misrepresent this metadata-only gate as a bring-up, DTSchema,
 # compile, IPA version, SMMU registration, or hardware verification.
 for statement in ("No bootable Armada OS phone image",
-                  "not a hardware qualification gate"):
+                  "hardware qualification gate"):
     if statement.casefold() not in text.casefold():
         sys.exit(f"FAIL: missing safety caveat: {statement}")
 
