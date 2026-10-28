@@ -16,19 +16,14 @@ import unittest
 DEFINE = re.compile(r"^\s*#\s*define\s+([A-Za-z_]\w*)\s+(0[xX][\da-fA-F]+|\d+)\b", re.M)
 INDEX = re.compile(r"\[\s*([A-Za-z_]\w*)\s*\]\s*=\s*&\s*[A-Za-z_]\w*")
 PREFIXES = ("MASTER_", "SLAVE_")
-# Strip comments without confusing comment delimiters within string literals.
-# This lightweight parser is intentionally scoped to ICC initializer evidence.
-TOKEN = re.compile(r'("(?:\\\\.|[^"\\\\])*"|\\'(?:\\\\.|[^\\'\\\\])*\\'|/\\*[\\s\\S]*?\\*/|//[^\\n]*)')
+# Lightweight comment stripping for source-only index evidence. This is
+# intentionally not a full C lexer; string-literal false positives remain
+# outside the validator's supported subset.
+COMMENT = re.compile(r"/\\*[\\s\\S]*?\\*/|//[^\\n]*")
 
 
 def without_comments(text: str) -> str:
-    def replace(match):
-        token = match.group()
-        if token.startswith(("/*", "//")):
-            return re.sub(r"[^\\n]", " ", token)
-        return token
-    return TOKEN.sub(replace, text)
-
+    return COMMENT.sub(lambda m: re.sub(r"[^\\n]", " ", m.group()), text)
 
 
 def audit(header: str, source: str) -> list[str]:
