@@ -35,6 +35,15 @@ This comparison inspects the **added C source lines** in `patches/sm7250-linux-7
 - Six display-specific BCM declarations are **not referenced by those arrays**: `sm7250_bcm_acv_display`, `sm7250_bcm_mc0_display`, `sm7250_bcm_sh0_display`, `sm7250_bcm_mm0_display`, `sm7250_bcm_mm1_display`, and `sm7250_bcm_mm2_display`. This correlates with the three unmatched display descriptors; it does **not** prove that array/descriptor wiring is otherwise complete.
 - **Open source questions:** whether these three display providers are intentionally inactive; whether 17 node arrays have correct provider-local binding indices and topology; whether BCM shared ownership and `keepalive`/vote semantics are safe; whether QoS, probe, remove and firmware requirements are satisfied. The saved Kconfig remains disabled, and no hardware enablement is authorized.
 
+## Provider-local index and shared BCM audit (source-only)
+
+The following scan uses the added lines of `drivers/interconnect/qcom/sm7250.c` and `include/dt-bindings/interconnect/qcom,sm7250-rpmh.h` in the preserved `feature/sm7250-source-snapshot` patch. The index scope is **within each node-pointer array**, not across all provider arrays: binding IDs are provider-local.
+
+- Parsed **17 node-pointer arrays** with **139** explicitly indexed `[SM7250_*] = &node` entries. For these entries every symbol resolves to one of the **258** literal binding macros. No duplicate resolved numeric ID was seen *within an individual array*. This is a partial static scan, not confirmation of array capacity, graph links or DT consumer arguments.
+- Found **one BCM object shared between two referenced BCM-pointer arrays**: `sm7250_bcm_cn1` is listed in both `sm7250_a1noc_bcms` and `sm7250_cnoc_bcms`. Shared BCM ownership requires checking the RPMh probe/remove, BCM initialization and aggregation/voting lifecycle before enabling either provider.
+- Found **six repeated firmware BCM names across distinct C objects**, each in display and non-display variants: `ACV`, `MC0`, `SH0`, `MM0`, `MM1`, and `MM2`. Their display variants are not referenced by the 12 identified BCM-pointer arrays (see previous section). Equal firmware names are not necessarily a defect; aliasing, shared membership and separate display paths must be checked against the downstream design.
+- **No hardware-readiness conclusion:** matching literal indices does not establish contiguous IDs, complete endpoint graphs, safe BCM voting or working provider registration. Keep `CONFIG_INTERCONNECT_QCOM_SM7250` disabled in the preserved configuration, and do not add DT consumers or activate providers.
+
 ## Verification checklist
 
 | Gate | Required evidence before enablement | Status |
