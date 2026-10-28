@@ -10,15 +10,29 @@
 - Preserved private GitHub research backup: `jdawg867/linux-sm7250-armada-integration`, branch `feature/sm7250-source-snapshot`. The interconnect prototype is present in the backed-up changes.
 - Additional private audit materials: branch `feature/sm7250-audit-backup`.
 - Previous local review inspected `drivers/interconnect/qcom/sm7250.c`, `drivers/interconnect/qcom/icc-rpmh.[ch]`, `include/dt-bindings/interconnect/qcom,sm7250-rpmh.h`, and downstream `lito-bus.dtsi`. Those findings require revalidation using the pinned sources before coding.
-- **Current state:** the SM7250 ICC Kconfig option was disabled in the preserved `sm7250.config`; the prototype intentionally lacked provider registration / DT matching. This status is not a compile result.
+- **Current state:** the SM7250 ICC Kconfig option was disabled in the preserved `sm7250.config`; the saved build config kept this driver disabled, **but** the backed-up C prototype includes OF matches and a platform-driver registration. Earlier statements that the source lacked registration were incorrect; this is not a compile or runtime result.
+
+## Direct inspection of preserved patch (October 28, 2026)
+
+Read `patches/sm7250-linux-7.2.6-integration.patch` from private backup branch `feature/sm7250-source-snapshot`. The file changes `drivers/interconnect/qcom/sm7250.c` (new, 2,019 lines), `include/dt-bindings/interconnect/qcom,sm7250-rpmh.h` (new, 371 lines), `drivers/interconnect/qcom/Kconfig`, `drivers/interconnect/qcom/Makefile`, and `Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml`.
+
+Concrete findings from the **added lines in the patch**, not from a compiled kernel:
+
+- The C file has **14** `qcom,sm7250-*` entries in `qnoc_of_match`, and ends with `module_platform_driver(qnoc_driver)`. Its `probe` and `remove` members reference `qcom_icc_rpmh_probe` and `qcom_icc_rpmh_remove`. This **contradicts prior documentation** saying registration/DT matching were absent. The source-file header still says registration and matching are incomplete; that comment is stale relative to the file's tail.
+- The added C file contains **17** `qcom_icc_desc` declarations and **17** node-pointer arrays, compared with **14** matched compatibles. This count alone does not establish an error: some descriptors might intentionally be unused or referenced elsewhere. Reconcile each descriptor and each binding compatible independently.
+- The added binding header defines **258** `SM7250_*` integer macros. A narrow scan identified **139** designated array entries using `[SM7250_*] = &node`; all 139 referenced names were found among the binding defines, and none of those names appeared twice as designated entries. **This does not verify provider-local numeric collisions, array completeness, node routing, BCM membership, or compilation.**
+- `Kconfig` declares `INTERCONNECT_QCOM_SM7250` and `Makefile` associates it with `sm7250.o`, while the preserved build configuration has `# CONFIG_INTERCONNECT_QCOM_SM7250 is not set`. The compiled/active status is **not verified**.
+- The DT binding patch adds 14 SM7250 compatible strings. Binding presence is not evidence of correct hardware topology or authorization to activate providers.
+
+**Required reconciliation:** update review assumptions to reflect the *actual source* while retaining the disabled configuration and no hardware-activation rule. Existing synthetic-only CI is not a substitute for checking these 17 descriptors, 14 matches, provider-local IDs, BCM references, and downstream fabric evidence.
 
 ## Verification checklist
 
 | Gate | Required evidence before enablement | Status |
 | --- | --- | --- |
-| Source reproduction | Retrieve the exact backed-up patch; verify checksum and apply against pinned base; inspect the resulting ICC files | Pending independent GitHub-side review |
+| Source reproduction | Read the private GitHub integration patch and pin exact file evidence; full independent checkout/build validation remains outstanding | Patch inspected; build unverified |
 | Binding / index contract | Check each SM7250 RPMh interconnect binding ID, node-array index, duplicate or missing ID, and endpoints against downstream reference; distinguish vendor-only indexes | Pending |
-| Provider lifecycle | Verify `qcom_icc_desc` construction, `qcom_icc_rpmh_probe` and remove/unwind, node creation/destruction and any shared-BCM ownership | Pending |
+| Provider lifecycle | Verify `qcom_icc_desc` construction, `qcom_icc_rpmh_probe` and remove/unwind, node creation/destruction and any shared-BCM ownership | Registration syntax present; lifecycle semantics pending |
 | BCM arrays | Verify every BCM name, node membership, keepalive status and the `qcom_icc_bcm_init` lifecycle; check for duplicate or dangling nodes | Pending |
 | QoS programming | Verify offsets, ports, masks, and init sequencing before permitting `qcom_icc_rpmh_configure_qos` calls | Pending |
 | Aggregate/set semantics | Verify `qcom_icc_pre_aggregate`, aggregate, `qcom_icc_set`, and `qcom_icc_set_qos` interactions; check failure and teardown behavior | Pending |
