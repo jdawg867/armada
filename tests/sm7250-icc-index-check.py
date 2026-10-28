@@ -16,13 +16,26 @@ import unittest
 DEFINE = re.compile(r"^\s*#\s*define\s+([A-Za-z_]\w*)\s+(0[xX][\da-fA-F]+|\d+)\b", re.M)
 INDEX = re.compile(r"\[\s*([A-Za-z_]\w*)\s*\]\s*=\s*&\s*[A-Za-z_]\w*")
 PREFIXES = ("MASTER_", "SLAVE_")
+# Strip comments without confusing comment delimiters within string literals.
+# This lightweight parser is intentionally scoped to ICC initializer evidence.
+TOKEN = re.compile(r'("(?:\\\\.|[^"\\\\])*"|\\'(?:\\\\.|[^\\'\\\\])*\\'|/\\*[\\s\\S]*?\\*/|//[^\\n]*)')
+
+
+def without_comments(text: str) -> str:
+    def replace(match):
+        token = match.group()
+        if token.startswith(("/*", "//")):
+            return re.sub(r"[^\\n]", " ", token)
+        return token
+    return TOKEN.sub(replace, text)
+
 
 
 def audit(header: str, source: str) -> list[str]:
     problems = []
     definitions = {}
     ids = {}
-    for symbol, raw in DEFINE.findall(header):
+    for symbol, raw in DEFINE.findall(without_comments(header)):
         if not symbol.startswith(PREFIXES):
             continue
         value = int(raw, 0)
@@ -39,7 +52,7 @@ def audit(header: str, source: str) -> list[str]:
     seen = set()
     slots = {}
     found = 0
-    for symbol in INDEX.findall(source):
+    for symbol in INDEX.findall(without_comments(source)):
         if not symbol.startswith(PREFIXES):
             continue
         found += 1
@@ -77,6 +90,16 @@ class SyntheticTests(unittest.TestCase):
         self.assertTrue(any("duplicate indexed" in p for p in
                             audit("#define MASTER_A 0",
                                   "[MASTER_A] = &a, [MASTER_A] = &b")))
+
+    def test_commented_entries_not_counted(self):
+        header = "#define MASTER_A 0\\n#define SLAVE_B 1"
+        source = "/* [MASTER_A] = &fake, */ [SLAVE_B] = &real, // [SLAVE_B] = &fake"
+        self.assertEqual(audit(header, source), [])
+
+    def test_commented_definitions_not_counted(self):
+        header = "/* #define MASTER_A 0 */\\n#define SLAVE_B 1"
+        self.assertTrue(any("undefined" in p for p in
+                            audit(header, "[MASTER_A] = &a, [SLAVE_B] = &b")))
 
     def test_missing_data_fails_closed(self):
         self.assertTrue(audit("", ""))
