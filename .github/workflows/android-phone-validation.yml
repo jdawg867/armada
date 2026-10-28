@@ -35,6 +35,10 @@ jobs:
         shell: bash
         run: python3 tests/android-phone-audit-test.py
 
+      - name: SM7250 ICC index validator (synthetic fixtures only)
+        shell: bash
+        run: python3 tests/sm7250-icc-index-check.py --self-test
+
       - name: Boot image regeneration regression
         shell: bash
         run: bash tests/bootimg-regen-test.sh
