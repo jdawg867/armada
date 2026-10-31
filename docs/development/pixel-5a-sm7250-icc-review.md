@@ -68,6 +68,16 @@ Read upstream `drivers/interconnect/qcom/icc-rpmh.c`, `icc-rpmh.h`, and `bcm-vot
 
 **Gate:** do not activate `CONFIG_INTERCONNECT_QCOM_SM7250`, introduce SM7250 ICC DT consumers, or change BCM votes based on these observations. Follow-up source work should check every `qcom_icc_bcm_init` failure path, per-node BCM capacity, shared `cn1` reference ownership, and probe/teardown/reprobe sequencing in the pinned code.
 
+## BCM capacity and initialization failure audit (Step 754)
+
+Checked exact pinned Linux base `500df175a7f9e6bc1a9c328590ca5150f84f9ff0`, `drivers/interconnect/qcom/icc-rpmh.h`, against the preserved SM7250 driver patch.
+
+- `MAX_BCM_PER_NODE` is **3**. `struct qcom_icc_node` stores `bcms[MAX_BCM_PER_NODE]`, and generic `qcom_icc_bcm_init` appends each BCM without an explicit capacity check. A future BCM membership edit **could** overflow that fixed array if it assigns more than three distinct BCM objects to a node.
+- In the preserved SM7250 source there are **32** BCM object initializers and **84** distinct referenced node objects. Their declared memberships yield a **maximum of two BCM references per node**, counting all declared BCM objects, including the inactive display variants; no node exceeds the pinned capacity in this scan. This is a source scan, not a memory-safety or runtime proof. The nodes with two memberships observed here are `sm7250_ebi` and `sm7250_slv_ebi_display`.
+- Generic `qcom_icc_bcm_init` returns an error when `cmd_db_read_addr` cannot resolve a BCM or aux data are missing/invalid. Its caller in `qcom_icc_rpmh_probe` loops over BCMs without checking those return values in the inspected pinned source. **Potential error propagation defect in generic code**; require separate source-level patch, regression validation and upstream review. Do not silently modify a shared core routine as an SM7250-only change.
+- `qcom_icc_bcm_init` sets `bcm->addr` before reading aux data. On aux-data failure, a retry may see `bcm->addr != 0` and take the already-initialized early return even though list/node initialization did not complete. This is a **source-supported partial-initialization hazard**, not evidence of an observed Pixel 5a failure.
+- Probe/remove/reprobe and BCM shared-voter interactions remain pending review. Keep the SM7250 driver disabled; no hardware activation or local build is authorized.
+
 ## Verification checklist
 
 | Gate | Required evidence before enablement | Status |
