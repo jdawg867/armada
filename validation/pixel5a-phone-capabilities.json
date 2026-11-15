@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "device": "Google Pixel 5a",
+  "codename": "barbet",
+  "soc": "SM7250",
+  "purpose": "daily-driver smartphone",
+  "phase": "source-research",
+  "hardware_testing_authorized": false,
+  "driver_activation_authorized": false,
+  "firmware_modification_authorized": false,
+  "release_ready": false,
+  "capabilities": [
+    {
+      "id": "voice_calls",
+      "requirement": "Cellular voice calls including carrier-required VoLTE",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    },
+    {
+      "id": "sms",
+      "requirement": "SMS send and receive",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    },
+    {
+      "id": "mms",
+      "requirement": "MMS send and receive",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    },
+    {
+      "id": "mobile_data",
+      "requirement": "Mobile packet data",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    },
+    {
+      "id": "emergency_calls",
+      "requirement": "Emergency call path (test only under controlled approved procedure)",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    },
+    {
+      "id": "wifi",
+      "requirement": "Wi-Fi connectivity",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    },
+    {
+      "id": "bluetooth",
+      "requirement": "Bluetooth pairing and audio",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    },
+    {
+      "id": "gnss",
+      "requirement": "GNSS location",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    },
+    {
+      "id": "touchscreen",
+      "requirement": "Touchscreen input",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    },
+    {
+      "id": "display",
+      "requirement": "Display and brightness",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    },
+    {
+      "id": "audio",
+      "requirement": "Microphone, speaker and earpiece audio",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    },
+    {
+      "id": "cameras",
+      "requirement": "Rear/front camera capture",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    },
+    {
+      "id": "battery_charging",
+      "requirement": "Battery metrics and charging",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    },
+    {
+      "id": "suspend_resume",
+      "requirement": "Suspend/resume and power consumption",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    },
+    {
+      "id": "sensors",
+      "requirement": "Motion and proximity sensors",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    },
+    {
+      "id": "fingerprint",
+      "requirement": "Fingerprint authentication",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": false
+    },
+    {
+      "id": "nfc",
+      "requirement": "NFC hardware",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": false
+    },
+    {
+      "id": "notifications",
+      "requirement": "User notifications",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    },
+    {
+      "id": "recovery",
+      "requirement": "Return to known-working Android without destroying modem/vendor firmware",
+      "status": "not_tested",
+      "evidence": [],
+      "mandatory": true
+    }
+  ]
+}
