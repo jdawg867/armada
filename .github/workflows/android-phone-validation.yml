@@ -66,6 +66,17 @@ jobs:
           "$RUNNER_TEMP/modemsmem-payload-test" | tee "$RUNNER_TEMP/modemsmem-payload-results.txt"
           test "$(grep -c '^PASS ' "$RUNNER_TEMP/modemsmem-payload-results.txt")" -eq 5
 
+      - name: Compile isolated Socinfo and simulated SMEM staging adapter (no device)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC="research/pixel5a-modemsmem"
+          cc -std=c11 -Wall -Wextra -Werror -pedantic -O1 -g \
+             -fsanitize=undefined -fno-omit-frame-pointer \
+             "$SRC/test_modemsmem_adapter.c" -o "$RUNNER_TEMP/modemsmem-adapter-test"
+          "$RUNNER_TEMP/modemsmem-adapter-test" | tee "$RUNNER_TEMP/modemsmem-adapter-results.txt"
+          test "$(grep -c '^PASS ' "$RUNNER_TEMP/modemsmem-adapter-results.txt")" -eq 9
+
       - name: SM7250 ICC index validator (synthetic fixtures only)
         shell: bash
         run: python3 tests/sm7250-icc-index-check.py --self-test
