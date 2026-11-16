@@ -15,6 +15,7 @@
 #include <linux/soc/qcom/socinfo.h>
 #include <linux/soc/qcom/smem.h>
 #include "kernel_smem_facade.h"
+#include "kernel_readonly_preflight.h"
 
 static_assert(SMEM_HW_SW_BUILD_ID == 137);
 static_assert(offsetof(struct socinfo, fmt) == 0);
@@ -40,6 +41,17 @@ static int __maybe_unused armada_modemsmem_kernel_api_probe(void)
         return -EMSGSIZE;
 
     return armada_modemsmem_kernel_alloc(134, 64);
+}
+
+/*
+ * Compile-only call path for the source-backed, fail-closed SMEM preflight.
+ * No module init or callers exist. Never called or installed.
+ */
+static int __maybe_unused armada_pixel5a_preflight_compile_probe(void)
+{
+    struct armada_pixel5a_candidate candidate;
+
+    return armada_pixel5a_readonly_preflight(&candidate);
 }
 
 MODULE_LICENSE("GPL");
