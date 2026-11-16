@@ -65,6 +65,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-aosp-lineage-source-diff-test.py
 
+      - name: Verified AOSP-Lineage init and module packaging diff interpretation
+        shell: bash
+        run: python3 tests/pixel5a-aosp-lineage-diff-interpretation-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
