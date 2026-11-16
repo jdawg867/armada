@@ -8,6 +8,8 @@ on:
       - "tests/pixel5a-aosp-12l-source-probe-test.py"
       - "research/pixel5a-modemsmem/compare_aosp_lineage_12l.py"
       - "tests/pixel5a-aosp-lineage-comparison-test.py"
+      - "research/pixel5a-modemsmem/inspect_aosp_lineage_12l_diffs.py"
+      - "tests/pixel5a-aosp-lineage-source-diff-test.py"
       - ".github/workflows/pixel5a-aosp-12l-source-probe.yml"
   workflow_dispatch:
 
@@ -70,6 +72,38 @@ jobs:
                     e.get("hunks_changed","UNKNOWN"))
           print("STOCK_VENDOR_BOOT_VERIFIED=false")
           PY
+      - name: Inspect source diff hunks for three AOSP versus Lineage paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/pixel5a-aosp-lineage-source-diff-test.py
+          python3 research/pixel5a-modemsmem/inspect_aosp_lineage_12l_diffs.py \
+            --online --output "$RUNNER_TEMP/pixel5a-aosp-lineage-source-diffs.json" \
+            > "$RUNNER_TEMP/pixel5a-aosp-lineage-source-diffs.log"
+          cat "$RUNNER_TEMP/pixel5a-aosp-lineage-source-diffs.log"
+          python3 - "$RUNNER_TEMP/pixel5a-aosp-lineage-source-diffs.json" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          assert d["retrieved_count"] == 3 and d["all_diffs_available"]
+          assert not d["stock_vendor_boot_verified"]
+          assert not d["modem_boot_order_verified"]
+          expected={
+            "barbet/init.barbet.rc":("78a14c15c8c71b5d40c712009711636bbd8505e85419cfec92ec4e15e9bbef4e","080e04c5474e2663cfe056062f08935dcb644f077a8680e867f4164772b66000"),
+            "redbull/BoardConfig-common.mk":("27a623d774cb7818a892d340c9a36aee732f69f4d482b0a73fdf30757fbf5ff3","028dd8dcff8f6f306ab2a09e41617c48ba2c2539c0cbb197861204af3090e581"),
+            "redbull/init.hardware.rc":("5cf98b4bab2359a81f5ddf3b10db397f9ff0361ad850733226cc7ed30f21f294","aa992f1b8481afed9ab20de181b76999b03da8910ae394f9795b34b44d81c8bf"),
+          }
+          for row in d["files"]:
+              a,b=expected[row["device"]+"/"+row["path"]]
+              assert row["aosp_sha256"]==a and row["lineage_sha256"]==b
+          print("PINNED_SOURCE_DIFFS=PASS")
+          PY
+      - name: Save source diff metadata (public text only)
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixel5a-aosp-lineage-12l-source-diff
+          path: ${{ runner.temp }}/pixel5a-aosp-lineage-source-diffs.json
+          if-no-files-found: error
+          retention-days: 14
       - name: Save compare metadata (no source content or firmware)
         uses: actions/upload-artifact@v4
         with:
