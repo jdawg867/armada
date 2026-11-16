@@ -128,3 +128,13 @@ This is **not** a real Linux kernel header compilation, module build, SMEM initi
 These seven tests exercise a **host simulation** of Linux error-pointer encoding, *not* the actual Linux headers or kernel build. They do not establish concurrent lifetime, SMEM ownership, memory writes, clock/power requirements or that a modem can start. No code in this step publishes SMEM, adds a Kconfig entry or activates hardware.
 
 **Next gate:** test the facade against the exact Linux 7.2.6 kernel header environment (not just mocks), establish whether the Google vendor item requires overwrite vs. preserve-on-reprobe and verify how a real MPSS remoteproc startup would be deferred until vendor SMEM publication. No assumptions about boot order or flash permissions.
+
+## Step 781 — non-enabling MPSS start-order model (host C11 only)
+
+Introduced `research/pixel5a-modemsmem/modem_boot_gate.h` plus `test_modem_boot_gate.c`. This is **a model of intended ordering, not a kernel integration**. It holds the states `WAIT_SMEM`, `STAGED`, `READY_SIMULATED` and `FAILED`. A simulated start request returns `-EAGAIN` until both successful input staging and an **explicit mock acknowledgement** of publication. No SMEM write is provided: callers can simulate acknowledgement, but cannot use this header to publish vendor data or actually start the MPSS remoteproc.
+
+The host test suite has nine checks: initial denial, simulated defer, retry after defer, rejection of premature acknowledgement, explicit mock success, permanent staging failure, failed acknowledgement, reset revocation and NULL input errors. The suite is compiled as C11 with strict warnings and UBSan. `-EAGAIN` represents pending work **only in this host model**; a real kernel probe would use `-EPROBE_DEFER` as appropriate.
+
+**Critical limitation:** The actual Linux 7.2.6 `qcom_q6v5_pas.c` remoteproc startup path is not wired to this model. The model is not concurrency-safe or a kernel security gate. It does not demonstrate that MPSS firmware reads SMEM item 134, that acknowledgement can be trusted, or that system init ordering is solved. Never interpret a host PASS as a modem-boot authorization or hardware qualification.
+
+**Step 782 prerequisite:** establish a real, source-backed kernel mechanism that prevents remoteproc startup before required vendor SMEM data publication, including concurrency, probe defer, reprobe and teardown. Verify it in an isolated kernel build before considering device enablement. The existing Android installation, modem firmware and working phone functionality remain protected.
