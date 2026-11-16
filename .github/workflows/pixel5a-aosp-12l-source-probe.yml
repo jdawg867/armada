@@ -6,6 +6,8 @@ on:
     paths:
       - "research/pixel5a-modemsmem/probe_aosp_12l_sources.py"
       - "tests/pixel5a-aosp-12l-source-probe-test.py"
+      - "research/pixel5a-modemsmem/compare_aosp_lineage_12l.py"
+      - "tests/pixel5a-aosp-lineage-comparison-test.py"
       - ".github/workflows/pixel5a-aosp-12l-source-probe.yml"
   workflow_dispatch:
 
@@ -44,6 +46,37 @@ jobs:
                     entry.get("http_status",""))
           print("STOCK_VENDOR_BOOT_VERIFIED=false")
           PY
+      - name: Compare exact AOSP tags to pinned LineageOS text (metadata only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/pixel5a-aosp-lineage-comparison-test.py
+          python3 research/pixel5a-modemsmem/compare_aosp_lineage_12l.py \
+            --online --output "$RUNNER_TEMP/pixel5a-aosp-lineage-12l-comparison.json" \
+            > "$RUNNER_TEMP/pixel5a-aosp-lineage-12l-comparison.log"
+          python3 - "$RUNNER_TEMP/pixel5a-aosp-lineage-12l-comparison.json" <<'PY'
+          import json,sys
+          r=json.load(open(sys.argv[1]))
+          assert r["stock_vendor_boot_verified"] is False
+          assert r["effective_modem_boot_order_verified"] is False
+          assert len(r["entries"]) == 15
+          print("SOURCE_PAIRS_COMPARED",r["compared_count"])
+          print("SOURCE_PAIRS_UNAVAILABLE",r["unavailable_count"])
+          for e in r["entries"]:
+              print("COMPARE",e["tag"],e["device"],e["path"],e["compare_state"],
+                    e.get("identical_bytes","UNAVAILABLE"),
+                    e.get("aosp_sha256","NO_AOSP_SHA"),
+                    e.get("lineage_sha256","NO_LINEAGE_SHA"),
+                    e.get("hunks_changed","UNKNOWN"))
+          print("STOCK_VENDOR_BOOT_VERIFIED=false")
+          PY
+      - name: Save compare metadata (no source content or firmware)
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixel5a-aosp-lineage-12l-comparison-metadata
+          path: ${{ runner.temp }}/pixel5a-aosp-lineage-12l-comparison.json
+          if-no-files-found: error
+          retention-days: 14
       - name: Save source-probe metadata (no source contents or firmware)
         uses: actions/upload-artifact@v4
         with:
