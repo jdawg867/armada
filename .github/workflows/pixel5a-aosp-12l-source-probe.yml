@@ -88,7 +88,7 @@ jobs:
           assert not d["stock_vendor_boot_verified"]
           assert not d["modem_boot_order_verified"]
           expected={
-            "barbet/init.barbet.rc":("78a14c15c8c71b5d40c712009711636bbd8505e85419cfec92ec4e15e9bbef4e","080e04c5474e2663cfe056062f08935dcb644f077a8680e867f4164772b66000"),
+            "barbet/barbet/init.barbet.rc":("78a14c15c8c71b5d40c712009711636bbd8505e85419cfec92ec4e15e9bbef4e","080e04c5474e2663cfe056062f08935dcb644f077a8680e867f4164772b66000"),
             "redbull/BoardConfig-common.mk":("27a623d774cb7818a892d340c9a36aee732f69f4d482b0a73fdf30757fbf5ff3","028dd8dcff8f6f306ab2a09e41617c48ba2c2539c0cbb197861204af3090e581"),
             "redbull/init.hardware.rc":("5cf98b4bab2359a81f5ddf3b10db397f9ff0361ad850733226cc7ed30f21f294","aa992f1b8481afed9ab20de181b76999b03da8910ae394f9795b34b44d81c8bf"),
           }
