@@ -204,3 +204,18 @@ The new `research/pixel5a-modemsmem/kernel_vendor_ownership_audit.h`, compiled i
 `tests/pixel5a-vendor-ownership-audit-test.py` provides eight baseline/negative source-contract tests. Both `.github/workflows/android-phone-validation.yml` and `.github/workflows/pixel5a-kernel-api-compile.yml` enforce them. The dedicated kernel workflow also compiles the header through `modemsmem_kernel_header_probe.c` against the actual pinned Linux 7.2.6 ARM64 headers. These source checks do not demonstrate runtime concurrency, memory ordering, error recovery, or successful modem initialization.
 
 **Cleanup design remains blocked:** There is no approved owner for a newly created item 134, no confirmed authority to wipe/reuse an existing item, and no proof that a modem restart requires rewriting the item. We therefore implement no allocation, zeroing, overwriting, freeing or firmware/remoteproc activation. Any later active path must first identify authoritative Pixel 5a firmware/vendor expectations, secure an explicit device-init lifecycle and synchronization strategy, and validate a complete isolated build before device testing.
+
+## Step 787 — authoritative downstream modemsmem write and teardown behavior
+
+Direct inspection of `LineageOS/android_kernel_google_redbull` at pinned commit `929e7e2f3658867d51a1d423c7e000f5cf1d4043`:
+- `drivers/soc/qcom/modemsmem/modemsmem.c`, Git blob `428143562894e6d8ca7b656174c72ee4b096f510`
+- `drivers/soc/qcom/modemsmem/modemsmem.h`, Git blob `a6b9d991fe7c023f44c21cc5c597746414c532a2`
+- `drivers/soc/qcom/modemsmem/Makefile`, Git blob `b7c435d9f9e09a203818b3e491e8696ff212d34`, conditional `CONFIG_MODEMSMEM`
+
+**Important correction to ownership planning:** The original Google/Redbull downstream probe calls `qcom_smem_alloc(..., SMEM_ID_VENDOR0, sizeof(struct modem_smem_type))`, accepts `-EEXIST`, gets the item, and then **unconditionally zeros all 64 bytes with `memset_io()`**. It rewrites version, platform, subtype and firmware-specific flags with `writel_relaxed()` via `modem_smem_set_u32()`. Thus the original driver **does overwrite an existing allocation**, but its behavior is not evidence that a new, unrelated Linux 7.2.6 port has the authority or correct boot timing to do likewise.
+
+The original implementation also uses downstream-only `socinfo_get_g_platform_*()` getters, `/chosen/cdt/cdb2` fields (modem_flag, factory bootmode, dsds), and exposes a factory-mode-writeable `modemsmem` sysfs attribute. It maps several allocation/get failures to `-ENOMEM`, tolerates sysfs group creation failure while still returning probe success, and has **no explicit platform `.remove` callback or `sysfs_remove_group()`**. This is a source-level lifecycle concern, not proof of a runtime leak in a specific boot environment.
+
+**Step 787 deliverables:** `validation/pixel5a-downstream-modemsmem-write-audit.json` pins the exact downstream source identity and records destructive writes, boot flags and incomplete lifecycle handling. `tests/pixel5a-downstream-modemsmem-write-audit-test.py` provides 10 source/baseline-negative tests that reject unreviewed changes to provenance, enablement, overwrite claims, factory sysfs, and hidden limitations. Both GitHub workflows enforce these tests.
+
+**No new active kernel writes:** The Step 785–786 read-only preflight and ownership classifier remain intentionally disconnected; this step adds no allocation, overwrite, sysfs, platform driver, firmware access, modem startup, or kernel image. A safe active implementation still requires explicit Pixel 5a-specific publication timing/owner evidence, rigorous restart lifecycle and actual kernel/phone validation. Keep PR #18 draft and protect the existing Android installation.
