@@ -71,6 +71,7 @@ static inline int armada_lifecycle_start(const struct armada_modem_lifecycle_aud
 {
     if (!ctx) return -EINVAL;
     if (ctx->deleting) return -ENODEV;
+    if (ctx->crashed) return -EAGAIN;
     return armada_start_epoch_can_start(&ctx->gate, origin);
 }
 static inline int armada_lifecycle_resume_from_crash(struct armada_modem_lifecycle_audit *ctx)
