@@ -37,9 +37,9 @@ def audit(source, probe):
             errors.append("missing guard: " + marker)
     if source.count("armada_modemsmem_kernel_get(") != 2:
         errors.append("expected only two read-only lookups")
-    if source.index("*result = candidate;") < source.index(
-        "vendor_size != ARMADA_VENDOR_SMEM_LENGTH"
-    ):
+    result_pos = source.find("*result = candidate;")
+    size_guard_pos = source.find("vendor_size != ARMADA_VENDOR_SMEM_LENGTH")
+    if result_pos != -1 and size_guard_pos != -1 and result_pos < size_guard_pos:
         errors.append("candidate published before vendor size check")
     if "#include \"kernel_readonly_preflight.h\"" not in probe or (
         "armada_pixel5a_readonly_preflight(&candidate)" not in probe
