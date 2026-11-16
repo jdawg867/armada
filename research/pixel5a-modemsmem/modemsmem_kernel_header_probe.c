@@ -16,6 +16,7 @@
 #include <linux/soc/qcom/smem.h>
 #include "kernel_smem_facade.h"
 #include "kernel_readonly_preflight.h"
+#include "kernel_vendor_ownership_audit.h"
 
 static_assert(SMEM_HW_SW_BUILD_ID == 137);
 static_assert(offsetof(struct socinfo, fmt) == 0);
@@ -52,6 +53,14 @@ static int __maybe_unused armada_pixel5a_preflight_compile_probe(void)
     struct armada_pixel5a_candidate candidate;
 
     return armada_pixel5a_readonly_preflight(&candidate);
+}
+
+/* A second compile-only reference, never registered or executed. */
+static int __maybe_unused armada_pixel5a_vendor_audit_compile_probe(void)
+{
+    struct armada_vendor_item_audit observation;
+
+    return armada_vendor_item_inspect(&observation);
 }
 
 MODULE_LICENSE("GPL");
