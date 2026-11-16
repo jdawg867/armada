@@ -138,6 +138,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-modem-publication-order-test.py
 
+      - name: Pinned Pixel 5a Barbet first-stage and init module evidence (source-only)
+        shell: bash
+        run: python3 tests/pixel5a-barbet-module-load-evidence-test.py
+
       - name: SM7250 ICC index validator (synthetic fixtures only)
         shell: bash
         run: python3 tests/sm7250-icc-index-check.py --self-test
