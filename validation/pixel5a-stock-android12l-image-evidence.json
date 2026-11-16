@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "device": "Google Pixel 5a (5G)",
+  "codename": "barbet",
+  "scope": "official_android12l_release_identity_only_stock_vendor_boot_not_extracted",
+  "official_release_source": "https://groups.google.com/g/android-building/c/GoMawyG2l94/m/gF67Adc6EQAJ",
+  "official_factory_index": "https://developers.google.com/android/images",
+  "official_ota_index": "https://developers.google.com/android/ota",
+  "aosp_source_refs": "https://android.googlesource.com/device/google/barbet/+refs",
+  "releases": [
+    {
+      "build": "SP2A.220305.012",
+      "android_version": "12.1.0",
+      "tag": "android-12.1.0_r1",
+      "month": "2022-03",
+      "kernel_project": "device/google/barbet-kernel",
+      "kernel_tag": "android-12.1.0_r0.5",
+      "kernel_branch": "android-msm-barbet-4.19-android12L"
+    },
+    {
+      "build": "SP2A.220505.002",
+      "android_version": "12.1.0",
+      "tag": "android-12.1.0_r5",
+      "month": "2022-05",
+      "kernel_project": "device/google/barbet-kernel",
+      "kernel_tag": "android-12.1.0_r0.21",
+      "kernel_branch": "android-msm-barbet-4.19-android12L"
+    },
+    {
+      "build": "SQ3A.220605.009.A1",
+      "android_version": "12.1.0",
+      "tag": "android-12.1.0_r7",
+      "month": "2022-06",
+      "kernel_project": "device/google/barbet-kernel",
+      "kernel_tag": "android-12.1.0_r0.27",
+      "kernel_branch": "android-msm-barbet-4.19-android12-qpr3"
+    }
+  ],
+  "verified_from_official_release_announcement": true,
+  "source_tree_paths_for_readonly_followup": [
+    "device/google/barbet/init.insmod.barbet.cfg",
+    "device/google/redbull/BoardConfig-common.mk",
+    "device/google/redbull/modules.load",
+    "device/google/redbull/init.hardware.rc",
+    "device/google/redbull/init.insmod.sh"
+  ],
+  "binary_vendor_boot_image_downloaded": false,
+  "binary_vendor_boot_hash_verified": false,
+  "binary_vendor_boot_extracted": false,
+  "actual_stock_modules_load_verified": false,
+  "actual_stock_modemsmem_module_probed": false,
+  "actual_stock_mpss_start_order_verified": false,
+  "device_boot_logs_examined": false,
+  "android12l_aosp_tag_files_compared_to_stock_image": false,
+  "stock_image_can_be_used_without_google_license_review": false,
+  "allowed_workflow": "source_only_no_flashing_no_redistribution",
+  "blockers": [
+    "obtain_licensed_exact_build_vendor_boot_for_offline_inspection",
+    "verify_exact_build_and_digest_before_parsing",
+    "identify_module_load_order_from_image_not_assumption",
+    "distinguish_module_load_completion_from_driver_probe_completion",
+    "verify_modemsmem_to_mpss_dependency_and_crash_recovery",
+    "verify_device_variant_and_vendor_firmware_release"
+  ],
+  "modem_functional_verified": false,
+  "device_modified": false
+}
