@@ -41,6 +41,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-barbet-module-load-evidence-test.py
 
+      - name: Official Pixel 5a Android 12L stock-build identity (no binary inspected)
+        shell: bash
+        run: python3 tests/pixel5a-stock-android12l-image-evidence-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
