@@ -146,6 +146,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-stock-android12l-image-evidence-test.py
 
+      - name: Test exact Android 12L AOSP tag source probe without networking
+        shell: bash
+        run: python3 tests/pixel5a-aosp-12l-source-probe-test.py
+
       - name: SM7250 ICC index validator (synthetic fixtures only)
         shell: bash
         run: python3 tests/sm7250-icc-index-check.py --self-test
