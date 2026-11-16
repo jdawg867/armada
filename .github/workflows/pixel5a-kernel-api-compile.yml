@@ -29,6 +29,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-vendor-ownership-audit-test.py
 
+      - name: Pixel 5a pinned downstream modemsmem write/lifecycle hazards (source-only)
+        shell: bash
+        run: python3 tests/pixel5a-downstream-modemsmem-write-audit-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
