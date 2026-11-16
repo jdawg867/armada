@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "kind": "official_aosp_tag_text_probe_result",
+  "github_workflow_run": 43916059845,
+  "commit": "c209f41d665c52c2c7a374610f6a0b246e20fab8",
+  "source": "https://android.googlesource.com/device/google",
+  "tags": [
+    "android-12.1.0_r1",
+    "android-12.1.0_r5",
+    "android-12.1.0_r7"
+  ],
+  "retrieved_count": 15,
+  "unavailable_count": 3,
+  "total_attempted": 18,
+  "sha256_by_path": {
+    "device/google/barbet/init.insmod.barbet.cfg": "a081d17fbfe8995aaf64ee8dfd4e528a13756d1deb3f660f22da55f044fe8383",
+    "device/google/barbet/barbet/init.barbet.rc": "78a14c15c8c71b5d40c712009711636bbd8505e85419cfec92ec4e15e9bbef4e",
+    "device/google/redbull/BoardConfig-common.mk": "27a623d774cb7818a892d340c9a36aee732f69f4d482b0a73fdf30757fbf5ff3",
+    "device/google/redbull/init.hardware.rc": "5cf98b4bab2359a81f5ddf3b10db397f9ff0361ad850733226cc7ed30f21f294",
+    "device/google/redbull/init.insmod.sh": "d6ca82cf42232a1b1e934827e055c024f39f5fdc1def5905b6f131bbb62f0855"
+  },
+  "unavailable_paths": [
+    {
+      "path": "device/google/redbull/modules.load",
+      "tags": [
+        "android-12.1.0_r1",
+        "android-12.1.0_r5",
+        "android-12.1.0_r7"
+      ],
+      "http_status": 404
+    }
+  ],
+  "all_files_retrieved": false,
+  "all_retrieved_file_hashes_identical_across_sampled_tags": true,
+  "source_compared_to_lineage_bytes": false,
+  "stock_vendor_boot_image_inspected": false,
+  "stock_runtime_module_load_verified": false,
+  "modemsmem_before_mpss_start_verified": false,
+  "device_hardware_tested": false,
+  "notes": "Public AOSP text SHA-256 only, from successful GitHub Actions run. Missing modules.load is a missing repository path at these refs, not proof the stock image lacks a module list. Compare exact source bytes to pinned LineageOS separately; never infer actual vendor_boot contents."
+}
