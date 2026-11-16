@@ -21,6 +21,10 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enforce read-only modemsmem preflight source contract
+        shell: bash
+        run: python3 tests/pixel5a-kernel-readonly-preflight-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
