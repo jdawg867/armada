@@ -177,3 +177,20 @@ The Step 782 source-only workflow run #54 (`43795236652`) completed successfully
 **Scope:** A successful external-module object compile checks types, field offsets and header compatibility under the selected generic ARM64 configuration. It is **not** a complete Android kernel build, link/symbol compatibility guarantee, functional module implementation, DT or firmware verification, or phone test. The workflow uses `KBUILD_MODPOST_WARN=1` because `modules_prepare` does not provide a built-kernel `Module.symvers`; linking warnings cannot be represented as success evidence. No `CONFIG_MODEMSMEM` driver has been added to Linux.
 
 **Still unresolved:** `rproc_trigger_recovery()` holds `rproc->lock` and calls a separate `rproc_boot_recovery`/`rproc_attach_recovery` path; any actual publication gate needs fully verified ownership, correct lock order, the early-attached-remoteproc case, synchronization with asynchronous firmware callbacks, and real phone-specific firmware semantics. Do not activate modem drivers or flash the phone. Next checkpoint is to inspect the *completed* compile workflow, fix genuine build issues, and only then consider an isolated kernel-facing adapter and lifecycle design.
+
+## Step 785 — read-only kernel-facing SMEM preflight (first kernel-native research helper)
+
+**Baseline:** Step 784 GitHub Actions kernel API compile run #2 (`43795990681`) and phone validation run #61 (`43795990690`) both passed for commit `a7786390a163478e93e539c48066e3231433f631`.
+
+**Added** `research/pixel5a-modemsmem/kernel_readonly_preflight.h` and compiled it through the existing `modemsmem_kernel_header_probe.c` using Linux 7.2.6 kernel headers (pinned mainline commit `500df175a7f9e6bc1a9c328590ca5150f84f9ff0`).
+
+The helper is deliberately **read-only and disconnected**:
+- Fetches item `SMEM_HW_SW_BUILD_ID` (**137**) using the existing Linux-facing `IS_ERR/PTR_ERR` facade and preserves the exact errors, including deferred probe and missing items.
+- Requires at least 68 bytes before copying the reviewed `struct socinfo` prefix; accepts only source-reviewed format versions **0.6 through 0.23**, then reads little-endian `hw_plat` at offset 52, `plat_ver` at 56 and `hw_plat_subtype` at 64. Extracts downstream 8-bit vendor major/minor fields into a **host-endian candidate**, never a published payload.
+- Looks up already-present vendor SMEM item **134** read-only, requires an exact 64-byte size, and returns the candidate **only if both item lookups and all bounds/format checks succeed**.
+- Does **not allocate item 134**, write any SMEM contents, claim ownership or validate existing vendor values. A successful preflight is not a publication acknowledgement and must not authorize modem startup. Missing item 134 remains a blocker until a safe allocation/ownership strategy is established.
+- No Kconfig, device-tree entry, platform driver registration, module init hook, or real remoteproc call. There is no activation path for this helper.
+
+Added `tests/pixel5a-kernel-readonly-preflight-test.py` with seven static source/negative tests: baseline guard presence, allocation rejection, write rejection, remoteproc-start rejection, vendor-size guard retention, kernel-probe wiring, and unknown-format rejection. The separate GitHub kernel workflow checks compilation against actual pinned ARM64 headers. Static tests do not exercise real SMEM and kernel compilation does not establish runtime safety.
+
+**Critical unresolved ownership and ordering:** A vendor item may already contain firmware-managed information; size alone does not imply it is safe to overwrite, zero or free it. Remoteproc automatic boot and recovery paths are not integrated with any publication barrier. The next safe checkpoint is an isolated **real-kernel-compiled** ownership/deferral design and negative tests for absent vendor allocation, arbitrary error-pointer returns, and teardown/callback races—without ever enabling the driver.
