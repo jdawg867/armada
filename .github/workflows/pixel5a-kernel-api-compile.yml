@@ -53,6 +53,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-aosp-12l-tag-result-test.py
 
+      - name: AOSP 12L vs pinned LineageOS text comparison offline tests
+        shell: bash
+        run: python3 tests/pixel5a-aosp-lineage-comparison-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
