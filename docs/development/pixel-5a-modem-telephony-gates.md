@@ -282,3 +282,16 @@ Official `device/google/barbet` and `device/google/redbull` AOSP repositories ar
 A **third isolated GitHub Actions workflow** `.github/workflows/pixel5a-aosp-12l-source-probe.yml` attempts these public-text downloads on a GitHub runner, reports retrieved/unavailable counts and per-file hashes, and uploads metadata only (not full source, firmware, OTA, factory archive or boot image). A run can complete even with unavailable sources, but its `all_files_retrieved` field remains `false`; such a green CI status must **never** be interpreted as a complete source comparison. CI cannot validate vendor firmware probe timing or actual Android 12L binary compatibility.
 
 **Next gate:** examine the resulting metadata and, only for successfully retrieved tagged files, compare exact source bytes/hashes to the pinned LineageOS files. Treat unavailable tags/files as unverified. If available evidence is insufficient for stock effective module order, continue with published source or separately authorized read-only offline factory image checks. No device, SMEM, remoteproc, firmware, or partition modifications are authorized.
+
+### Step 791 verified GitHub-runner result (follow-up to source probe)
+
+The new **official AOSP public-text-only workflow** run #2, ID `43916059845`, completed SUCCESS for commit `c209f41d665c52c2c7a374610f6a0b246e20fab8`. Its logs and metadata artifact establish **15 successfully retrieved tagged source-file records out of 18 attempts**; **three HTTP 404** responses occurred for `device/google/redbull/modules.load`, at each of `android-12.1.0_r1`, `r5`, `r7`. No SHA checksum has been invented for the missing file. A missing repository path at these tags does **not** mean a stock vendor_boot binary has no `modules.load` or that modem support modules are absent.
+
+All five successfully retrieved *paths* have identical SHA-256 content hashes across these three sampled tags:
+- `device/google/barbet/init.insmod.barbet.cfg`: `a081d17fbfe8995aaf64ee8dfd4e528a13756d1deb3f660f22da55f044fe8383`
+- `device/google/barbet/barbet/init.barbet.rc`: `78a14c15c8c71b5d40c712009711636bbd8505e85419cfec92ec4e15e9bbef4e`
+- `device/google/redbull/BoardConfig-common.mk`: `27a623d774cb7818a892d340c9a36aee732f69f4d482b0a73fdf30757fbf5ff3`
+- `device/google/redbull/init.hardware.rc`: `5cf98b4bab2359a81f5ddf3b10db397f9ff0361ad850733226cc7ed30f21f294`
+- `device/google/redbull/init.insmod.sh`: `d6ca82cf42232a1b1e934827e055c024f39f5fdc1def5905b6f131bbb62f0855`
+
+`validation/pixel5a-aosp-12l-tag-probe-result.json` preserves the exact result snapshot and `tests/pixel5a-aosp-12l-tag-result-test.py` adds nine baseline/negative tests enforced in both existing workflows. **No exact byte comparison to the LineageOS source files, stock image inspection, effective module-probe timing, SMP2P/MPSS startup order or phone functionality has yet been verified.** Next investigation should fetch the pinned LineageOS source bytes in a similarly bounded source-only job and compare hashes/differences only for matching AOSP paths; keep the absent AOSP `modules.load` status explicit. No physical handset access is necessary for source comparison.
