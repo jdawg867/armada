@@ -1,0 +1,74 @@
+name: Pixel 5a Linux 7.2.6 kernel API compile probe
+
+on:
+  pull_request:
+    branches: [development]
+    paths:
+      - "research/pixel5a-modemsmem/**"
+      - ".github/workflows/pixel5a-kernel-api-compile.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  kernel-headers:
+    name: Linux 7.2.6 ARM64 header and isolated Kbuild compile
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Provision ARM64 build prerequisites
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc-aarch64-linux-gnu bc bison flex libssl-dev libelf-dev
+
+      - name: Retrieve exact pinned Linux source (never checkout into Armada)
+        shell: bash
+        run: |
+          set -euo pipefail
+          PIN="500df175a7f9e6bc1a9c328590ca5150f84f9ff0"
+          mkdir -p "$RUNNER_TEMP/linux-src"
+          curl -fL --retry 3 --max-time 300 \
+            "https://github.com/torvalds/linux/archive/${PIN}.tar.gz" \
+            -o "$RUNNER_TEMP/linux-source.tar.gz"
+          tar -xzf "$RUNNER_TEMP/linux-source.tar.gz" -C "$RUNNER_TEMP/linux-src" --strip-components=1
+          KERNEL="$RUNNER_TEMP/linux-src"
+          test -f "$KERNEL/Makefile"
+          grep -Eq '^VERSION = 7$' "$KERNEL/Makefile"
+          grep -Eq '^PATCHLEVEL = 2$' "$KERNEL/Makefile"
+          grep -Eq '^SUBLEVEL = 6$' "$KERNEL/Makefile"
+          printf 'KERNEL=%s\n' "$KERNEL" >> "$GITHUB_ENV"
+
+      - name: Configure actual Linux 7.2.6 ARM64 build headers
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/kernel-out"
+          make -C "$KERNEL" O="$RUNNER_TEMP/kernel-out" \
+            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
+          make -C "$KERNEL" O="$RUNNER_TEMP/kernel-out" -j2 \
+            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules_prepare
+
+      - name: Compile real-kernel-header SMEM and Socinfo probe (never load)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC="$GITHUB_WORKSPACE/research/pixel5a-modemsmem"
+          test -f "$SRC/modemsmem_kernel_header_probe.c"
+          test -f "$SRC/kernel_smem_facade.h"
+          ! grep -Eq 'module_init\(|platform_driver_register\(|rproc_boot\(|request_firmware\(' "$SRC/modemsmem_kernel_header_probe.c"
+          # modules_prepare does not generate Module.symvers; modpost may warn
+          # about unresolved symbols. The acceptance check is actual ARM64
+          # compilation of the probe object using the pinned kernel headers.
+          make -C "$KERNEL" O="$RUNNER_TEMP/kernel-out" -j2 \
+            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
+            KBUILD_MODPOST_WARN=1 M="$SRC" modules
+          test -s "$SRC/modemsmem_kernel_header_probe.o"
+          file "$SRC/modemsmem_kernel_header_probe.o"
+          echo "PASS Linux 7.2.6 ARM64 kernel-header compile probe"
+          echo "No module is uploaded, installed, loaded, published or run on a phone."
