@@ -61,6 +61,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-aosp-lineage-result-test.py
 
+      - name: Review AOSP-Lineage changed hunks (offline negative tests)
+        shell: bash
+        run: python3 tests/pixel5a-aosp-lineage-source-diff-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
