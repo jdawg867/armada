@@ -57,6 +57,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-aosp-lineage-comparison-test.py
 
+      - name: Verify hosted AOSP vs Lineage source comparison snapshot (not hardware)
+        shell: bash
+        run: python3 tests/pixel5a-aosp-lineage-result-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
