@@ -49,6 +49,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-aosp-12l-source-probe-test.py
 
+      - name: Verify 15-of-18 official AOSP tagged text evidence snapshot (not stock image)
+        shell: bash
+        run: python3 tests/pixel5a-aosp-12l-tag-result-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
