@@ -358,3 +358,11 @@ These are **source differences and reviewer interpretations**, not modem startup
 **Limits:** This models specific pinned Lineage Make expressions; it is not a complete GNU Make/Soong invocation, compiled module dependency resolution, real init-module insertion, first-stage ramdisk extraction, Qualcomm PIL runtime trace, or proof of vendor SMEM write visibility. The **AOSP Android 12L `redbull/modules.load` tagged path remains missing (404)**; the Lineage first-stage projection must not be relabeled stock. No firmware files, device partitions, active module images, or Pixel 5a hardware were accessed.
 
 **Next:** Use the actual computed module projection numbers from CI; then inspect `subsys_register` / PIL boot triggers and their device-tree/early userspace integration to identify any real driver-order barriers rather than relying on module list position.
+
+### Step 794 source projection result (exact pinned Lineage text)
+
+A direct independent evaluation of the pinned `BoardConfig-common.mk`, `BoardConfigLineage.mk` and `modules.load` texts yielded **329** ordered module basenames, **219** declared common first-stage eligible names, and two additional Lineage entries. Projecting the ordered module list through the union of first-stage eligible basenames yielded **220 first-stage entries** and **109 vendor entries** (not a complete Soong/Make build result).
+
+The three watched module positions in the **ordered source list**, zero-based, are `smem.ko=34`, `subsys-pil-tz.ko=53`, `modemsmem.ko=83`; in the **projected first-stage list** they are `30`, `47`, `74` (human positions #31, #48, #75). Thus source list sequence is `smem` → `subsys-pil-tz` → `modemsmem`. No inference is permitted about firmware start order, driver probe completion or visibility of the vendor SMEM item134 payload.
+
+These figures are pinned in `validation/pixel5a-lineage-first-stage-module-projection.json` and protected by `tests/pixel5a-lineage-first-stage-evidence-test.py`, integrated with all three CI workflows. The GitHub source-only workflow is additionally configured to recalculate them from immutable pinned public source references; its live outcome must be independently checked. **Absent actual factory-image module lists, exact build-dependent module artifacts and kernel probe logs, these are NOT stock Pixel 5a boot facts.**
