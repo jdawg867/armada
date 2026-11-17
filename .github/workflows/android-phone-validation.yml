@@ -170,6 +170,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-aosp-lineage-diff-interpretation-test.py
 
+      - name: Pinned Lineage first-stage module projection offline regression tests
+        shell: bash
+        run: python3 tests/pixel5a-lineage-module-projection-test.py
+
       - name: SM7250 ICC index validator (synthetic fixtures only)
         shell: bash
         run: python3 tests/sm7250-icc-index-check.py --self-test
