@@ -69,6 +69,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-aosp-lineage-diff-interpretation-test.py
 
+      - name: Pinned Lineage first-stage module projection offline regression tests
+        shell: bash
+        run: python3 tests/pixel5a-lineage-module-projection-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
