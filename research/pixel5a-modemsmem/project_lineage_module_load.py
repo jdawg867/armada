@@ -46,7 +46,7 @@ def fetch(key):
 
 def assignment(text,key):
     lines=text.splitlines()
-    begin=re.compile(r"^\s*"+re.escape(key)+r"\s*:?=\s*(.*)$")
+    begin=re.compile(r"^\s*"+re.escape(key)+r"\s*(?::|\+|\?)?=\s*(.*)$")
     for i,line in enumerate(lines):
         m=begin.match(line)
         if not m: continue
