@@ -174,6 +174,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-lineage-module-projection-test.py
 
+      - name: Verify source-only Lineage 329-module first-stage projection evidence
+        shell: bash
+        run: python3 tests/pixel5a-lineage-first-stage-evidence-test.py
+
       - name: SM7250 ICC index validator (synthetic fixtures only)
         shell: bash
         run: python3 tests/sm7250-icc-index-check.py --self-test
