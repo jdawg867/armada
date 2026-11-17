@@ -10,6 +10,8 @@ on:
       - "tests/pixel5a-aosp-lineage-comparison-test.py"
       - "research/pixel5a-modemsmem/inspect_aosp_lineage_12l_diffs.py"
       - "tests/pixel5a-aosp-lineage-source-diff-test.py"
+      - "research/pixel5a-modemsmem/project_lineage_module_load.py"
+      - "tests/pixel5a-lineage-module-projection-test.py"
       - ".github/workflows/pixel5a-aosp-12l-source-probe.yml"
   workflow_dispatch:
 
@@ -109,6 +111,43 @@ jobs:
         with:
           name: pixel5a-aosp-lineage-12l-comparison-metadata
           path: ${{ runner.temp }}/pixel5a-aosp-lineage-12l-comparison.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Project pinned Lineage first-stage module list and inspect PIL source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/pixel5a-lineage-module-projection-test.py
+          python3 research/pixel5a-modemsmem/project_lineage_module_load.py \
+            --online --output "$RUNNER_TEMP/pixel5a-lineage-module-projection.json" \
+            > "$RUNNER_TEMP/pixel5a-lineage-module-projection.log"
+          python3 - "$RUNNER_TEMP/pixel5a-lineage-module-projection.json" <<'PY'
+          import json,sys
+          r=json.load(open(sys.argv[1]))
+          assert not r["missing_watched"]
+          assert r["pil_appears_before_modemsmem_in_list"]
+          assert all(r["watched"][n]["in_effective_boot_projection"] for n in
+                     ("smem.ko","subsys-pil-tz.ko","modemsmem.ko"))
+          assert r["module_loader_checks_modprobe_status"] is False
+          assert r["pil_powerup_calls_pil_boot"]
+          assert r["pil_probe_registers_subsystem"]
+          assert not r["actual_stock_vendor_boot_verified"]
+          assert not r["module_probe_completion_verified"]
+          assert not r["actual_modem_start_order_verified"]
+          print("SOURCE_MODULE_LIST_COUNT",r["ordered_modules_count"])
+          print("FIRST_STAGE_PROJECTION_COUNT",r["boot_projection_count"])
+          print("VENDOR_PROJECTION_COUNT",r["vendor_projection_count"])
+          for name,value in r["watched"].items():
+              print("WATCHED",name,value["ordered_index_zero_based"],
+                    value["in_effective_boot_projection"])
+          print("PIL_BEFORE_MODEMSMEM_IN_SOURCE_LIST=true")
+          print("PROBE_COMPLETION_VERIFIED=false")
+          PY
+      - name: Save first-stage source projection metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixel5a-lineage-module-projection-source-only
+          path: ${{ runner.temp }}/pixel5a-lineage-module-projection.json
           if-no-files-found: error
           retention-days: 14
       - name: Save source-probe metadata (no source contents or firmware)
