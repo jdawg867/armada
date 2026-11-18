@@ -40,6 +40,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-lito-modem-pil-dt-caller-test.py
 
+      - name: Verify Lito ADSP source selection and unproven modem branch
+        shell: bash
+        run: python3 tests/pixel5a-adsp-modem-loader-config-test.py
+
       - name: Fetch public, exactly tagged AOSP text sources only
         shell: bash
         run: |
