@@ -396,3 +396,20 @@ These figures are pinned in `validation/pixel5a-lineage-first-stage-module-proje
 **Deliverables:** `validation/pixel5a-lito-modem-pil-dt-caller-audit.json` pins immutable DT/loader source hashes, observed conditional call path and unresolved assumptions; `tests/pixel5a-lito-modem-pil-dt-caller-test.py` contains eight baseline/negative tests, now called by all three GitHub workflows. No actual modem start, firmware access, image extraction, phone operation, write to SMEM or driver registration is performed.
 
 **Step 797 suggested focus:** Resolve exact Barbet audio/ADSP loader DT properties and overlays and search downstream modem start callers, with pinned source-only evidence. The mainline Linux 7.2.6 PAS remoteproc port must remain separately reviewed before any integration or device action.
+
+## Step 797 — Barbet/Lito ADSP loader configuration and conditional modem branch
+
+**Baseline:** Step 796 GitHub Android phone validation #119 (`44229560313`), source inspection #35 (`44229560417`) and Linux 7.2.6 ARM64 compile #60 (`44229560308`) all completed SUCCESS on `555eda35de05527bb6af09d1bb86fd30886e0ffb`. No active modem testing occurred.
+
+**Pinned kernel source** `LineageOS/android_kernel_google_redbull` at `929e7e2f3658867d51a1d423c7e000f5cf1d4043`:
+- `arch/arm64/boot/dts/vendor/qcom/msm-audio-lpass.dtsi`, blob `a9496d85ef337acf1802bccd1cbeb73e47acae7e`, lines 531–535: `adsp_loader: qcom,msm-adsp-loader` is `status = "ok"`, `compatible = "qcom,adsp-loader"`, with `qcom,adsp-state = <0>`. The inspected node **does not** set `qcom,proc-img-to-load = "modem"`.
+- `arch/arm64/boot/dts/vendor/qcom/lito-audio.dtsi`, blob `b0c71b6bef60277d3bd694ab21b3b52616ea9529`, includes `msm-audio-lpass.dtsi`.
+- `arch/arm64/boot/dts/google/lito-redbull-audio.dtsi`, blob `6fc430fff036faed2c92217aace7e3be2455985e`, includes `qcom-base/lito-audio-overlay.dtsi`; its pinned vendor source is `arch/arm64/boot/dts/vendor/qcom/lito-audio-overlay.dtsi`, blob `d40caafaa79af5726f4cdae22a4992d36a84c5d4`. Its `&adsp_loader` override at 487–491 adds `nvmem-cells` for `adsp_variant`, `adsp-fw-names = "adsp2"`, and bit values. The inspected override **does not** set the loader image property to `"modem"`.
+- `arch/arm64/boot/dts/google/lito-barbet-audio.dtsi`, blob `b8b9b41e3de01936a851ed33d1c592684f7374e2`, was inspected; no direct `qcom,proc-img-to-load = "modem"` assignment was found there.
+- In `techpack/audio/dsp/adsp-loader.c`, blob `a32acfd359092d4a8cdbcb2da804d0ec8601da0b`, `adsp_load_fw()` reads `qcom,proc-img-to-load`; if absent, it follows the `load_adsp` branch, not the `subsystem_get("modem")` branch. The latter exists but requires an explicit `"modem"` property and an APR state of `APR_SUBSYS_DOWN`. This is a **conditional code branch, not proof of Pixel 5a modem activation**.
+
+**Important remaining uncertainty:** The inspected DT source subset does not constitute a final preprocessed/flattened Pixel 5a DTB or verify that no other include, overlay or runtime property enables `qcom,proc-img-to-load = "modem"`. The exact boot firmware start, userspace trigger, possible nonliteral `subsystem_get` callers, vendor SMEM item 134 publication barrier and recovery remain unknown. Even if these specific DT nodes default to ADSP loading, a different component may request MPSS startup.
+
+**Artifacts:** `validation/pixel5a-adsp-modem-loader-config-audit.json` pins six source blobs and records precisely scoped source observations. `tests/pixel5a-adsp-modem-loader-config-test.py` adds ten negative/baseline tests in all three GitHub workflows. No flashing, SMEM allocation/write, module load, modem boot, device access or firmware download is performed.
+
+**Next:** Resolve the complete Barbet flattened DT source include graph and inspect nonliteral subsystem-get callers and early userspace modem-load policy. Do not enable an active driver before establishing a safe modemsmem publication/start barrier.
