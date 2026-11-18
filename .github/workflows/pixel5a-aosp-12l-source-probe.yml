@@ -36,6 +36,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-downstream-pil-start-trigger-test.py
 
+      - name: Validate pinned Lito PIL modem DT and conditional subsystem caller
+        shell: bash
+        run: python3 tests/pixel5a-lito-modem-pil-dt-caller-test.py
+
       - name: Fetch public, exactly tagged AOSP text sources only
         shell: bash
         run: |
