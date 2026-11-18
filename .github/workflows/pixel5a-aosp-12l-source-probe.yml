@@ -32,6 +32,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-lineage-first-stage-evidence-test.py
 
+      - name: Verify downstream PIL subsystem start-trigger source evidence
+        shell: bash
+        run: python3 tests/pixel5a-downstream-pil-start-trigger-test.py
+
       - name: Fetch public, exactly tagged AOSP text sources only
         shell: bash
         run: |
