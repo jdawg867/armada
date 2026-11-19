@@ -194,6 +194,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-barbet-dt-indirect-modem-caller-test.py
 
+      - name: Verify IPA default subsystem names and Barbet MP overlay source mapping
+        shell: bash
+        run: python3 tests/pixel5a-ipa-subsystem-name-barbet-overlay-test.py
+
       - name: SM7250 ICC index validator (synthetic fixtures only)
         shell: bash
         run: python3 tests/sm7250-icc-index-check.py --self-test
