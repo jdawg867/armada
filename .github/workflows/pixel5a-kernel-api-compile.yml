@@ -117,6 +117,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-smem-allocator-ownership-ordering-test.py
 
+      - name: Verify source-only SMEM provider deferral and fail-closed publication contract
+        shell: bash
+        run: python3 tests/pixel5a-smem-provider-publication-contract-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
