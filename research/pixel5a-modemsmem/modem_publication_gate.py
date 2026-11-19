@@ -41,9 +41,9 @@ def transition(state: Gate, event: str) -> Gate:
     if event == "crash":
         return Gate(provider_ready=state.provider_ready, recovery_blocked=True)
     if event == "recovery_reviewed":
-        if not state.provider_ready or not state.recovery_blocked:
-            raise ValueError("recovery review requires provider and prior block")
-        return Gate(provider_ready=True)
+        if not state.recovery_blocked:
+            raise ValueError("recovery review requires a prior block")
+        return Gate()  # require all evidence again, including provider
     if state.recovery_blocked:
         raise ValueError("recovery is blocked pending fresh review")
     if event == "provider_ready":
