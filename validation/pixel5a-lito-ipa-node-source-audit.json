@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "step": 801,
+  "scope": "pinned_Lito_IPA_DT_source_subset_only_not_flattened_runtime_dtb",
+  "kernel": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043"
+  },
+  "sources": {
+    "lito_dtsi": {
+      "path": "arch/arm64/boot/dts/vendor/qcom/lito.dtsi",
+      "blob": "24b013a4b166456be0a1f8a4a278d9fb3dcfccd1"
+    },
+    "lito_v2": {
+      "path": "arch/arm64/boot/dts/vendor/qcom/lito-v2.dtsi",
+      "blob": "97affc51181d437ee4d37797b261b41c5fe00e24"
+    },
+    "lito_v2_dts": {
+      "path": "arch/arm64/boot/dts/vendor/qcom/lito-v2.dts",
+      "blob": "a3da016a653d65cb310deb32aa2895615fb8b7f1"
+    },
+    "barbet_common": {
+      "path": "arch/arm64/boot/dts/google/lito-barbet-common.dtsi",
+      "blob": "4aeed8583a96230c89b11ac85ec6b156abadc2db"
+    },
+    "redbull_common": {
+      "path": "arch/arm64/boot/dts/google/lito-redbull-common.dtsi",
+      "blob": "9eea9dc7431c5ef6cc68f100789402c025b558ce"
+    },
+    "barbet_mp": {
+      "path": "arch/arm64/boot/dts/google/lito-v2-barbet-mp.dtsi",
+      "blob": "277ae16bb06ebb5c945fe02a579298af45aba3ff"
+    }
+  },
+  "ipa": {
+    "label": "ipa_hw",
+    "node": "qcom,ipa@1e00000",
+    "compatible": "qcom,ipa",
+    "hardware_version": 18,
+    "platform_type": 1,
+    "firmware_override_gsi_property": "qcom,use-gsi-ipa-fw",
+    "firmware_override_uc_property": "qcom,use-uc-ipa-fw",
+    "override_observed_in_reviewed_subset": false,
+    "default_subsystem_gsi": "ipa_fws",
+    "default_subsystem_uc": "ipa_uc",
+    "runtime_override_values_verified": false
+  },
+  "ipa_firmware_pil": {
+    "node": "qcom,ipa_fws",
+    "compatible": "qcom,pil-tz-generic",
+    "pas_id": 15,
+    "firmware_name": "ipa_fws",
+    "name_is_modem": false
+  },
+  "chain": {
+    "lito_v2_dts_includes_lito_v2": true,
+    "lito_v2_includes_lito": true,
+    "barbet_mp_includes_barbet": true,
+    "barbet_common_includes_redbull_common": true,
+    "final_include_graph_complete": false,
+    "compiled_dtb_verified": false
+  },
+  "unverified": [
+    "complete_QCOM_and_Google_DT_source_graph",
+    "runtime_Barbet_IPA_DT_overrides_and_overlay_selection",
+    "loaded_IPA_PIL_subsystem_firmware_name",
+    "actual_modem_PIL_start_requester",
+    "vendor_SMEM_item134_published_before_MPSS",
+    "modem_crash_and_recovery_order",
+    "stock_Android12L_vendor_boot_contents",
+    "phone_calls_SMS_mobile_data"
+  ],
+  "permissions": {
+    "smem_write": false,
+    "modem_start": false,
+    "kernel_activation": false,
+    "firmware_flash": false
+  },
+  "hardware_tested": false
+}
