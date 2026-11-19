@@ -97,6 +97,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-ipa-subsystem-name-barbet-overlay-test.py
 
+      - name: Verify IPA DT firmware-name override provenance and defaults
+        shell: bash
+        run: python3 tests/pixel5a-ipa-firmware-name-property-provenance-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
