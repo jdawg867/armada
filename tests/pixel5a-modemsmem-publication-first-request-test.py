@@ -13,7 +13,7 @@ def verify(d):
     if (d.get("schema_version"),d.get("step"),d.get("scope"),s.get("commit"),s.get("modemsmem_blob"),s.get("modemsmem_header_blob"),s.get("bam_dmux_blob"))!=(1,803,"pinned_downstream_modemsmem_initialization_and_bounded_modem_requesters_source_only","929e7e2f3658867d51a1d423c7e000f5cf1d4043","428143562894e6d8ca7b656174c72ee4b096f510","a6b9d991fe7c023f44c21cc5c597746414c532a2","c6ec3156c17e0b50f1405434a46d92054715b1fd"):
         issues.append("unverified provenance")
     o=d.get("observed",{})
-    if set(o)!=YES|NO or any(o.get(k) is not True for k in YES) or any(o.get(k) is not False for k in NO):
+    if set(o)!=(YES|NO|{'header_vendor_item_id','structure_bytes'}) or any(o.get(k) is not True for k in YES) or any(o.get(k) is not False for k in NO):
         issues.append("unsupported probe/start assertion")
     if (o.get("header_vendor_item_id"),o.get("structure_bytes"))!=(134,64):
         issues.append("wrong SMEM item or structure")
