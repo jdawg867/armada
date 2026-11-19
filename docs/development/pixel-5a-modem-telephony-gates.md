@@ -446,3 +446,19 @@ These findings are pinned in `validation/pixel5a-barbet-dt-indirect-modem-caller
 **Artifacts:** `validation/pixel5a-ipa-subsystem-name-barbet-overlay-audit.json` records the pinned exact source IDs, defaults, override gaps and the observed overlay build mapping. `tests/pixel5a-ipa-subsystem-name-barbet-overlay-test.py` includes ten baseline/negative checks in all three GitHub Actions workflows. In particular, the tests reject relabeling IPA's default `ipa_fws`/`ipa_uc` calls as `modem`, promoting source files into a verified runtime DTB, erasing untraced override assignments or authorizing firmware startup.
 
 **Step 800 next:** Locate the code that populates `gsi_fw_file_name` and `uc_fw_file_name` and their exact Lito/Barbet DT property inputs, then inspect the chosen `qcom-base` audio mapping with a source-only include/Make audit. Keep modemsmem vendor item 134 publication and MPSS firmware start order unverified. No phone changes.
+
+## Step 800 — pinned IPA firmware override property-to-PIL argument provenance
+
+**Baseline:** Step 799 at commit `d4325a73ea2876da3273c12c35cc2d3945721144` had phone CI #134 (`44430329887`) and public source CI #50 (`44430329906`) SUCCESS. The separate Linux 7.2.6 ARM64 probe #75 (`44430329893`) was still in progress at the time of this audit; its result must not be assumed green without a separate completed GitHub run.
+
+**Pinned code** `LineageOS/android_kernel_google_redbull@929e7e2f3658867d51a1d423c7e000f5cf1d4043` `drivers/platform/msm/ipa/ipa_v3/ipa.c` (Git blob `f03dc32340af1e5b57ab0356b71c8700ff7e1bdb`):
+- Around lines 7565–7576, `of_property_read_string` reads `qcom,use-gsi-ipa-fw` into `ipa_drv_res->gsi_fw_file_name` and `qcom,use-uc-ipa-fw` into `ipa_drv_res->uc_fw_file_name`. When missing it reports use of default firmware, rather than assigning a literal modem subsystem.
+- Around lines 6743–6769, `ipa3_ctx` copies these optional strings from the resource fields to `ipa3_ctx->gsi_fw_file_name` and `ipa3_ctx->uc_fw_file_name`.
+- In `ipa3_load_ipa_fw` around lines 6346–6350 and 6380–6384, optional context strings reach `ipa3_pil_load_ipa_fws()` instead of the fallbacks `IPA_SUBSYSTEM_NAME="ipa_fws"` or `IPA_UC_SUBSYSTEM_NAME="ipa_uc"`. `ipa3_pil_load_ipa_fws(const char *sub_sys)` passes the selected name to `subsystem_get(sub_sys)`. **Neither default is "modem"**.
+- A bounded pinned-repository source search shows `qcom,use-gsi-ipa-fw` assignments for other SoCs (`scuba.dtsi` uses `"scuba_ipa_fws"`; `lagoon.dtsi` uses `"lagoon_ipa_fws"`) and the IPA source/bindings, **but no direct assignment in returned Lito/Barbet source paths**. Absence from this source search is **not proof** that a final preprocessed Barbet DTB or a runtime override lacks those properties.
+
+**Build mapping:** The pinned Google DT Makefile maps `lito-v2-barbet-mp-overlay.dtbo` onto `qcom-base/lito-v2.dtb`. Complete `qcom-base` include mapping, chosen device overlay variant, compiled DTBO, installed DTB and effective IPA node properties are **not** established.
+
+**Artifacts:** `validation/pixel5a-ipa-firmware-name-property-provenance.json` records exact source provenance, the full source property → resource → context → PIL argument chain, other-SoC examples, absent runtime proof and safety locks. `tests/pixel5a-ipa-firmware-name-property-provenance-test.py` adds ten baseline/negative checks to all three GitHub Actions workflows. The new tests must not be mistaken for a running modem experiment.
+
+**Step 801:** Verify the Lito/Barbet IPA DT node and any variant overrides directly from pinned source and (if possible) the build include mapping. Separately identify whether any actual modem start caller has a dependency on `modemsmem` item134 publication. No Android device/firmware modifications.
