@@ -413,3 +413,22 @@ These figures are pinned in `validation/pixel5a-lineage-first-stage-module-proje
 **Artifacts:** `validation/pixel5a-adsp-modem-loader-config-audit.json` pins six source blobs and records precisely scoped source observations. `tests/pixel5a-adsp-modem-loader-config-test.py` adds ten negative/baseline tests in all three GitHub workflows. No flashing, SMEM allocation/write, module load, modem boot, device access or firmware download is performed.
 
 **Next:** Resolve the complete Barbet flattened DT source include graph and inspect nonliteral subsystem-get callers and early userspace modem-load policy. Do not enable an active driver before establishing a safe modemsmem publication/start barrier.
+
+## Step 798 — Barbet audio include chain and nonliteral modem-start call sites
+
+**CI baseline:** Step 797 at `89f5153942ee120db0b2386e3cfd586b1eb4c9a2`: Android validation #124 (`44423649119`), Linux 7.2.6 ARM64 compile #65 (`44423649905`), and pinned source workflow #40 (`44423649369`) all passed.
+
+**Directly inspected pinned Linux downstream tree:** `LineageOS/android_kernel_google_redbull`, `929e7e2f3658867d51a1d423c7e000f5cf1d4043`.
+
+The **source include chain** passes from `lito-barbet.dtsi` to `lito-barbet-common.dtsi`, then `lito-redbull-common.dtsi`, and then `lito-redbull-audio.dtsi`, whose source includes `qcom-base/lito-audio-overlay.dtsi`. Separate pinned vendor text `msm-audio-lpass.dtsi` declares an enabled `adsp_loader` and `lito-audio-overlay.dtsi` adds NVMEM-backed `adsp2` firmware selection. Neither inspected node nor overlay explicitly selects `qcom,proc-img-to-load = "modem"`. This is **not a full flattened DTB**: the exact `qcom-base` include mapping and all preprocessor or later overlay overrides have not yet been verified.
+
+**Bounded callsite search of the pinned downstream kernel:**
+- `techpack/audio/dsp/adsp-loader.c`, blob `a32acfd359092d4a8cdbcb2da804d0ec8601da0b`, has the literal conditional `subsystem_get("modem")`. Its code also provides a sysfs boot command which schedules a worker, but the command is not evidence that a phone actually uses the modem branch. The loader probe initializes the workqueue; it does not directly call `subsystem_get("modem")`.
+- `drivers/platform/msm/ipa/ipa_v3/ipa.c`, blob `f03dc32340af1e5b57ab0356b71c8700ff7e1bdb`, calls `subsystem_get(sub_sys)` with a variable argument. **Its effective value on Barbet was not traced in this step**; it cannot be declared a modem start merely because a variable is passed.
+- `drivers/net/wireless/cnss2/main.c`, blob `1d38cdf05733fd9e1ca044c3aa087202737f6dad`, uses `subsystem_get(subsys_info->subsys_desc.name)`; the inspected initialization sets that descriptor name to `"wlan"`, so this evidence concerns WLAN, not a demonstrated modem trigger.
+- `drivers/gpu/msm/adreno_a6xx.c` uses `subsystem_get(a6xx_core->zap_name)` for GPU firmware, another dynamic-name call that should **not** be classified as a modem call without tracing its value.
+- A second potential modem implementation is present in `drivers/soc/qcom/pil-q6v5-mss.c`, blob `db48b1a2117162dbd0c893c9c9a49c74838805c8`, whose descriptor name is `"modem"`. Its existence **does not establish that it binds in the Barbet configuration**. The pinned Lito source node examined previously uses `qcom,pil-tz-generic`.
+
+These findings are pinned in `validation/pixel5a-barbet-dt-indirect-modem-caller-audit.json`; ten fail-closed regression cases in `tests/pixel5a-barbet-dt-indirect-modem-caller-test.py` run in all three GitHub workflows. This is a **bounded code-search and inspected-source audit**, not a complete call graph, evaluated final DT, stock Android 12L boot image, active kernel or hardware boot trace.
+
+**Step 799:** Trace how the IPA `sub_sys` argument is assigned and whether its code path can request `"modem"` on this device; inspect the final DT include preprocessing/overlay mapping independently. Preserve separate investigations of vendor SMEM item134 ownership/publication, PIL registration and crash recovery. Do not enable any modem or module on the working Pixel 5a.
