@@ -101,6 +101,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-ipa-firmware-name-property-provenance-test.py
 
+      - name: Verify pinned Lito IPA source node and non-modem firmware defaults
+        shell: bash
+        run: python3 tests/pixel5a-lito-ipa-node-source-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
