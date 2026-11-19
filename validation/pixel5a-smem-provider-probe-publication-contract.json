@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "step": 805,
+  "scope": "pinned_downstream_probe_deferral_and_proposed_fail_closed_gate_not_kernel_implementation",
+  "source": {
+    "repo": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "provider": "drivers/soc/qcom/smem.c",
+    "provider_blob": "de4d8aba7e366d5a3594731674dcfa310b3a8713",
+    "consumer": "drivers/soc/qcom/modemsmem/modemsmem.c",
+    "consumer_blob": "428143562894e6d8ca7b656174c72ee4b096f510",
+    "loader": "drivers/soc/qcom/subsys-pil-tz.c",
+    "loader_blob": "f17f9e57b0d1f671017032df9224ada0bbea15c2"
+  },
+  "observed": {
+    "provider_arch_initcall_registration": true,
+    "provider_requires_SBL_initialized_header": true,
+    "provider_requires_hwspinlock": true,
+    "provider_handles_unsupported_version_as_EINVAL": true,
+    "provider_sets_global_pointer_at_success_end": true,
+    "allocator_returns_EPROBE_DEFER_before_provider_ready": true,
+    "get_returns_ERR_PTR_EPROBE_DEFER_before_provider_ready": true,
+    "consumer_accepts_alloc_EEXIST": true,
+    "consumer_converts_other_alloc_errors_to_ENOMEM": true,
+    "consumer_converts_get_pointer_or_size_errors_to_ENOMEM": true,
+    "consumer_resets_existing_64_byte_item": true,
+    "consumer_sysfs_create_error_nonfatal": true,
+    "consumer_preserves_allocator_EPROBE_DEFER": false,
+    "consumer_communicates_payload_ready_to_PIL": false,
+    "consumer_guards_existing_item_before_reset": false,
+    "provider_arch_initcall_proves_consumer_probe_finished": false,
+    "first_MPSS_boot_after_consumer_probe_proven": false
+  },
+  "proposal": {
+    "status": "requirements_only_not_implemented",
+    "start_disabled_by_default": true,
+    "require_item134_sole_writer_policy": true,
+    "require_existing_item_preservation_or_explicit_owner_clearance": true,
+    "require_exact_size_and_valid_pointer": true,
+    "require_distinct_deferred_provider_status": true,
+    "require_payload_write_visibility_contract": true,
+    "require_successful_publication_ack_before_MPSS_start": true,
+    "require_crash_restart_safe_republication_policy": true,
+    "require_explicit_manual_hardware_authorization": true
+  },
+  "unverified": [
+    "item134_owner_and_existing_contents",
+    "physical_provider_probe_and_module_load_order",
+    "driver_retry_behavior_if_minus_ENOMEM",
+    "remote_processor_acknowledgement_or_fence",
+    "SMEM_memory_region_cache_and_visibility_requirements",
+    "userspace_or_kernel_first_MPSS_start_requester",
+    "modem_restart_ownership_and_republication",
+    "final_vendor_boot_DTB_and_hardware_telephony"
+  ],
+  "safety": {
+    "smem_write": false,
+    "modem_start": false,
+    "driver_load": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}
