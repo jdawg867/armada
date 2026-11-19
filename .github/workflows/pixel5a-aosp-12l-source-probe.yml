@@ -60,6 +60,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-lito-ipa-node-source-test.py
 
+      - name: Validate pinned Lito modem PIL binding and absent SMEM readiness fence
+        shell: bash
+        run: python3 tests/pixel5a-lito-modem-pil-binding-test.py
+
       - name: Fetch public, exactly tagged AOSP text sources only
         shell: bash
         run: |
