@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "step": 804,
+  "scope": "pinned_downstream_smem_allocator_metadata_ordering_only",
+  "source": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "smem_path": "drivers/soc/qcom/smem.c",
+    "smem_blob": "de4d8aba7e366d5a3594731674dcfa310b3a8713",
+    "modemsmem_path": "drivers/soc/qcom/modemsmem/modemsmem.c",
+    "modemsmem_blob": "428143562894e6d8ca7b656174c72ee4b096f510"
+  },
+  "observed": {
+    "private_existing_item_returns_EEXIST": true,
+    "global_existing_item_returns_EEXIST": true,
+    "alloc_rejects_uninitialized_smem_with_EPROBE_DEFER": true,
+    "alloc_hardware_spinlock_acquired": true,
+    "alloc_hardware_spinlock_released": true,
+    "alloc_uses_global_or_private_partition": true,
+    "private_wmb_orders_header_before_free_offset": true,
+    "global_wmb_orders_entry_header_before_allocated_flag": true,
+    "get_hardware_spinlock_acquired": true,
+    "get_hardware_spinlock_released": true,
+    "get_resolves_existing_pointer_and_size": true,
+    "modemsmem_accepts_EEXIST_and_gets_item": true,
+    "modemsmem_unconditionally_zeros_item_after_get": true,
+    "allocation_metadata_wmb_proves_modem_payload_written": false,
+    "hardware_spinlock_guarantees_MPSS_payload_consumption": false,
+    "existing_allocation_identifies_original_item_owner": false,
+    "get_pointer_size_is_publication_ack": false,
+    "modemsmem_explicit_completion_notification": false,
+    "firmware_start_after_payload_stores_proven": false
+  },
+  "numbers": {
+    "smem_vendor_item_id": 134,
+    "modemsmem_struct_size_bytes": 64
+  },
+  "unverified": [
+    "original_item134_owner_on_actual_phone",
+    "item134_preallocation_and_existing_content",
+    "SMEM_partitions_used_at_runtime",
+    "reinitialization_and_restart_corruption_risk",
+    "payload_memory_ordering_and_modem_read_protocol",
+    "initial_MPSS_start_requester_and_start_barrier",
+    "actual_first_stage_driver_probe_order",
+    "compiled_vendor_boot_and_effective_Barbet_DTB",
+    "cellular_and_modem_hardware_behavior"
+  ],
+  "safety": {
+    "flash": false,
+    "smem_write": false,
+    "load_modem": false,
+    "enable_driver": false
+  },
+  "hardware_tested": false
+}
