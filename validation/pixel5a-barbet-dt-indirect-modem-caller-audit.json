@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "step": 798,
+  "classification": "bounded_pinned_source_graph_and_callsite_audit_not_flattened_DTB",
+  "kernel": {
+    "repo": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043"
+  },
+  "include_chain": [
+    {
+      "from": "arch/arm64/boot/dts/google/lito-barbet.dtsi",
+      "to": "lito-barbet-common.dtsi",
+      "blob": "cbfbedb711ae7bdba17e0513a8f924ce1fdaeeb1"
+    },
+    {
+      "from": "arch/arm64/boot/dts/google/lito-barbet-common.dtsi",
+      "to": "lito-redbull-common.dtsi",
+      "blob": "4aeed8583a96230c89b11ac85ec6b156abadc2db"
+    },
+    {
+      "from": "arch/arm64/boot/dts/google/lito-redbull-common.dtsi",
+      "to": "lito-redbull-audio.dtsi",
+      "blob": "9eea9dc7431c5ef6cc68f100789402c025b558ce"
+    },
+    {
+      "from": "arch/arm64/boot/dts/google/lito-redbull-audio.dtsi",
+      "to": "qcom-base/lito-audio-overlay.dtsi",
+      "blob": "6fc430fff036faed2c92217aace7e3be2455985e"
+    }
+  ],
+  "audio_source": {
+    "vendor_base": "arch/arm64/boot/dts/vendor/qcom/msm-audio-lpass.dtsi",
+    "vendor_base_blob": "a9496d85ef337acf1802bccd1cbeb73e47acae7e",
+    "vendor_overlay": "arch/arm64/boot/dts/vendor/qcom/lito-audio-overlay.dtsi",
+    "vendor_overlay_blob": "d40caafaa79af5726f4cdae22a4992d36a84c5d4",
+    "google_barbet_audio": "arch/arm64/boot/dts/google/lito-barbet-audio.dtsi",
+    "google_barbet_audio_blob": "b8b9b41e3de01936a851ed33d1c592684f7374e2",
+    "base_adsp_loader_enabled": true,
+    "base_adsp_state_zero": true,
+    "inspected_files_contain_modem_image_selection": false,
+    "overlay_sets_adsp_variant": true,
+    "final_preprocessed_dtb_verified": false,
+    "qcom_base_overlay_path_mapping_verified": false
+  },
+  "callers": [
+    {
+      "file": "techpack/audio/dsp/adsp-loader.c",
+      "blob": "a32acfd359092d4a8cdbcb2da804d0ec8601da0b",
+      "expression": "subsystem_get(\"modem\")",
+      "classification": "literal_modem_only_conditional",
+      "runtime_executed": false
+    },
+    {
+      "file": "drivers/platform/msm/ipa/ipa_v3/ipa.c",
+      "blob": "f03dc32340af1e5b57ab0356b71c8700ff7e1bdb",
+      "expression": "subsystem_get(sub_sys)",
+      "classification": "dynamic_argument_unresolved",
+      "runtime_executed": false
+    },
+    {
+      "file": "drivers/net/wireless/cnss2/main.c",
+      "blob": "1d38cdf05733fd9e1ca044c3aa087202737f6dad",
+      "expression": "subsystem_get(subsys_info->subsys_desc.name)",
+      "classification": "source_sets_name_wlan",
+      "runtime_executed": false
+    },
+    {
+      "file": "drivers/gpu/msm/adreno_a6xx.c",
+      "expression": "subsystem_get(a6xx_core->zap_name)",
+      "classification": "dynamic_gpu_firmware_name_not_classified_modem",
+      "runtime_executed": false
+    }
+  ],
+  "other_modem_framework": {
+    "path": "drivers/soc/qcom/pil-q6v5-mss.c",
+    "blob": "db48b1a2117162dbd0c893c9c9a49c74838805c8",
+    "declares_subsystem_modem": true,
+    "registered_on_barbet": false
+  },
+  "loader": {
+    "file": "techpack/audio/dsp/adsp-loader.c",
+    "boot_control_is_sysfs": true,
+    "boot_store_calls_workqueue": true,
+    "adsp_loader_probe_directly_calls_subsystem_get_modem": false,
+    "source_code_may_be_enabled_without_modem_selection": true
+  },
+  "unresolved": [
+    "final_barbet_dtb_and_overlay_resolution",
+    "qcom_base_audio_overlay_include_mapping",
+    "runtime_adsp_loader_proc_img_to_load_property",
+    "IPA_dynamic_sub_sys_argument_values_on_barbet",
+    "other_nonliteral_and_userspace_modem_start_routes",
+    "which_modem_PIL_driver_binds_on_barbet",
+    "stock_android12l_vendor_boot_and_init_execution",
+    "vendor_item134_publication_before_mpss_firmware_start",
+    "modem_restart_republication_and_telephony_validation"
+  ],
+  "activation": {
+    "allow_smem_write": false,
+    "allow_modem_start": false,
+    "allow_kernel_driver_enable": false,
+    "allow_phone_flash": false
+  },
+  "hardware_tested": false
+}
