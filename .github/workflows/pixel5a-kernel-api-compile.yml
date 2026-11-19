@@ -89,6 +89,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-adsp-modem-loader-config-test.py
 
+      - name: Verify Barbet DT include graph and indirect modem caller source boundaries
+        shell: bash
+        run: python3 tests/pixel5a-barbet-dt-indirect-modem-caller-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
