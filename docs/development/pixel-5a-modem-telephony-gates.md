@@ -577,3 +577,23 @@ These findings are pinned in `validation/pixel5a-barbet-dt-indirect-modem-caller
 **Deliverables:** `validation/pixel5a-android-peripheral-manager-first-start-audit.json` pins all Android source blobs and modem-related uncertainties. `tests/pixel5a-android-peripheral-manager-first-start-test.py` adds 13 offline positive/negative tests to all three GitHub workflows. No vendor binary was executed or accessed from a working handset, no modem was started, no identifier value was obtained, and no SMEM data was read/written.
 
 **Step 808:** Examine additional public source-visible Peripheral Manager startup interfaces and Pixel 5a init/sepolicy edges; consider whether a read-only, offline init-event graph can establish start ordering without vendor binaries. Keep PR #18 draft, and obtain separate approval before any real device bring-up.
+
+## Step 808 — bounded Android init event graph, Peripheral Manager and item134 readiness
+
+**Step 807 verified CI:** latest previous head `67e2b204940baff1e5471444fb810787afa6e236` passed Android validation #177 (`44779082584`), public AOSP/Lineage source #93 (`44779082754`) and inactive Linux 7.2.6 ARM64 compile #118 (`44779082611`).
+
+**Pinned source:** `LineageOS/android_device_google_redbull@9fdf5ccfc9dd1ca22ca4ea657e414cb35e95b770`, `init.hardware.rc` blob `ec3c3edf7e72fb394bde8e9dc669e4a07ced854b`, `init.insmod.sh` blob `a222838cc855392838a69fbd9ea3951273078658`, `sepolicy/vendor/qcom/common/peripheral_manager.te` blob `edafb01e6199964607b294d44287e9fcbfeae79f` and `sepolicy/vendor/qcom/common/rild.te` blob `5bc8795a5172fa4d05556fb5a4368f141f24937f`.
+
+**Seven explicit init/source edges, not a flattened runtime timeline:**
+1. The source `on init` script starts `insmod_sh` (around `init.hardware.rc:97-98`). Its shell script sets `vendor.all.modules.ready` and `vendor.all.devices.ready` unconditionally at the end (around `init.insmod.sh:52-53`), so these are **not** proven module probe completion or item134 publication acknowledgements.
+2. The `on boot` action (around `init.hardware.rc:436-450`) starts `init-modem-sh`, whose separately inspected script publishes CDT identifier *properties*, not a firmware-start request. No identifiers were collected.
+3. Three **separate** triggers start `vendor.per_mgr` (`/vendor/bin/pm-service`): `persist.vendor.modem.esim.reset=done`, `persist.vendor.modem.esim.reset=noneed`, and fallback `sys.boot_completed=1` (lines 575–584). The boot-completed fallback does not have a source-level conjunction requiring eSIM state `done`; this does **not** establish a safely ordered modem startup relative to eSIM or SMEM.
+4. The property `init.svc.vendor.per_mgr=running` starts `per_proxy` (`/vendor/bin/pm-proxy`) (lines 566–573). This proves an init service edge, **not** that modem firmware booted.
+
+**Permissions are not action evidence.** `peripheral_manager.te` grants read access to `modem_ssr_device` and SSR sysfs, and Binder/QIPCRTR capabilities; `rild.te` allows RIL to find the Peripheral Manager service. Neither policy file exposes the proprietary daemon's implementation or demonstrates an actual `subsystem_get("modem")` call. No complete Android init runtime event log or installed device state was audited.
+
+**Safety-critical absent edges:** The inspected Android init files do not contain an explicit `modemsmem probe success → item134 payload visible → firmware consumer acknowledgement → first modem PIL start` dependency. This absence is confined to these reviewed source files, not a claim about every vendor binary, proprietary mechanism or final boot image. The downstream kernel `modemsmem` implementation still zeroes an existing 64-byte item134 and the host-only Step 806 model does not fix this in a running kernel.
+
+**Artifacts:** `validation/pixel5a-android-init-modem-start-event-graph.json` pins the seven explicit source edges and separates unverified external events. `tests/pixel5a-android-init-modem-start-event-graph-test.py` has fifteen baseline/negative tests in all three GitHub workflows; the tests reject invented direct `per_mgr → pil_boot` edges, promotion of ready properties into probe ACKs and removal of item134 ownership/recovery uncertainties. No physical phone, firmware, identifiers, SMEM reads/writes or modem start were involved.
+
+**Step 809:** Inspect Android `vendor.per_mgr` SELinux device-node labels and any public source-visible `modem_ssr_device` interfaces and kernel subsystem character-device handlers, then assess whether a *possible* userspace first-start path can be narrowed further. Keep differences between permission, existence, open/read and actual firmware boot explicit.
