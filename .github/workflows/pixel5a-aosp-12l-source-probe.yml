@@ -84,6 +84,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-android-peripheral-manager-first-start-test.py
 
+      - name: Check pinned Android init Peripheral Manager event edges and readiness gaps
+        shell: bash
+        run: python3 tests/pixel5a-android-init-modem-start-event-graph-test.py
+
       - name: Fetch public, exactly tagged AOSP text sources only
         shell: bash
         run: |
