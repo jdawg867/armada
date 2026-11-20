@@ -89,13 +89,18 @@
       "id": "modem_pil_first_start",
       "kind": "unverified_external_event",
       "source": "not evidenced in init source"
+    },
+    {
+      "id": "init_normal",
+      "kind": "conditional_init_trigger",
+      "source": "init.hardware.rc:53 on init && property:vendor.skip.init=0"
     }
   ],
   "edges": [
     {
-      "from": "boot",
+      "from": "init_normal",
       "to": "module_loader",
-      "type": "explicit_start"
+      "type": "explicit_start_if_vendor_skip_init_zero"
     },
     {
       "from": "module_loader",
