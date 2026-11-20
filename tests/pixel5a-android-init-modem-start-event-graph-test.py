@@ -6,7 +6,7 @@ from pathlib import Path
 
 P = Path(__file__).resolve().parents[1] / "validation/pixel5a-android-init-modem-start-event-graph.json"
 EXPECTED_EDGES = {
-    ("boot","module_loader","explicit_start"),
+    ("init_normal","module_loader","explicit_start_if_vendor_skip_init_zero"),
     ("module_loader","module_ready_properties","unconditional_setprop_at_script_end_not_probe_ack"),
     ("boot","init_modem_sh","explicit_start"),
     ("esim_done","per_mgr","explicit_start"),
