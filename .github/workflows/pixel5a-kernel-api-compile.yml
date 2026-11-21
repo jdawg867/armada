@@ -173,6 +173,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-pil-proxy-vote-error-edge-test.py
 
+      - name: Guard pinned Redbull bus config and Lito modem bus source selection
+        shell: bash
+        run: python3 tests/pixel5a-pil-modem-bus-scaling-source-selection-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
