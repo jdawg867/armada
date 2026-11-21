@@ -116,6 +116,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-modem-pil-callback-rollback-test.py
 
+      - name: Guard Step 816 pinned PAS SCM shutdown error and resource ownership boundaries
+        shell: bash
+        run: python3 tests/pixel5a-modem-pas-shutdown-resource-test.py
+
       - name: Fetch public, exactly tagged AOSP text sources only
         shell: bash
         run: |
