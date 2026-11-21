@@ -732,3 +732,19 @@ The pinned `ueventd.rc` blob `ee94e699cdacc2fb9e061d66e5281bde81a798a1` assigns 
 **Artifacts:** `validation/pixel5a-modem-pas-shutdown-resource-audit.json` and `tests/pixel5a-modem-pas-shutdown-resource-test.py` (28 offline baseline/negative tests), included in all three GitHub workflows. These tests protect pinned source claims; they do not execute trusted firmware, modem power transitions or recovery.
 
 **Step 817:** Inspect pinned regulator and clock enable/disable helper cleanup behavior, particularly partial-acquisition failure and whether early SCM errors can preserve resources unexpectedly. Keep PR #18 draft and continue offline.
+
+## Step 817 — pinned regulator/clock helper rollback and proxy bus vote paths
+
+**Step 816 CI:** `bfd0237da495e39e6afa32786e1d65f4ca89859c` passed Android validation `44919599053`, public Android source probe `44919599078`, and isolated Linux ARM64 compile `44919599013`.
+
+**Source:** `LineageOS/android_kernel_google_redbull@929e7e2f3658867d51a1d423c7e000f5cf1d4043`, `drivers/soc/qcom/subsys-pil-tz.c` blob `f17f9e57b0d1f671017032df9224ada0bbea15c2`: `enable_regulators()` lines 455–515, `disable_regulators()` 517–533, `prepare_enable_clocks()` 535–555, `disable_unprepare_clocks()` 557–563, `pil_make_proxy_vote()` 565–593, `pil_remove_proxy_vote()` 595–607, `do_bus_scaling_request()` 378–404.
+
+**Helper behavior:** `enable_regulators` attempts per-entry voltage/load/enable, and its error labels reset the current entry where applicable and unwind earlier entries in reverse order. Cleanup calls to `regulator_set_voltage`, `regulator_set_load`, and `regulator_disable` have unchecked return values, so attempting rollback is not proof of restored hardware state. With `keep_proxy_regs_on && reg_no_enable`, the helper can skip regulator enabling, and corresponding disable helper can skip disabling. `disable_regulators` returns void. The clock helper reverses previously enabled clocks if `clk_prepare_enable` fails, and its teardown helper also returns void.
+
+**Critical follow-up:** `pil_make_proxy_vote` acquires a bus-scaling vote before proxy regulators and clocks. If `enable_regulators` fails, this helper **returns directly without an explicit matching bus unvote**; if clock acquisition fails, it disables proxy regulators then returns, again without a matching local bus unvote. Its successful counterpart `pil_remove_proxy_vote` does release the bus vote, but that is a distinct function; the enclosing `pil_boot` error path and build-time bus-scaling configuration must be audited before claiming an effective leak. This source has a no-op bus-scaling configuration branch, so the missing unvote must not be presented as a verified Pixel 5a hardware leak. Do not patch this general kernel behavior inline with Armada's phone-specific work; isolate and defer upstream submission until the user approves batch review.
+
+**Unresolved:** exact configured bus client, whether the parent loader later unvotes on all failure cases, actual regulator/clock outcomes, implications of PAS transport errors from Step 816, SMEM item134 publication/acknowledgment, and live modem/phone recovery. No ADB, character-device open, modem power request, SMEM operation or flashing.
+
+**Artifacts:** `validation/pixel5a-pil-regulator-clock-proxy-vote-audit.json` and `tests/pixel5a-pil-regulator-clock-proxy-vote-test.py` (24 offline baseline/negative tests), added to three existing GitHub Actions workflows. Verify final Step 817 CI independently.
+
+**Step 818:** Trace `pil_boot()` handling of a failed `pil_proxy_vote()` and the exact `pil_proxy_unvote()` behavior to establish whether the missing local bus unvote is compensated by its caller. Continue source-only and keep draft PR #18 unmerged.
