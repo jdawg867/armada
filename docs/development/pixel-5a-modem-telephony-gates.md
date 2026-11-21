@@ -626,3 +626,17 @@ As established in Step 809, opening the subsystem character device is potentiall
 **Artifacts:** `validation/pixel5a-modem-ssr-device-access-audit.json` pins the checked source provenance and unknowns. `tests/pixel5a-modem-ssr-device-access-test.py` contains eighteen offline baseline/negative tests and is added to all three existing GitHub Actions workflows. These checks are source-claim invariants, not live Android instrumentation. CI result for this commit must be separately checked.
 
 **Next (Step 811):** Investigate the source-visible `vendor.per_mgr` init service user/group declarations and related service definitions, and whether any public service implementation corroborates which process opens `/dev/subsys_modem`. Continue separating source-level DAC/SELinux eligibility from observed runtime actions, and preserve all phone-function gates.
+
+## Step 811 — pinned Peripheral Manager init UID/GID and modem SSR source access eligibility
+
+**Step 810 CI:** exact commit `53c11319cda50c9b2fc049bd2311871d53aebdf8` passed the three PR workflows: Android phone validation `44863209424`, official Android AOSP source probe `44863209478`, and isolated kernel API compile `44863209446`.
+
+**Pinned source:** `LineageOS/android_device_google_redbull@9fdf5ccfc9dd1ca22ca4ea657e414cb35e95b770`, `init.hardware.rc` blob `ec3c3edf7e72fb394bde8e9dc669e4a07ced854b`, lines 561–564, declares `service vendor.per_mgr /vendor/bin/pm-service` with `user system` and `group system` (plus `ioprio rt 4`). The associated `per_proxy` service, lines 566–573, also has user/group system/system, is disabled by default, and starts when `init.svc.vendor.per_mgr=running`. This proxy trigger is an init service edge, *not* a verified modem boot event.
+
+The pinned `ueventd.rc` blob `ee94e699cdacc2fb9e061d66e5281bde81a798a1` assigns `/dev/subsys_*` mode `0640 system system`; the specific modem node matches this pattern. Under the **source declarations**, the Peripheral Manager's declared `system` UID would satisfy owner-read DAC checks. Pinned `file_contexts` labels `/dev/subsys_modem` as `modem_ssr_device`, and `peripheral_manager.te` (blob `edafb01e6199964607b294d44287e9fcbfeae79f`) contains `allow vendor_per_mgr modem_ssr_device:chr_file r_file_perms;`. Thus init identity, ueventd DAC, and SELinux source rules are mutually compatible with a read-capable open; this narrows the previous uncertainty.
+
+**Not established:** actual installed init/ueventd policy, live effective credentials/SELinux, actual node state, proprietary `pm-service` implementation or successful `open()`, which requester starts MPSS first, or SMEM item134 availability/acknowledgment before modem firmware consumption. An `open()` on the subsystem character device can initiate firmware power-up; it must not be treated as a passive diagnostic.
+
+**Artifacts:** `validation/pixel5a-peripheral-manager-init-identity-audit.json` and `tests/pixel5a-peripheral-manager-init-identity-test.py` (21 offline baseline/negative tests), wired into all three existing GitHub workflows. No ADB, binary/device access, modem boot, SMEM operation or flash was performed. Step 811 CI has to be checked against the final branch head.
+
+**Step 812:** Investigate *public* Peripheral Manager implementations or service interface documentation and other users of the SSR device, bounded to pinned source analysis. Do not infer proprietary runtime behavior from a SELinux grant or service declaration. Keep PR #18 draft until real phone-function validation is authorized and demonstrated.
