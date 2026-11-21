@@ -140,6 +140,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-barbet-mp-modprobe-dependency-boundary-test.py
 
+      - name: Guard Step 822 source-hash CI recheck and Kbuild dependency evidence limits
+        shell: bash
+        run: python3 tests/pixel5a-source-hash-and-modules-dependency-boundary-test.py
+
       - name: Fetch public, exactly tagged AOSP text sources only
         shell: bash
         run: |
