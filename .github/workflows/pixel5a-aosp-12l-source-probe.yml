@@ -124,6 +124,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-pil-regulator-clock-proxy-vote-test.py
 
+      - name: Guard pinned PIL proxy vote failure edge and missing unvote
+        shell: bash
+        run: python3 tests/pixel5a-pil-proxy-vote-error-edge-test.py
+
       - name: Fetch public, exactly tagged AOSP text sources only
         shell: bash
         run: |
