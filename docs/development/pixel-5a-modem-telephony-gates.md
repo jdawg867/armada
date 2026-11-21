@@ -674,3 +674,24 @@ The pinned `ueventd.rc` blob `ee94e699cdacc2fb9e061d66e5281bde81a798a1` assigns 
 **Artifacts:** `validation/pixel5a-modem-ssr-get-put-lifecycle-audit.json`, `tests/pixel5a-modem-ssr-get-put-lifecycle-test.py` (26 offline baseline/negative cases), integrated into the three existing GitHub workflows. No ADB, open, device read, modem start, SMEM operation, kernel activation or flashing was performed. This step's CI must be verified on final branch head.
 
 **Step 814:** Inspect pinned `subsys_start()`/ `subsys_stop()` and dependency unwind in greater detail, especially a failed first boot versus a deliberate close, without claiming operational modem recovery or touching the Pixel 5a.
+
+## Step 814 — pinned SSR startup error versus last-reference shutdown
+
+**Step 813 verified CI:** exact head `ac1eae4926a1ca2896d059ae4beb838267b4e407` passed Android phone validation `44916853885`, public AOSP/Lineage source probe `44916853858`, and ARM64 inactive compile `44916853871`.
+
+**Pinned source:** `LineageOS/android_kernel_google_redbull@929e7e2f3658867d51a1d423c7e000f5cf1d4043`, `drivers/soc/qcom/subsystem_restart.c` blob `e304cb58b65037237b2a231a52dadb3bccd618c7`, `subsys_start()` lines 899–937, `subsys_stop()` lines 939–963, `__subsystem_get()` lines 1031 onward.
+
+**First-start / failure branches:**
+1. `subsys_start()` emits `SUBSYS_BEFORE_POWERUP`, resets `err_ready` completion and invokes the registered `desc->powerup` callback.
+2. **Callback error:** emits `SUBSYS_POWERUP_FAILURE` and directly returns. This branch does not explicitly invoke `desc->shutdown` or `disable_all_irqs` itself. Whether the callback safely unwinds partial powerup is an **unverified dependency**. In the caller, the failed start skips reference-count increment and follows dependency/module/device unwind.
+3. **Callback success:** enables subsystem interrupts. If `is_not_loadable`, sets ONLINE and returns without the error-ready wait or subsequent AFTER_POWERUP notification. This special branch must not be conflated with the loadable modem flow.
+4. **Loadable ready wait failure:** sends `SUBSYS_POWERUP_FAILURE`, calls `desc->shutdown(desc,false)`, disables interrupts and returns an error; this is **different cleanup** from immediate callback failure.
+5. **Loadable ready success:** sets state ONLINE and emits `SUBSYS_AFTER_POWERUP`.
+
+**Stop path:** `subsys_stop()` emits `SUBSYS_BEFORE_SHUTDOWN` and resets `shutdown_ack`. Unless the DT property `qcom,pil-force-shutdown` is present, it marks OFFLINING and attempts SysMon graceful shutdown under its timeout helper, logging a nonzero SysMon result. It then calls `desc->shutdown(desc,false)`, sets OFFLINE, disables interrupts, and emits `SUBSYS_AFTER_SHUTDOWN`. The forced path skips SysMon graceful signaling; this is not proof of healthy modem recovery. Only the final counted `subsystem_put` invokes `subsys_stop`, as audited in Step 813.
+
+**Open questions and safety:** Descendant `powerup` callback cleanup on partial failure, exact Barbet `is_not_loadable` and DT force-shutdown properties, SMEM item134 ownership/publication/acknowledgment ordering, modem reinitialization after crash, and functioning calls/SMS/data are all unverified. Neither notifications nor state flags establish telephony readiness. No hardware, ADB, character-device open, modem boot, SMEM read/write, flash or release action was performed.
+
+**Artifacts:** `validation/pixel5a-modem-ssr-start-stop-failure-audit.json` and `tests/pixel5a-modem-ssr-start-stop-failure-test.py` (30 offline baseline/negative tests) in all three existing GitHub Actions workflows. Source assertions, not live device validation. Verify this Step 814 commit's CI separately.
+
+**Step 815:** Inspect the registered Lito modem descriptor's `powerup` and `shutdown` callback implementation and any rollback on partial failure, especially whether its cleanup matches SSR caller expectations. Continue source-only and keep PR #18 draft.
