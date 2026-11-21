@@ -748,3 +748,21 @@ The pinned `ueventd.rc` blob `ee94e699cdacc2fb9e061d66e5281bde81a798a1` assigns 
 **Artifacts:** `validation/pixel5a-pil-regulator-clock-proxy-vote-audit.json` and `tests/pixel5a-pil-regulator-clock-proxy-vote-test.py` (24 offline baseline/negative tests), added to three existing GitHub Actions workflows. Verify final Step 817 CI independently.
 
 **Step 818:** Trace `pil_boot()` handling of a failed `pil_proxy_vote()` and the exact `pil_proxy_unvote()` behavior to establish whether the missing local bus unvote is compensated by its caller. Continue source-only and keep draft PR #18 unmerged.
+
+## Step 818 — pinned PIL proxy vote error edge bypasses normal unvote
+
+**Step 817 CI:** exact commit `8491215a3b64354e8d07276e062d2b4c1535b54d` passed Android phone validation `44920064688`, public Android source probe `44920064692`, and isolated Linux ARM64 compile `44920064699`.
+
+**Pinned source:** `LineageOS/android_kernel_google_redbull@929e7e2f3658867d51a1d423c7e000f5cf1d4043`, `drivers/soc/qcom/peripheral-loader.c` blob `c7920af7ab0c010c24078c72809a5d83667ce765`, `pil_proxy_vote()` lines 624–641, `pil_proxy_unvote()` lines 643–663, and `pil_boot()` lines 1279–1290, 1381–1411; `drivers/soc/qcom/subsys-pil-tz.c` blob `f17f9e57b0d1f671017032df9224ada0bbea15c2`, `pil_make_proxy_vote()` and `pil_remove_proxy_vote()` lines 565–607.
+
+**Critical branch:** `pil_boot()` clears `unvoted_flag` and calls `pil_proxy_vote()`. When it returns an error, `pil_boot` jumps straight to `release_fw`, bypassing `err_boot` (which calls `pil_proxy_unvote(desc, ret)`). Thus the source-visible failure path **does not schedule a normal error-path unvote** after a failed proxy vote. It does release firmware and perform later error cleanup, including mmap/AOP OFF, but those operations are not a bus-scale unvote.
+
+**Wrapper semantics:** `pil_proxy_vote()` invokes the platform `proxy_vote` callback, relaxes its wake lock on callback error, and subsequently enables the proxy-unvote IRQ and notifies proxy vote regardless of callback failure. `pil_proxy_unvote()` is a separate scheduler that conditionally queues delayed work, ultimately invoking `__pil_proxy_unvote` and the platform `pil_remove_proxy_vote()` callback to release clocks/regulators/bus. This work is **not explicitly queued by the failed-proxy-vote branch**. An independent IRQ/external action might alter runtime behavior; this was not observed or established.
+
+**Source-level conclusion:** the platform callback's regulator/clock failure paths can return after acquiring the bus vote without a local unvote, and the generic caller's failure path does not itself compensate through `pil_proxy_unvote`. This is a concrete candidate cleanup defect, **not proof that bus scaling is compiled/enabled or that a live Pixel 5a leaks power resources**. Any general Linux kernel fix belongs in an isolated branch and must not be sent upstream before Armada integration is complete and the user approves the batch.
+
+**Unproven gates:** effective bus-scaling configuration and bus client ownership; possible proxy IRQ side effects; recovery from a failed first modem request; SMEM item134 ownership/publication and modem acknowledgment; calls/SMS/data/SSR recovery. No physical phone, ADB, /dev/subsys_modem open, modem start, SMEM access or flash operation.
+
+**Artifacts:** `validation/pixel5a-pil-proxy-vote-error-edge-audit.json` and `tests/pixel5a-pil-proxy-vote-error-edge-test.py` (24 offline baseline/negative tests), included in three existing GitHub workflows. Verify this commit's CI separately.
+
+**Step 819:** Establish exact compile-time MSM bus-scaling switch and Barbet/Lito device-tree bus-client configuration in the pinned source. If still ambiguous, record the limitation rather than claiming a live leak; consider isolated kernel-fix design only after source selection is established. Keep PR #18 draft.
