@@ -246,6 +246,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-peripheral-manager-init-identity-test.py
 
+      - name: Guard bounded public Peripheral Manager and subsystem SSR source conclusions
+        shell: bash
+        run: python3 tests/pixel5a-peripheral-manager-public-interface-test.py
+
       - name: SM7250 ICC index validator (synthetic fixtures only)
         shell: bash
         run: python3 tests/sm7250-icc-index-check.py --self-test
