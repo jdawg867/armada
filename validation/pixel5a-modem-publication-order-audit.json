@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "device": "Pixel 5a barbet",
+  "classification": "source_only_no_order_guarantee",
+  "downstream": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "driver_path": "drivers/soc/qcom/modemsmem/modemsmem.c",
+    "driver_blob": "428143562894e6d8ca7b656174c72ee4b096f510",
+    "dt_path": "arch/arm64/boot/dts/google/lito-redbull-common.dtsi",
+    "dt_blob": "9eea9dc7431c5ef6cc68f100789402c025b558ce",
+    "defconfig_path": "arch/arm64/configs/redbull_defconfig",
+    "defconfig_blob": "55e2088384d7189da77f5cd31ccf11dd75e58e4d",
+    "config": "CONFIG_MODEMSMEM=m",
+    "compatible": "modemsmem",
+    "modem_probe_steps": [
+      "smem_alloc_accept_eexist",
+      "smem_get_size_check",
+      "memset_io_64_bytes",
+      "populate_version_platform_and_flags",
+      "sysfs_create_group_nonfatal"
+    ],
+    "module_init_registers_platform_driver": true,
+    "modem_probe_deferred_until_mpss_ready": false
+  },
+  "mainline": {
+    "repository": "torvalds/linux",
+    "commit": "500df175a7f9e6bc1a9c328590ca5150f84f9ff0",
+    "pas_driver_path": "drivers/remoteproc/qcom_q6v5_pas.c",
+    "pas_driver_blob": "cb3e51d6f7cecbe5c2f5b72059001efab047f089",
+    "remoteproc_core_path": "drivers/remoteproc/remoteproc_core.c",
+    "remoteproc_core_blob": "527996e8ecdaaa840738b74b911a1192d769045c",
+    "pas_probe_checks_scm": true,
+    "pas_probe_assigns_auto_boot": true,
+    "pas_probe_registers_rproc": true,
+    "rproc_add_may_trigger_async_autoboot": true,
+    "explicit_modemsmem_dependency_observed": false
+  },
+  "not_established": [
+    "vendor_item_134_before_mpss_start",
+    "vendor_item_134_publication_completion_or_memory_visibility",
+    "pixel5a_firmware_owns_existing_item_134",
+    "modemsmem_platform_driver_probe_before_pas_probe",
+    "device_links_supplier_consumer_correctness",
+    "crash_recovery_requires_item_republication",
+    "modemsmem_sysfs_and_probe_remove_cleanup",
+    "stock_android12l_binary_equivalence",
+    "cellular_calls_sms_data_or_modem_boot"
+  ],
+  "minimum_future_requirements": [
+    "identify_pixel5a_authoritative_boot_and_firmware_contract",
+    "define_vendor_item_owner_and_reprobe_rule",
+    "enforce_start_dependency_covering_autoboot_manual_and_recovery",
+    "synchronize_publication_and_crash_restart_under_verified_locks",
+    "perform_actual_kernel_integration_build_and_recovery_tests_before_device_activation"
+  ],
+  "authorization": {
+    "permit_smem_write": false,
+    "permit_smem_alloc": false,
+    "permit_pas_enable": false,
+    "permit_kernel_driver_registration": false,
+    "permit_device_flash": false
+  },
+  "hardware_verified": false
+}

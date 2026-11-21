@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "step": 806,
+  "scope": "source_backed_device_tree_provider_consumer_gap_and_offline_policy_model",
+  "source": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "lito_path": "arch/arm64/boot/dts/vendor/qcom/lito.dtsi",
+    "lito_blob": "24b013a4b166456be0a1f8a4a278d9fb3dcfccd1",
+    "google_common_path": "arch/arm64/boot/dts/google/lito-redbull-common.dtsi",
+    "google_common_blob": "9eea9dc7431c5ef6cc68f100789402c025b558ce",
+    "provider_path": "drivers/soc/qcom/smem.c",
+    "provider_blob": "de4d8aba7e366d5a3594731674dcfa310b3a8713",
+    "consumer_path": "drivers/soc/qcom/modemsmem/modemsmem.c",
+    "consumer_blob": "428143562894e6d8ca7b656174c72ee4b096f510"
+  },
+  "observed": {
+    "provider_node": "smem: qcom,smem",
+    "provider_compatible": "qcom,smem",
+    "provider_memory_region_ref": "smem_mem",
+    "provider_hwlocks_ref": "tcsr_mutex 3",
+    "consumer_node": "modemsmem",
+    "consumer_compatible": "modemsmem",
+    "modem_node": "pil_modem: qcom,mss@4080000",
+    "modem_compatible": "qcom,pil-tz-generic",
+    "consumer_requires_provider_api_for_probe": true,
+    "consumer_explicit_dt_phandle_to_provider_present": false,
+    "modem_explicit_dt_dependency_on_consumer_present": false,
+    "modem_pon_depends_on_in_inspected_node": false,
+    "provider_registration_proves_consumer_probe_completed": false,
+    "existing_item_reset_proven_safe": false,
+    "dt_node_order_proves_runtime_order": false
+  },
+  "offline_policy": {
+    "mode": "simulation_only_not_kernel_integration",
+    "default_modem_disabled": true,
+    "requires_provider_ready": true,
+    "requires_exclusive_owner_clearance": true,
+    "requires_existing_item_preservation": true,
+    "requires_valid_exact_64_byte_payload": true,
+    "requires_payload_visibility_confirmed": true,
+    "requires_explicit_acknowledgement": true,
+    "requires_manual_authorization": true,
+    "revokes_on_crash_or_provider_loss": true,
+    "never_auto_republishes_existing_item": true
+  },
+  "unverified": [
+    "compiled_Barbet_DTB_and_overrides",
+    "actual_DT_probe_links_and_runtime_order",
+    "item134_original_ownership_and_contents",
+    "payload_visibility_ack_protocol_or_modem_capability",
+    "who_requests_first_MPSS_start",
+    "modem_crash_and_recovery_ownership",
+    "stock_vendor_boot_and_Android_runtime",
+    "actual_hardware_telephony"
+  ],
+  "safety": {
+    "read_device": false,
+    "write_smem": false,
+    "start_modem": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}

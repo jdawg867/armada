@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "reference_repository": "LineageOS/android_kernel_google_redbull",
+  "reference_commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+  "scope": "pinned_lineage_redbull_source_not_stock_android12l_or_hardware",
+  "device": "barbet",
+  "source_files": [
+    {
+      "path": "arch/arm64/boot/dts/google/lito-v2-barbet-mp.dtsi",
+      "blob": "277ae16bb06ebb5c945fe02a579298af45aba3ff",
+      "includes": [
+        "lito-barbet.dtsi"
+      ]
+    },
+    {
+      "path": "arch/arm64/boot/dts/google/lito-barbet.dtsi",
+      "blob": "cbfbedb711ae7bdba17e0513a8f924ce1fdaeeb1",
+      "includes": [
+        "lito-barbet-common.dtsi"
+      ]
+    },
+    {
+      "path": "arch/arm64/boot/dts/google/lito-barbet-common.dtsi",
+      "blob": "4aeed8583a96230c89b11ac85ec6b156abadc2db",
+      "includes": [
+        "lito-redbull-common.dtsi"
+      ]
+    },
+    {
+      "path": "arch/arm64/boot/dts/google/lito-redbull-common.dtsi",
+      "blob": "9eea9dc7431c5ef6cc68f100789402c025b558ce",
+      "node": "modemsmem",
+      "compatible": "modemsmem"
+    },
+    {
+      "path": "drivers/soc/qcom/modemsmem/modemsmem.c",
+      "blob": "428143562894e6d8ca7b656174c72ee4b096f510",
+      "uses": [
+        "qcom_smem_alloc",
+        "qcom_smem_get",
+        "socinfo_get_g_platform_type"
+      ]
+    },
+    {
+      "path": "drivers/soc/qcom/modemsmem/modemsmem.h",
+      "blob": "a6b9d991fe7c023f44c21cc5c597746414c532a2",
+      "smem_item": 134
+    },
+    {
+      "path": "arch/arm64/configs/redbull_defconfig",
+      "blob": "55e2088384d7189da77f5cd31ccf11dd75e58e4d",
+      "config": "CONFIG_MODEMSMEM=m"
+    },
+    {
+      "path": "arch/arm64/boot/dts/vendor/qcom/lito-smp2p.dtsi",
+      "blob": "9a7ba151bed5dbec01bf8013e4de3f9fafc52f11",
+      "mpss_smem": [
+        435,
+        428
+      ],
+      "local_pid": 0,
+      "remote_pid": 1,
+      "interrupt_parent": "ipcc_mproc",
+      "mailbox_client": "IPCC_CLIENT_MPSS",
+      "mailbox_signal": "IPCC_MPROC_SIGNAL_SMP2P"
+    },
+    {
+      "path": "arch/arm64/boot/dts/vendor/qcom/lito.dtsi",
+      "blob": "24b013a4b166456be0a1f8a4a278d9fb3dcfccd1",
+      "mpass": {
+        "pas_id": 4,
+        "smem_id": 421,
+        "watchdog_spi": 266,
+        "ipcc_spi": 229,
+        "compatible": "qcom,pil-tz-generic",
+        "firmware": "modem",
+        "memory_region": "modem_wlan_mem"
+      }
+    }
+  ],
+  "verified_only": "source literal findings from pinned LineageOS redbull tree",
+  "unverified": [
+    "google stock barbet Android 12L exact source inclusion",
+    "pixel 5a DTB compilation result",
+    "modemsmem module load or correct SMEM init ordering",
+    "mainline Linux 7.2.6 driver and DT binding port",
+    "modem startup and phone calls/SMS/data"
+  ],
+  "hardware_verified": false,
+  "modem_ready": false,
+  "driver_activation_authorized": false
+}

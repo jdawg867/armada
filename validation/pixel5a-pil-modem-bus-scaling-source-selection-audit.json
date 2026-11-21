@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "step": 819,
+  "scope": "pinned_Redbull_Lito_MSM_bus_scaling_defconfig_and_modem_DT_source_only",
+  "sources": {
+    "kernel_repo": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "pil_driver": "drivers/soc/qcom/subsys-pil-tz.c",
+    "pil_blob": "f17f9e57b0d1f671017032df9224ada0bbea15c2",
+    "lito_dtsi": "arch/arm64/boot/dts/vendor/qcom/lito.dtsi",
+    "lito_blob": "24b013a4b166456be0a1f8a4a278d9fb3dcfccd1",
+    "redbull_defconfig": "arch/arm64/configs/redbull_defconfig",
+    "redbull_defconfig_blob": "55e2088384d7189da77f5cd31ccf11dd75e58e4d",
+    "redbull_gki_defconfig": "arch/arm64/configs/redbull-gki_defconfig",
+    "redbull_gki_blob": "4e120207857deb2a5faab7fedb4bf89b874f0b50",
+    "lito_defconfig": "arch/arm64/configs/vendor/lito_defconfig",
+    "lito_defconfig_blob": "bae5311e7c3969672fb7721d308878aea686185c"
+  },
+  "observed": {
+    "bus_scaling_symbol": "CONFIG_QCOM_BUS_SCALING",
+    "pil_driver_bus_guard": "IS_ENABLED(CONFIG_QCOM_BUS_SCALING)",
+    "redbull_bus_scaling_value": "m",
+    "redbull_gki_bus_scaling_value": "m",
+    "lito_bus_scaling_value": "m",
+    "redbull_bus_rpmh_value": "m",
+    "redbull_gki_bus_rpmh_value": "m",
+    "lito_bus_rpmh_value": "m",
+    "lito_modem_node": "pil_modem: qcom,mss@4080000",
+    "lito_modem_bus_name": "pil-modem",
+    "lito_modem_num_cases": 2,
+    "lito_modem_num_paths": 1,
+    "lito_modem_bus_vectors": "<129 512 0 0>, <129 512 0 8171520>",
+    "driver_pdata_requires_bus_properties": true,
+    "driver_registers_bus_client_from_pdata": true,
+    "driver_bus_client_registration_may_fail_without_error_return": true,
+    "build_time_bus_scaling_real_branch_selected_under_cited_defconfigs": true,
+    "live_pixel5a_bus_module_loaded_verified": false,
+    "final_barbet_dt_node_verified": false,
+    "actual_bus_client_registered_verified": false,
+    "device_bus_vote_failure_and_leak_observed": false,
+    "modemsmem_item134_ready_and_telephony_verified": false
+  },
+  "unknowns": [
+    "final_vendor_boot_flattened_barbet_modem_DT_overrides",
+    "real_loaded_module_and_effective_kernel_config",
+    "runtime_bus_client_registration_and_vote_outcomes",
+    "failed_vote_hardware_resource_ownership",
+    "upstreamable_cleanup_fix_behavior_and_test_scope",
+    "first_modem_start_vs_item134_and_phone_calls_SMS_data"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "modem_start": false,
+    "smem_read": false,
+    "smem_write": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}

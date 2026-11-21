@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "step": 808,
+  "kind": "pinned_android_init_event_dependency_graph_source_only",
+  "android": {
+    "repository": "LineageOS/android_device_google_redbull",
+    "commit": "9fdf5ccfc9dd1ca22ca4ea657e414cb35e95b770",
+    "files": [
+      {
+        "path": "init.hardware.rc",
+        "blob": "ec3c3edf7e72fb394bde8e9dc669e4a07ced854b"
+      },
+      {
+        "path": "init.insmod.sh",
+        "blob": "a222838cc855392838a69fbd9ea3951273078658"
+      },
+      {
+        "path": "sepolicy/vendor/qcom/common/peripheral_manager.te",
+        "blob": "edafb01e6199964607b294d44287e9fcbfeae79f"
+      },
+      {
+        "path": "sepolicy/vendor/qcom/common/rild.te",
+        "blob": "5bc8795a5172fa4d05556fb5a4368f141f24937f"
+      }
+    ]
+  },
+  "events": [
+    {
+      "id": "boot",
+      "kind": "init_trigger",
+      "source": "init.hardware.rc:436"
+    },
+    {
+      "id": "module_loader",
+      "kind": "service",
+      "source": "init.hardware.rc:97-98"
+    },
+    {
+      "id": "module_ready_properties",
+      "kind": "property_writes",
+      "source": "init.insmod.sh:52-53"
+    },
+    {
+      "id": "esim_done",
+      "kind": "property_trigger",
+      "source": "init.hardware.rc:576-577"
+    },
+    {
+      "id": "esim_noneed",
+      "kind": "property_trigger",
+      "source": "init.hardware.rc:579-580"
+    },
+    {
+      "id": "boot_completed",
+      "kind": "property_trigger",
+      "source": "init.hardware.rc:583-584"
+    },
+    {
+      "id": "per_mgr",
+      "kind": "service",
+      "source": "init.hardware.rc:561-564"
+    },
+    {
+      "id": "per_mgr_running",
+      "kind": "service_state_trigger",
+      "source": "init.hardware.rc:572-573"
+    },
+    {
+      "id": "per_proxy",
+      "kind": "service",
+      "source": "init.hardware.rc:566-570"
+    },
+    {
+      "id": "init_modem_sh",
+      "kind": "service",
+      "source": "init.hardware.rc:448,464-468"
+    },
+    {
+      "id": "modemsmem_probe_completed",
+      "kind": "unverified_external_event",
+      "source": "not evidenced in init source"
+    },
+    {
+      "id": "item134_payload_published",
+      "kind": "unverified_external_event",
+      "source": "not evidenced in init source"
+    },
+    {
+      "id": "modem_pil_first_start",
+      "kind": "unverified_external_event",
+      "source": "not evidenced in init source"
+    },
+    {
+      "id": "init_normal",
+      "kind": "conditional_init_trigger",
+      "source": "init.hardware.rc:53 on init && property:vendor.skip.init=0"
+    }
+  ],
+  "edges": [
+    {
+      "from": "init_normal",
+      "to": "module_loader",
+      "type": "explicit_start_if_vendor_skip_init_zero"
+    },
+    {
+      "from": "module_loader",
+      "to": "module_ready_properties",
+      "type": "unconditional_setprop_at_script_end_not_probe_ack"
+    },
+    {
+      "from": "boot",
+      "to": "init_modem_sh",
+      "type": "explicit_start"
+    },
+    {
+      "from": "esim_done",
+      "to": "per_mgr",
+      "type": "explicit_start"
+    },
+    {
+      "from": "esim_noneed",
+      "to": "per_mgr",
+      "type": "explicit_start"
+    },
+    {
+      "from": "boot_completed",
+      "to": "per_mgr",
+      "type": "explicit_start"
+    },
+    {
+      "from": "per_mgr_running",
+      "to": "per_proxy",
+      "type": "explicit_start"
+    }
+  ],
+  "observed": {
+    "per_mgr_binary": "/vendor/bin/pm-service",
+    "per_proxy_binary": "/vendor/bin/pm-proxy",
+    "per_mgr_comment_intended_modem_boot": true,
+    "per_mgr_ssr_device_read_allowed": true,
+    "per_mgr_ssr_sysfs_read_allowed": true,
+    "rild_can_find_per_mgr_service": true,
+    "ready_props_prove_modemsmem_probe_complete": false,
+    "init_has_explicit_wait_for_modemsmem_before_per_mgr": false,
+    "per_mgr_binary_call_graph_inspected": false,
+    "per_mgr_running_event_proves_modem_pil_start": false,
+    "boot_completed_fallback_requires_esim_done": false,
+    "modemsmem_completion_to_first_start_edge_proven": false
+  },
+  "unverified": [
+    "proprietary_pm_service_kernel_start_interface",
+    "init_runtime_event_order_and_actual_properties",
+    "modemsmem_probe_completion_before_per_mgr",
+    "actual_vendor_item134_payload_visibility",
+    "MPSS_first_boot_request_and_consumer_acknowledgment",
+    "safe_item134_ownership_and_reuse_on_restarts",
+    "final_Barbet_vendor_boot_and_device_tree",
+    "live_calls_SMS_mobile_data"
+  ],
+  "safety": {
+    "device_access": false,
+    "smem_read": false,
+    "smem_write": false,
+    "modem_start": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}

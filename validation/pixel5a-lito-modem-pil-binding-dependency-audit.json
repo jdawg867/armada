@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "step": 802,
+  "kind": "source_only_lito_modem_PIL_binding_and_dependency_audit",
+  "sources": {
+    "kernel_repo": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "lito_dtsi": "arch/arm64/boot/dts/vendor/qcom/lito.dtsi",
+    "lito_blob": "24b013a4b166456be0a1f8a4a278d9fb3dcfccd1",
+    "pil_driver": "drivers/soc/qcom/subsys-pil-tz.c",
+    "pil_blob": "f17f9e57b0d1f671017032df9224ada0bbea15c2",
+    "restart_driver": "drivers/soc/qcom/subsystem_restart.c",
+    "restart_blob": "e304cb58b65037237b2a231a52dadb3bccd618c7",
+    "alternative_driver": "drivers/soc/qcom/pil-q6v5-mss.c",
+    "alternative_blob": "db48b1a2117162dbd0c893c9c9a49c74838805c8"
+  },
+  "modem_node": {
+    "label": "pil_modem",
+    "name": "qcom,mss@4080000",
+    "compatible": "qcom,pil-tz-generic",
+    "firmware_name": "modem",
+    "pas_id": 4,
+    "crash_reason_smem_id": 421,
+    "vendor_payload_smem_item_id": 134,
+    "has_pon_depends_on_in_inspected_node": false,
+    "has_item134_completion_gate_in_inspected_node": false
+  },
+  "observed": {
+    "pil_driver_matches_compatible": true,
+    "pil_probe_reads_firmware_name": true,
+    "pil_probe_copies_firmware_name_to_subsystem_name": true,
+    "pil_probe_installs_subsys_powerup_callback": true,
+    "pil_probe_calls_subsys_register": true,
+    "subsys_registration_immediately_boots_modem": false,
+    "subsys_get_finds_subsystem_by_name": true,
+    "subsys_get_invokes_optional_pon_depends_on": true,
+    "subsys_get_starts_on_initial_zero_refcount": true,
+    "pil_powerup_calls_pil_boot": true,
+    "alternative_pil_q6v5_mss_matches_inspected_lito_node": false,
+    "smem_421_is_vendor_payload_134": false
+  },
+  "unknowns": [
+    "actual_final_flattened_barbet_modem_node",
+    "other_dt_overrides_or_pon_depends_on_additions",
+    "which_downstream_modem_driver_is_bound_at_runtime",
+    "actual_first_subsystem_get_modem_requester",
+    "whether_modemsmem_item134_has_completed_before_PIL_start",
+    "probe_completion_and_memory_visibility_order",
+    "firmware_start_and_restart_republication_timing",
+    "stock_vendor_boot_and_physical_telephony_behavior"
+  ],
+  "permissions": {
+    "allow_modem_boot": false,
+    "allow_smem_write": false,
+    "allow_driver_load": false,
+    "allow_flash": false
+  },
+  "hardware_tested": false
+}

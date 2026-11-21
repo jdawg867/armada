@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "kind": "source_only_aosp_vs_lineage_android12l_diff_interpretation",
+  "aosp_tag": "android-12.1.0_r7",
+  "aosp_lineage_comparison_run": 43920100174,
+  "diff_inspection_run_initial": 43983484332,
+  "source_inputs_pinned": true,
+  "files": [
+    {
+      "path": "barbet/init.barbet.rc",
+      "lineage_path": "barbet/init.barbet.rc",
+      "source_diff_hunks": 1,
+      "interpretation": "Lineage adds an explicit user root declaration to vendor.mdm_helper service; it does not alter its class core or command path in the inspected hunk",
+      "init_effect": "service_user_declaration_changed",
+      "direct_modemsmem_publication_dependency": false
+    },
+    {
+      "path": "redbull/BoardConfig-common.mk",
+      "lineage_path": "BoardConfig-common.mk",
+      "source_diff_hunks": 24,
+      "interpretation": "AOSP contains a kernel module packaging/load-list construction block, including KERNEL_MODULES_LOAD, BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD and BOOT_KERNEL_MODULES_FILTER, absent from the corresponding pinned Lineage common config hunk; other changes include AVB key wiring, module-list differences, and optional async-probe kernel command-line entries",
+      "init_effect": "kernel_module_packaging_and_build_configuration_differs",
+      "direct_modemsmem_publication_dependency": false
+    },
+    {
+      "path": "redbull/init.hardware.rc",
+      "lineage_path": "init.hardware.rc",
+      "source_diff_hunks": 13,
+      "interpretation": "Modified init actions cover charger, NFC library properties, battery/charge permissions, SSR dump folder, cgroup/task profile and storage tuning; the inspected hunk preserves wait_for_prop vendor.all.modules.ready and vendor.all.devices.ready rather than adding a modemsmem probe completion barrier",
+      "init_effect": "init_property_and_service_related_differences_not_new_publication_barrier",
+      "direct_modemsmem_publication_dependency": false
+    }
+  ],
+  "key_findings": {
+    "public_aosp_lineage_init_insmod_script_identical": true,
+    "public_aosp_lineage_barbet_insmod_cfg_identical": true,
+    "module_packaging_logic_differs_between_trees": true,
+    "source_diff_establishes_modemsmem_probe_completion_before_mpss": false,
+    "source_diff_establishes_stock_vendor_boot_module_contents": false,
+    "lineage_boardconfiglineage_may_relocate_packaging_logic_but_not_proven_in_this_diff": true,
+    "direct_publication_completion_notification_observed_in_changed_lines": false
+  },
+  "remaining_unverified": [
+    "effective_resolved_modules_load_for_stock_android12l",
+    "exact_factory_vendor_boot_contents",
+    "module_loader_exit_status_and_driver_probe_completion",
+    "qualcomm_modemsmem_item134_memory_visibility_before_mpss_start",
+    "modem_recovery_dependency_on_item134",
+    "full_phone_telephony_calls_sms_mobile_data"
+  ],
+  "source_diff_content_reviewed": true,
+  "hardware_tested": false,
+  "firmware_read": false,
+  "smem_write_authorized": false
+}

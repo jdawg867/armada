@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "step": 815,
+  "scope": "pinned_Lito_PIL_callback_and_loader_unwind_source_only_not_verified_complete_rollback",
+  "sources": {
+    "kernel_repo": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "pil_tz_path": "drivers/soc/qcom/subsys-pil-tz.c",
+    "pil_tz_blob": "f17f9e57b0d1f671017032df9224ada0bbea15c2",
+    "loader_path": "drivers/soc/qcom/peripheral-loader.c",
+    "loader_blob": "c7920af7ab0c010c24078c72809a5d83667ce765",
+    "restart_path": "drivers/soc/qcom/subsystem_restart.c",
+    "restart_blob": "e304cb58b65037237b2a231a52dadb3bccd618c7"
+  },
+  "observed": {
+    "registered_powerup_callback": "subsys_powerup",
+    "registered_shutdown_callback": "subsys_shutdown",
+    "powerup_sets_fw_name": true,
+    "powerup_resets_stop_ack_when_irq_present": true,
+    "powerup_returns_pil_boot_result": true,
+    "shutdown_invokes_pil_shutdown": true,
+    "shutdown_returns_zero_regardless_pil_shutdown_result": true,
+    "shutdown_force_stop_can_signal_smem_state_and_wait_stop_ack": true,
+    "loader_calls_aop_on_before_request_firmware": true,
+    "loader_aop_on_failure_returns_immediately": true,
+    "loader_releases_prior_memory_map_before_new_load": true,
+    "loader_request_firmware_failure_exits_through_out": true,
+    "loader_init_image_failure_has_err_boot_unvote": true,
+    "loader_mem_setup_failure_can_deinit_image": true,
+    "loader_auth_reset_failure_has_memory_reassignment_attempt": true,
+    "loader_error_path_attempts_proxy_unvote": true,
+    "loader_error_path_releases_firmware_when_acquired": true,
+    "loader_error_path_frees_region_when_allocated": true,
+    "loader_error_path_releases_mmap": true,
+    "loader_error_path_sends_aop_off": true,
+    "loader_shutdown_tracks_shutdown_fail": true,
+    "loader_shutdown_marks_modem_ssr": true,
+    "loader_shutdown_sends_aop_off": true,
+    "loader_shutdown_cleanup_and_modem_success_verified": false,
+    "loader_rollback_guaranteed_across_all_errors": false,
+    "first_modem_start_after_item134_ready_verified": false,
+    "device_testing_performed": false
+  },
+  "caveats": [
+    "Subsys callback returning zero from shutdown does not propagate PIL underlying shutdown failure.",
+    "Loader rollback is conditional by failing stage; cleanup operations can fail or have unchecked return values.",
+    "An AOP ON failure returns directly before the later common cleanup path; no assertion about remote AOP state is justified.",
+    "Failure before the image is loaded and failure after authentication are different ownership states.",
+    "PIL callback success and SSR ONLINE are not telephony readiness, nor an item134 publication fence.",
+    "Source-only inspection cannot confirm effective DT overrides, clock/regulator behavior, firmware correctness or real recovery."
+  ],
+  "unknowns": [
+    "partial_clock_regulator_and_proxy_vote_unwind_effectiveness",
+    "memory_reassignment_and_SCM_failure_recovery",
+    "effective_Barbet_modem_device_tree_configuration",
+    "modemsmem_item134_ownership_publication_and_acknowledgement",
+    "runtime_modem_first_start_and_restart_generation",
+    "phone_calls_SMS_data_and_SSR_recovery"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "smem_read": false,
+    "smem_write": false,
+    "modem_start": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}

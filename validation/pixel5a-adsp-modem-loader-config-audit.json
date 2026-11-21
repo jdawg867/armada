@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "step": 797,
+  "scope": "pinned_source_only_adsp_loader_configuration_not_final_dtb",
+  "kernel_commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+  "paths": {
+    "arch/arm64/boot/dts/vendor/qcom/msm-audio-lpass.dtsi": "a9496d85ef337acf1802bccd1cbeb73e47acae7e",
+    "arch/arm64/boot/dts/vendor/qcom/lito-audio.dtsi": "b0c71b6bef60277d3bd694ab21b3b52616ea9529",
+    "arch/arm64/boot/dts/vendor/qcom/lito-audio-overlay.dtsi": "d40caafaa79af5726f4cdae22a4992d36a84c5d4",
+    "arch/arm64/boot/dts/google/lito-redbull-audio.dtsi": "6fc430fff036faed2c92217aace7e3be2455985e",
+    "arch/arm64/boot/dts/google/lito-barbet-audio.dtsi": "b8b9b41e3de01936a851ed33d1c592684f7374e2",
+    "techpack/audio/dsp/adsp-loader.c": "a32acfd359092d4a8cdbcb2da804d0ec8601da0b"
+  },
+  "observed": {
+    "msm_audio_lpass_declares_adsp_loader": true,
+    "adsp_loader_enabled_in_lpass_source": true,
+    "adsp_state_zero_in_lpass_source": true,
+    "lito_audio_includes_msm_audio_lpass": true,
+    "redbull_audio_includes_lito_audio_overlay": true,
+    "overlay_adds_adsp_variant_nvmem": true,
+    "overlay_adds_adsp2_variant_firmware_name": true,
+    "inspected_lpass_node_selects_modem_image": false,
+    "inspected_lito_audio_overlay_selects_modem_image": false,
+    "adsp_loader_code_defaults_to_adsp_when_image_property_absent": true,
+    "adsp_loader_contains_conditional_subsystem_get_modem": true,
+    "conditional_modem_call_proven_executed_on_pixel5a": false,
+    "entire_final_dtb_and_all_overrides_resolved": false
+  },
+  "unverified": [
+    "all_final_barbet_audio_dtb_overrides",
+    "complete_dt_include_graph_and_preprocessor_expansion",
+    "whether_runtime_proc_img_property_is_modem",
+    "all_possible_nonliteral_modem_subsystem_get_callers",
+    "initial_modem_firmware_boot_source_and_timing",
+    "smem_134_publication_barrier_before_firmware_start",
+    "stock_android12l_boot_trace_and_vendor_boot_binary",
+    "voice_sms_mobile_data_actual_operation"
+  ],
+  "safety": {
+    "firmware_boot": false,
+    "smem_write": false,
+    "driver_activation": false,
+    "device_flash": false
+  },
+  "hardware_tested": false
+}
