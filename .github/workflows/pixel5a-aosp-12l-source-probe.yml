@@ -132,6 +132,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-pil-modem-bus-scaling-source-selection-test.py
 
+      - name: Guard pinned Barbet MP modem bus DT and module-list projection
+        shell: bash
+        run: python3 tests/pixel5a-barbet-modem-bus-overlay-module-order-test.py
+
       - name: Fetch public, exactly tagged AOSP text sources only
         shell: bash
         run: |
