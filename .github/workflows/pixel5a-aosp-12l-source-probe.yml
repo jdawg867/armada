@@ -104,6 +104,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-peripheral-manager-public-interface-test.py
 
+      - name: Guard pinned SSR device open-close and reference lifecycle semantics
+        shell: bash
+        run: python3 tests/pixel5a-modem-ssr-get-put-lifecycle-test.py
+
       - name: Fetch public, exactly tagged AOSP text sources only
         shell: bash
         run: |
