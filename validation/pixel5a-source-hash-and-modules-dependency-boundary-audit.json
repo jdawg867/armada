@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "step": 822,
+  "scope": "source_hash_CI_recheck_and_Kbuild_module_dependency_boundary_offline_only",
+  "ci": {
+    "step821_commit": "fed57a6f949270da740eb173646dbd9d9e7afba7",
+    "android_validation": {
+      "run_id": 44957899973,
+      "conclusion": "success"
+    },
+    "aosp_source": {
+      "run_id": 44957899925,
+      "job_id": 137009976814,
+      "conclusion": "success",
+      "retrieved_diffs": 3,
+      "all_diffs_available": true,
+      "strict_expected_sha_assertions_passed": true,
+      "sha_mismatch_diagnostic_emitted": false
+    },
+    "arm64_compile": {
+      "run_id": 44957900008,
+      "conclusion": "success"
+    },
+    "prior_failed_source_run_id": 44954804193,
+    "prior_failure_class": "AssertionError in pinned AOSP-versus-Lineage SHA comparison",
+    "prior_failure_cause_established": false,
+    "expected_digest_update_authorized": false
+  },
+  "source": {
+    "kernel_repo": "LineageOS/android_kernel_google_redbull",
+    "kernel_commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "soc_makefile": "drivers/soc/qcom/Makefile",
+    "soc_makefile_blob": "ba295cb355875e8a2905eea8b6f7aadead3338cf",
+    "bus_makefile": "drivers/soc/qcom/msm_bus/Makefile",
+    "bus_makefile_blob": "f7d007d78bd81e9e4358eaff15b186c88ef6e821",
+    "modemsmem_makefile": "drivers/soc/qcom/modemsmem/Makefile",
+    "modemsmem_makefile_blob": "b7c435d9f9e09a203818b3e491e8696ff212d34d",
+    "soc_kconfig": "drivers/soc/qcom/Kconfig",
+    "soc_kconfig_blob": "ee5bcb896a9985c04709d0947b5ab0e39a9f309d",
+    "redbull_defconfig": "arch/arm64/configs/redbull_defconfig",
+    "redbull_defconfig_blob": "55e2088384d7189da77f5cd31ccf11dd75e58e4d",
+    "android_repo": "LineageOS/android_device_google_redbull",
+    "android_commit": "9fdf5ccfc9dd1ca22ca4ea657e414cb35e95b770",
+    "modules_load": "modules.load",
+    "modules_load_blob": "b116d1f234682a1f7e7275f36e6c7a2feb79ddb5"
+  },
+  "observed": {
+    "kbuild_subsys_pil_tz_symbol": "CONFIG_MSM_PIL_SSR_GENERIC",
+    "kbuild_peripheral_loader_symbol": "CONFIG_MSM_PIL",
+    "kbuild_bus_symbol": "CONFIG_QCOM_BUS_SCALING",
+    "kbuild_bus_rpmh_symbol": "CONFIG_QCOM_BUS_CONFIG_RPMH",
+    "kbuild_modemsmem_symbol": "CONFIG_MODEMSMEM",
+    "bus_rpmh_kconfig_depends_on_bus_scaling": true,
+    "redbull_bus_scaling_module": true,
+    "redbull_bus_rpmh_module": true,
+    "redbull_modemsmem_module": true,
+    "module_list_pil_before_bus": true,
+    "module_list_bus_before_modemsmem": true,
+    "module_list_count_from_step821_run": 329,
+    "first_stage_projection_count_from_step821_run": 220,
+    "published_makefile_Kconfig_are_module_build_selection_evidence": true,
+    "makefile_Kconfig_define_final_modules_dep_graph": false,
+    "actual_modules_dep_content_verified": false,
+    "modprobe_resolved_order_verified": false,
+    "successful_module_probe_order_verified": false,
+    "actual_first_modem_start_verified": false,
+    "modemsmem_item134_ready_verified": false,
+    "live_phone_functions_verified": false
+  },
+  "unknowns": [
+    "why_prior_source_hash_assertion_failed_when_later_pinned_recheck_passed",
+    "actual_modules_dep_softdep_and_alias_metadata_from_built_vendor_modules",
+    "dependencies_of_subsys_pil_tz_and_modemsmem_binary_modules",
+    "driver_probe_completion_order_and_bus_client_registration",
+    "item134_first_modem_start_ownership_and_acknowledgement",
+    "live_calls_SMS_data_and_SSR_recovery"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "modem_start": false,
+    "smem_read": false,
+    "smem_write": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}
