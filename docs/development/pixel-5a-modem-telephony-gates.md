@@ -695,3 +695,21 @@ The pinned `ueventd.rc` blob `ee94e699cdacc2fb9e061d66e5281bde81a798a1` assigns 
 **Artifacts:** `validation/pixel5a-modem-ssr-start-stop-failure-audit.json` and `tests/pixel5a-modem-ssr-start-stop-failure-test.py` (30 offline baseline/negative tests) in all three existing GitHub Actions workflows. Source assertions, not live device validation. Verify this Step 814 commit's CI separately.
 
 **Step 815:** Inspect the registered Lito modem descriptor's `powerup` and `shutdown` callback implementation and any rollback on partial failure, especially whether its cleanup matches SSR caller expectations. Continue source-only and keep PR #18 draft.
+
+## Step 815 — pinned Lito PIL powerup callbacks and conditional loader rollback
+
+**Step 814 CI:** commit `747617394e9c81dbc85c90401442045cc96976fc` passed Android phone validation `44918068460`, public AOSP/Lineage source probe `44918068483` and isolated Linux ARM64 compile `44918068475`.
+
+**Pinned kernel source:** `LineageOS/android_kernel_google_redbull@929e7e2f3658867d51a1d423c7e000f5cf1d4043`, `drivers/soc/qcom/subsys-pil-tz.c` blob `f17f9e57b0d1f671017032df9224ada0bbea15c2`, `drivers/soc/qcom/peripheral-loader.c` blob `c7920af7ab0c010c24078c72809a5d83667ce765`, and `drivers/soc/qcom/subsystem_restart.c` blob `e304cb58b65037237b2a231a52dadb3bccd618c7`.
+
+**Registered Lito-compatible callbacks:** the PIL TZ driver's probe assigns `subsys_desc.powerup = subsys_powerup` and `subsys_desc.shutdown = subsys_shutdown`. The power-up callback reinitializes stop acknowledgment when the corresponding IRQ is present, sets the firmware name, then **returns the result of `pil_boot()`**. The shutdown callback conditionally uses the force-stop SMEM state and stop acknowledgment before invoking `pil_shutdown()`; critically, it returns `0` independently of underlying PIL shutdown errors. This source-level behavior must not be interpreted as proof that the modem shut down successfully.
+
+**Loader failure behavior:** `pil_boot()` first sends AOP ON, returning early if it fails. After firmware request and image checks it has stage-dependent error branches: resource voting; init-image, memory setup, segment loading, memory assignment, and auth-and-reset stages; conditional `deinit_image`, `pil_proxy_unvote`, firmware release, memory region clear/free and `pil_release_mmap`, followed by AOP OFF on error. There are conditional ownership transitions, and cleanup operation return values are not all checked. The source therefore establishes **attempted stage-specific cleanup**, not an atomic rollback guarantee for every hardware/resource failure.
+
+**Shutdown behavior:** `pil_shutdown()` invokes the PIL shutdown operation and sets or clears `desc->shutdown_fail`, handles proxy unvote, issues AOP OFF and sets `desc->modem_ssr = true`. It returns `void`, and the surrounding `subsys_shutdown` returns success even when the lower-level shutdown operation failed. No actual SSR reliability, modem reset generation, or telephony functionality was tested.
+
+**Remaining gates:** effective Barbet DT and driver binding; clock/regulator/SCM failure cleanup effectiveness; memory ownership and assignment; SMEM item134 original ownership, publication and consumer acknowledgment; first modem request timing; calls, SMS, cellular data and crash recovery. No source callback is an item134 readiness fence, and no physical Pixel 5a, ADB, modem start, character open, SMEM read/write or flash operation was involved.
+
+**Artifacts:** `validation/pixel5a-modem-pil-callback-rollback-audit.json` and `tests/pixel5a-modem-pil-callback-rollback-test.py` (23 offline baseline/negative tests), added to the three existing GitHub Actions workflows. Final commit CI must be independently checked.
+
+**Step 816:** Examine pinned `pil_shutdown_trusted()` and PAS/SCM error propagation, resource and memory ownership on failed shutdown; continue source-only and keep PR #18 draft.
