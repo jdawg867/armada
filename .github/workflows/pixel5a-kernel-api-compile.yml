@@ -161,6 +161,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-modem-pil-callback-rollback-test.py
 
+      - name: Guard Step 816 pinned PAS SCM shutdown error and resource ownership boundaries
+        shell: bash
+        run: python3 tests/pixel5a-modem-pas-shutdown-resource-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
