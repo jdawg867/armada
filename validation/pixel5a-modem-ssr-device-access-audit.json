@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "step": 810,
+  "scope": "pinned_redbull_ueventd_DAC_and_SELinux_source_access_not_runtime_open",
+  "sources": {
+    "android": {
+      "repository": "LineageOS/android_device_google_redbull",
+      "commit": "9fdf5ccfc9dd1ca22ca4ea657e414cb35e95b770",
+      "ueventd_path": "ueventd.rc",
+      "ueventd_blob": "ee94e699cdacc2fb9e061d66e5281bde81a798a1",
+      "device_common_path": "device-common.mk",
+      "device_common_blob": "200ab69ad13b09aef47b1350fb40b1ee7c9dd2d8",
+      "file_contexts_path": "sepolicy/vendor/qcom/common/file_contexts",
+      "file_contexts_blob": "f53709a48e090c7faa3af51da725688876747955",
+      "peripheral_manager_policy_path": "sepolicy/vendor/qcom/common/peripheral_manager.te",
+      "peripheral_manager_policy_blob": "edafb01e6199964607b294d44287e9fcbfeae79f"
+    }
+  },
+  "observed": {
+    "ueventd_pattern": "/dev/subsys_*",
+    "ueventd_mode": "0640",
+    "ueventd_owner": "system",
+    "ueventd_group": "system",
+    "ueventd_vendor_copy_destination": "$(TARGET_COPY_OUT_VENDOR)/etc/ueventd.rc",
+    "modem_node": "/dev/subsys_modem",
+    "modem_selinux_type": "modem_ssr_device",
+    "peripheral_manager_domain": "vendor_per_mgr",
+    "selinux_permission": "allow vendor_per_mgr modem_ssr_device:chr_file r_file_perms;",
+    "ueventd_entry_covers_modem_node": true,
+    "ueventd_grants_world_access": false,
+    "selinux_policy_grants_device_read_permission": true,
+    "mode_and_selinux_both_must_allow_an_open": true,
+    "proprietary_pm_service_effective_uid_gid_verified": false,
+    "compiled_runtime_sepolicy_verified": false,
+    "actual_device_node_mode_verified": false,
+    "pm_service_open_observed": false,
+    "first_modem_start_observed": false,
+    "modemsmem_item134_readiness_verified": false
+  },
+  "unknowns": [
+    "effective_pm_service_UID_GID_and_supplemental_groups",
+    "loaded_SELinux_policy_and_domain_at_runtime",
+    "actual_subsys_modem_device_node_and_label",
+    "which_userspace_process_first_opens_subsys_modem",
+    "other_source_or_proprietary_modem_first_start_requesters",
+    "modemsmem_probe_and_item134_publication_vs_first_start",
+    "first_boot_modem_recovery_and_phone_telephony"
+  ],
+  "safety": {
+    "device_open": false,
+    "device_read": false,
+    "modem_start": false,
+    "smem_read": false,
+    "smem_write": false,
+    "adb": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}
