@@ -100,6 +100,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-peripheral-manager-init-identity-test.py
 
+      - name: Guard bounded public Peripheral Manager and subsystem SSR source conclusions
+        shell: bash
+        run: python3 tests/pixel5a-peripheral-manager-public-interface-test.py
+
       - name: Fetch public, exactly tagged AOSP text sources only
         shell: bash
         run: |
