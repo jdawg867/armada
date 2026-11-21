@@ -92,6 +92,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-modem-subsys-char-device-first-start-test.py
 
+      - name: Verify pinned modem SSR ueventd DAC and SELinux evidence boundaries
+        shell: bash
+        run: python3 tests/pixel5a-modem-ssr-device-access-test.py
+
       - name: Fetch public, exactly tagged AOSP text sources only
         shell: bash
         run: |
