@@ -656,3 +656,21 @@ The pinned `ueventd.rc` blob `ee94e699cdacc2fb9e061d66e5281bde81a798a1` assigns 
 **Deliverables:** `validation/pixel5a-peripheral-manager-public-interface-audit.json` and `tests/pixel5a-peripheral-manager-public-interface-test.py` (20 offline baseline/negative tests) integrated into all three existing GitHub Actions workflows. Source assertions are not a replacement for runtime telephony validation; CI for this step must be independently checked.
 
 **Step 813:** Audit the public SSR character device's error and release semantics with respect to reference counts and initial modem startup, including failure unwind and implications for any eventual userspace modem request, without opening the character device or touching the phone.
+
+## Step 813 — pinned SSR character open/close and get/put lifecycle
+
+**Step 812 CI verified:** commit `d949a5d34cbbf91999abb8139a7d82378268f77c` passed Android phone validation `44916541942`, public AOSP/Lineage probe `44916541900` and isolated Linux ARM64 compile `44916541909`.
+
+**Pinned kernel source:** `LineageOS/android_kernel_google_redbull@929e7e2f3658867d51a1d423c7e000f5cf1d4043`, `drivers/soc/qcom/subsystem_restart.c`, blob `e304cb58b65037237b2a231a52dadb3bccd618c7`, inspected `__subsystem_get()` (~1028–1081), `subsystem_get_with_fwname()` (~1108–1112), `subsystem_put()` (~1114–1155), and character-device `subsys_device_open()`, `subsys_device_close()` and fops (~1457–1500).
+
+- Character `.open` looks up subsystem by device minor, returns `-EINVAL` if no matching registration, calls `subsystem_get_with_fwname(desc->name, desc->fw_name)`, and propagates `PTR_ERR` on `IS_ERR`. Merely opening a present device **can actively start firmware**.
+- `__subsystem_get` returns `ERR_PTR(-ENODEV)` for absent subsystems and for module pin failure; acquires an optional dependency using `subsystem_get(pon_depends_on)`; while holding tracking lock, only when `count==0` calls `subsys_start()`. A successful request increments `count`. The error path for `subsys_start` bypasses the increment, unlocks and drops dependency/module/device references.
+- Character `.release` looks up the subsystem again by minor, returns `-EINVAL` if missing, then calls `subsystem_put(subsys_dev)`. It does **not** retrieve a per-file saved reference handle in the inspected code; this is not evidence that runtime concurrent unregister or recovery is safe. The standard file release callback must not be assumed to execute after an unsuccessful open.
+- `subsystem_put` no-ops on an error/null handle, checks and warns on an unexpected zero reference count; for a valid counted reference decrements `count`, invoking `subsys_stop()` and memory release only when count reaches zero. A close **does not guarantee** power-down if another reference holder remains. This inspection does not validate all cross-dependency or SSR crash paths.
+- Registered subsystem descriptors should have a name; although `__subsystem_get` contains a special null-name return, we do not assign semantics to null-name runtime `/dev/subsys_modem` behavior absent evidence.
+
+**Evidence limit:** Reference counts are not telephony service readiness. We have not established the proprietary Peripheral Manager's open/close lifetime, other owners, module presence on stock Pixel 5a, SMEM item134 visibility or ownership, safe SSR recovery or working calls/SMS/data.
+
+**Artifacts:** `validation/pixel5a-modem-ssr-get-put-lifecycle-audit.json`, `tests/pixel5a-modem-ssr-get-put-lifecycle-test.py` (26 offline baseline/negative cases), integrated into the three existing GitHub workflows. No ADB, open, device read, modem start, SMEM operation, kernel activation or flashing was performed. This step's CI must be verified on final branch head.
+
+**Step 814:** Inspect pinned `subsys_start()`/ `subsys_stop()` and dependency unwind in greater detail, especially a failed first boot versus a deliberate close, without claiming operational modem recovery or touching the Pixel 5a.
