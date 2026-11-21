@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "step": 813,
+  "scope": "pinned_downstream_SSR_character_open_close_and_get_put_control_flow_source_only",
+  "source": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "path": "drivers/soc/qcom/subsystem_restart.c",
+    "blob": "e304cb58b65037237b2a231a52dadb3bccd618c7",
+    "get_lines": "1028-1081",
+    "put_lines": "1114-1155",
+    "char_fops_lines": "1457-1500"
+  },
+  "observed": {
+    "char_open_handler": "subsys_device_open",
+    "char_release_handler": "subsys_device_close",
+    "char_open_looks_up_minor": true,
+    "char_release_looks_up_minor": true,
+    "char_open_calls": "subsystem_get_with_fwname",
+    "char_close_calls": "subsystem_put",
+    "char_open_returns_negative_invalid_minor": true,
+    "char_close_returns_negative_invalid_minor": true,
+    "char_open_propagates_ERR_PTR_error": true,
+    "char_open_has_no_file_private_data_handle_storage": true,
+    "char_close_has_no_file_private_data_handle_retrieval": true,
+    "get_missing_subsystem_returns_ENODEV": true,
+    "get_module_pin_failure_returns_ENODEV": true,
+    "get_first_reference_calls_subsys_start": true,
+    "get_success_increments_subsystem_count": true,
+    "get_start_failure_bypasses_count_increment": true,
+    "get_start_failure_unwinds_dependency_and_module_device_refs": true,
+    "put_zero_reference_warnings_and_skips_decrement": true,
+    "put_final_reference_calls_subsys_stop": true,
+    "put_final_reference_frees_subsystem_memory": true,
+    "put_nonfinal_reference_stops_modem": false,
+    "release_always_stops_modem": false,
+    "failed_open_proven_to_receive_release": false,
+    "char_open_guarantees_item134_readiness": false,
+    "PM_service_runtime_open_observed": false,
+    "modem_recovery_runtime_verified": false
+  },
+  "caveats": [
+    "Character open returns zero on non-ERR_PTR result; pinned __subsystem_get returns NULL for a null name, but registered name is expected to be non-null; do not infer NULL-return behavior from an actual device without evidence",
+    "Character release performs fresh minor lookup, not an observed per-file saved handle; no concurrency safety proof is claimed",
+    "The inspected dependency handling is source-specific and does not establish hardware recovery safety",
+    "Callers other than character device can hold subsystem references, so close need not shut down modem",
+    "Neither success of open nor refcount changes establish modemsmem item134 publication or firmware acknowledgment"
+  ],
+  "unknowns": [
+    "proprietary_pm_service_open_and_close_lifetime",
+    "multiple_user_or_kernel_reference_holders",
+    "restart_generation_recovery_and_telephony_liveness",
+    "actual_runtime_dependencies_and_modemsmem_item134_barrier",
+    "installed_kernel_vendor_policy_compatibility"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "smem_read": false,
+    "smem_write": false,
+    "modem_start": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}
