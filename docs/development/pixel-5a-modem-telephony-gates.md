@@ -713,3 +713,22 @@ The pinned `ueventd.rc` blob `ee94e699cdacc2fb9e061d66e5281bde81a798a1` assigns 
 **Artifacts:** `validation/pixel5a-modem-pil-callback-rollback-audit.json` and `tests/pixel5a-modem-pil-callback-rollback-test.py` (23 offline baseline/negative tests), added to the three existing GitHub Actions workflows. Final commit CI must be independently checked.
 
 **Step 816:** Examine pinned `pil_shutdown_trusted()` and PAS/SCM error propagation, resource and memory ownership on failed shutdown; continue source-only and keep PR #18 draft.
+
+## Step 816 — trusted PAS shutdown, SCM transport status and regulator/clock cleanup
+
+**Step 815 CI check:** exact head `60a648513b32d6d7a9b1838bf51bcdd422fcfe30` had Android phone validation `44919394800` and public source probe `44919394804` **success**, while isolated ARM64 compile `44919394809` was **in_progress** at inspection. Do not promote that checkpoint to all-three-passed without rechecking.
+
+**Pinned source:** `LineageOS/android_kernel_google_redbull@929e7e2f3658867d51a1d423c7e000f5cf1d4043`, `drivers/soc/qcom/subsys-pil-tz.c` blob `f17f9e57b0d1f671017032df9224ada0bbea15c2`, `pil_shutdown_trusted()` lines 722–769 and `subsys_shutdown()` lines 833–853; `drivers/soc/qcom/peripheral-loader.c` blob `c7920af7ab0c010c24078c72809a5d83667ce765`, `pil_shutdown()` lines 1419–1440.
+
+**Shutdown ordering and failures:**
+- The trusted shutdown callback returns immediately when `no_auth` is set. Otherwise it acquires a bus-scale vote, proxy regulators, and proxy clocks before invoking `scm_call2(PAS_SHUTDOWN_CMD)`.
+- Bus-vote failure returns directly; proxy-regulator or proxy-clock enable failure branches undo the bus vote and, for the clock branch, proxy regulators. These are *code paths*, not confirmed hardware resource states.
+- After the SCM call, proxy clocks and regulators are disabled and the bus request is released. If the **SCM transport `rc`** is nonzero, the function returns it **without reaching the subsequent primary clock/regulator disable calls**. If transport succeeds but the **secure return `desc.ret[0]`** is nonzero, the primary resources are nevertheless disabled and the secure result returned. This distinction makes shutdown failure handling and resource ownership important.
+- The higher-level `pil_shutdown()` sets `shutdown_fail` according to the trusted callback result, performs proxy-unvote handling, sends AOP OFF and marks `modem_ssr=true`, but has `void` return. The `subsys_shutdown()` wrapper invokes it then returns `0`. Therefore a visible successful SSR callback result cannot be interpreted as secure-PAS shutdown success.
+- No release or reinitialization path shown here proves that failing primary clock/regulator cleanup is harmless; a later retry may encounter state left by the prior attempt. No hardware condition is asserted.
+
+**Unresolved gates:** actual PAS transport/secure outcomes, clock/regulator/proxy resource ownership, error propagation into recovery policy, forced stop acknowledgment, SMEM item134 publication and reuse protocol, modem restart generation, and live phone calls/SMS/data. No physical device, ADB, modem start, character-device open, SMEM reads/writes, flashing or patch activation occurred.
+
+**Artifacts:** `validation/pixel5a-modem-pas-shutdown-resource-audit.json` and `tests/pixel5a-modem-pas-shutdown-resource-test.py` (28 offline baseline/negative tests), included in all three GitHub workflows. These tests protect pinned source claims; they do not execute trusted firmware, modem power transitions or recovery.
+
+**Step 817:** Inspect pinned regulator and clock enable/disable helper cleanup behavior, particularly partial-acquisition failure and whether early SCM errors can preserve resources unexpectedly. Keep PR #18 draft and continue offline.
