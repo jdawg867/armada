@@ -181,6 +181,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-barbet-modem-bus-overlay-module-order-test.py
 
+      - name: Guard Step 821 Barbet MP and modprobe dependency source boundaries
+        shell: bash
+        run: python3 tests/pixel5a-barbet-mp-modprobe-dependency-boundary-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
