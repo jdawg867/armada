@@ -208,6 +208,10 @@ jobs:
           }
           for row in d["files"]:
               a,b=expected[row["device"]+"/"+row["path"]]
+              if row["aosp_sha256"] != a or row["lineage_sha256"] != b:
+                  print("PINNED_SOURCE_DIFF_SHA_MISMATCH",row["device"],row["path"],
+                        "aosp_expected",a,"aosp_actual",row["aosp_sha256"],
+                        "lineage_expected",b,"lineage_actual",row["lineage_sha256"])
               assert row["aosp_sha256"]==a and row["lineage_sha256"]==b
           print("PINNED_SOURCE_DIFFS=PASS")
           PY
