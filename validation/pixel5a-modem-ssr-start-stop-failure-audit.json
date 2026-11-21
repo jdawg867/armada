@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "step": 814,
+  "scope": "pinned_SSR_subsys_start_stop_source_control_flow_not_live_modem_recovery",
+  "source": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "path": "drivers/soc/qcom/subsystem_restart.c",
+    "blob": "e304cb58b65037237b2a231a52dadb3bccd618c7",
+    "start_lines": "899-937",
+    "stop_lines": "939-963",
+    "get_lines": "1031-1085"
+  },
+  "observed": {
+    "start_before_powerup_notification": "SUBSYS_BEFORE_POWERUP",
+    "start_reinitializes_error_ready_completion": true,
+    "start_calls_descriptor_powerup": true,
+    "powerup_error_notification": "SUBSYS_POWERUP_FAILURE",
+    "powerup_callback_failure_returns_error": true,
+    "powerup_callback_failure_directly_calls_descriptor_shutdown": false,
+    "powerup_callback_failure_directly_disables_irqs": false,
+    "powerup_success_enables_all_irqs": true,
+    "not_loadable_branch_marks_online_without_err_ready_wait": true,
+    "not_loadable_branch_emits_after_powerup_notification": false,
+    "loadable_branch_waits_for_err_ready": true,
+    "err_ready_failure_notification": "SUBSYS_POWERUP_FAILURE",
+    "err_ready_failure_calls_descriptor_shutdown": true,
+    "err_ready_failure_disables_all_irqs": true,
+    "err_ready_failure_returns_error": true,
+    "err_ready_success_marks_online": true,
+    "err_ready_success_notification": "SUBSYS_AFTER_POWERUP",
+    "stop_before_shutdown_notification": "SUBSYS_BEFORE_SHUTDOWN",
+    "stop_reinitializes_shutdown_ack_completion": true,
+    "stop_checks_force_shutdown_property": "qcom,pil-force-shutdown",
+    "stop_nonforced_path_marks_offlining": true,
+    "stop_nonforced_path_attempts_sysmon_shutdown": true,
+    "stop_force_path_attempts_sysmon_shutdown": false,
+    "stop_calls_descriptor_shutdown": true,
+    "stop_marks_offline": true,
+    "stop_disables_all_irqs": true,
+    "stop_after_shutdown_notification": "SUBSYS_AFTER_SHUTDOWN",
+    "get_first_reference_calls_start": true,
+    "get_failed_start_increments_refcount": false,
+    "start_proves_modemsmem_item134_ready": false,
+    "stop_proves_telephony_recovery": false,
+    "hardware_verified": false
+  },
+  "limitations": [
+    "Direct powerup-callback failure cleanup depends on callback behavior not established by this function; no explicit desc shutdown or IRQ disable in that branch",
+    "Error-ready timeout and powerup callback failure follow distinct paths; do not conflate them",
+    "not-loadable branch skips error-ready wait and after-powerup notification; source branch selection on a stock Pixel 5a is not established here",
+    "SysMon shutdown errors are logged but are not proof of graceful subsystem acknowledgment",
+    "Callback return and subsystem state transitions alone do not establish SIM, calls, SMS, cellular data or SSR recovery",
+    "Source contains no modemsmem item134 ownership, publication or firmware acknowledgment fence"
+  ],
+  "unknowns": [
+    "descriptor_powerup_callback_failure_rollback_semantics",
+    "Barbet_loadable_branch_and_runtime_DT_force_shutdown_property",
+    "modem_first_start_vs_item134_publication",
+    "subsystem_recovery_generation_and_external_refholders",
+    "actual_Pixel5a_telephony_end_to_end"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "modem_start": false,
+    "smem_read": false,
+    "smem_write": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}
