@@ -96,6 +96,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-modem-ssr-device-access-test.py
 
+      - name: Check pinned Peripheral Manager init identity and modem SSR access eligibility
+        shell: bash
+        run: python3 tests/pixel5a-peripheral-manager-init-identity-test.py
+
       - name: Fetch public, exactly tagged AOSP text sources only
         shell: bash
         run: |
