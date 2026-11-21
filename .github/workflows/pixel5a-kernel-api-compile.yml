@@ -165,6 +165,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-modem-pas-shutdown-resource-test.py
 
+      - name: Guard pinned PIL regulator clock and proxy bus vote failure semantics
+        shell: bash
+        run: python3 tests/pixel5a-pil-regulator-clock-proxy-vote-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
