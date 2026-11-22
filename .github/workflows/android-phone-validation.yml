@@ -324,6 +324,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-modemsmem-review-patch-832-test.py
 
+      - name: Guard Step 833 full-file verifier against unpinned and symlink source
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-full-pinned-source-833-negative-test.py
+
       - name: Check Step 833 exact pinned upstream driver blob and full-source RFC patch
         shell: bash
         run: |
