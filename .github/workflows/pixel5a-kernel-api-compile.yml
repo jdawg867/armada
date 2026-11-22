@@ -193,6 +193,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-public-module-dependency-evidence-test.py
 
+      - name: Run host-only synthetic modules.dep topology and fail-closed tests
+        shell: bash
+        run: python3 tests/pixel5a-host-only-modules-dep-resolver-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
