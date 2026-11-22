@@ -158,5 +158,69 @@ class DependencyGraphTests(unittest.TestCase):
             self.assertEqual(r.returncode,0,r.stderr)
             self.assertEqual(json.loads(r.stdout)["dependency_first_candidate_order"],["x/a.ko","y/a.ko"])
 
+
+    def test_softdep_nonempty_fails_closed(self):
+        with self.assertRaises(dep.DependencyError):
+            dep.classify_sidecar("softdep a pre: b\n", "softdep")
+
+    def test_softdep_comments_empty(self):
+        self.assertEqual(dep.classify_sidecar("# no rules\n\n", "softdep"), "empty")
+
+    def test_metadata_unsupplied_distinct_from_empty(self):
+        self.assertEqual(dep.classify_sidecar(None, "softdep"), "not_supplied")
+        self.assertEqual(dep.classify_sidecar("", "softdep"), "empty")
+
+    def test_alias_present_never_interpreted(self):
+        self.assertEqual(dep.classify_sidecar("alias pci:v00001234 a\n", "alias"),
+                         "present_not_interpreted")
+
+    def test_alias_comments_empty(self):
+        self.assertEqual(dep.classify_sidecar("# header\n", "alias"), "empty")
+
+    def test_cli_softdep_rules_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            md = base / "modules.dep"
+            soft = base / "modules.softdep"
+            md.write_text(BASE)
+            soft.write_text("softdep subsys-pil-tz pre: msm_bus\n")
+            r = subprocess.run([sys.executable, str(SCRIPT),
+                                "--modules-dep", str(md),
+                                "--modules-softdep", str(soft),
+                                "--target", "kernel/subsys-pil-tz.ko"],
+                               capture_output=True, text=True)
+            self.assertEqual(r.returncode, 2)
+            self.assertIn("unsupported", r.stderr)
+
+    def test_cli_alias_input_noninterpretation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            md = base / "modules.dep"
+            al = base / "modules.alias"
+            md.write_text(BASE)
+            al.write_text("alias of:N*T*Cgoogle,barbet* subsys-pil-tz\n")
+            r = subprocess.run([sys.executable, str(SCRIPT),
+                                "--modules-dep", str(md), "--modules-alias", str(al),
+                                "--target", "kernel/subsys-pil-tz.ko"],
+                               capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stderr)
+            out = json.loads(r.stdout)
+            self.assertEqual(out["modules_alias_status"], "present_not_interpreted")
+            self.assertEqual(out["modules_softdep_status"], "not_supplied")
+            self.assertFalse(out["softdep_alias_metadata_complete"])
+            self.assertFalse(out["modprobe_alias_softdep_blacklist_evaluated"])
+
+    def test_cli_sidecar_symlink_refused(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            md, src, link = base / "modules.dep", base / "soft", base / "link"
+            md.write_text(BASE)
+            src.write_text("")
+            link.symlink_to(src)
+            r = subprocess.run([sys.executable, str(SCRIPT), "--modules-dep", str(md),
+                                "--modules-softdep", str(link), "--target", "kernel/smem.ko"],
+                               capture_output=True, text=True)
+            self.assertEqual(r.returncode, 2)
+
 if __name__ == "__main__":
     unittest.main()
