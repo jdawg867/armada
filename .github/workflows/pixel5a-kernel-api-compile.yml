@@ -205,6 +205,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-modemsmem-item134-first-start-barrier-test.py
 
+      - name: Guard Step 829 modemsmem reprobe re-clear and SSR source boundaries
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-reprobe-reclear-ssr-lifecycle-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
