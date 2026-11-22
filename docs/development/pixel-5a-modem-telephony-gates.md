@@ -925,3 +925,17 @@ The pinned `ueventd.rc` blob `ee94e699cdacc2fb9e061d66e5281bde81a798a1` assigns 
 **Artifacts:** `validation/pixel5a-smem-allocator-item134-publication-defer-audit.json` and `tests/pixel5a-smem-allocator-item134-publication-defer-test.py` (30 offline baseline/negative tests), included in all three existing GitHub workflows. Verify Step 830 CI at final head separately. No ADB, physical device, SMEM read/write, modem boot, module loading, phone flashing, or upstream kernel submission.
 
 **Step 831:** inspect kernel driver core deferred probe handling and whether `modemsmem` can distinguish the actual allocator `-EPROBE_DEFER` path from permanent errors without weakening its existing item-size or ownership checks. Keep all work public-source-only and PR #18 draft.
+
+## Step 831 — source-visible deferred probe handling versus modemsmem ENOMEM masking
+
+**Step 830 verified CI:** commit `e7db146263e2004924cf2bbfb4cd81dfc35d1aab` passed Android phone validation `44989098178`, pinned AOSP/Lineage source probe `44989098128`, and isolated Linux 7.2.6 ARM64 compile `44989098131`.
+
+**Pinned driver core:** `LineageOS/android_kernel_google_redbull@929e7e2f3658867d51a1d423c7e000f5cf1d4043`, `drivers/base/dd.c` blob `3a7200ebe1eb3aa19aeed70f37f415abedaecd9d`. The `really_probe` failure path explicitly distinguishes `-EPROBE_DEFER` (adds the device to deferred-probe lists for later retry triggering) from other failures such as `-ENOMEM` (ordinary failed probe). This is an observable kernel error-contract distinction; it does not prove when or whether a particular hardware probe was retried.
+
+**Pinned SMEM provider and client:** `drivers/soc/qcom/smem.c` blob `de4d8aba7e366d5a3594731674dcfa310b3a8713` can return `-EPROBE_DEFER` from `qcom_smem_alloc` before provider initialization and `ERR_PTR(-EPROBE_DEFER)` from `qcom_smem_get`. The `drivers/soc/qcom/modemsmem/modemsmem.c` blob `428143562894e6d8ca7b656174c72ee4b096f510` accepts `-EEXIST`, but maps *all* other alloc failures to `-ENOMEM`, and maps a failed get (or wrong item size) to `-ENOMEM`. As written, the client loses the provider's `-EPROBE_DEFER` signal and therefore will not enter that specific driver-core deferred-probe path on those failures. Whether this matters on an actual Pixel 5a boot remains unknown.
+
+**Review-only candidate:** A narrowly scoped kernel error-propagation fix could preserve `-EPROBE_DEFER` from `qcom_smem_alloc` and `PTR_ERR(modem_smem)` from `qcom_smem_get`, while retaining the existing `-EEXIST` handling, structure-size guard and other error behaviors. This is a **candidate**, not a built, merged, tested or submitted change. Keep any general Linux kernel changes isolated until primary Armada OS phone integration is complete and the user approves the eventual batch review. No source changes have been made to the upstream kernel or active Armada integration by this step.
+
+**Step 831 artifacts:** `validation/pixel5a-modemsmem-deferred-probe-driver-core-audit.json` and `tests/pixel5a-modemsmem-deferred-probe-driver-core-test.py` (26 offline baseline/negative tests), integrated in all three CI workflows. Final Step 831 CI must be checked separately. No ADB, phone, modem, kernel insertion, SMEM read/write, flashing or remote processor startup.
+
+**Step 832:** confirm Step 831 CI, then work on an isolated review candidate with pure-source negative fault cases for `-EPROBE_DEFER` versus `-ENOMEM`, without changing the active Armada branch or sending upstream patches. Do not infer stock telephony readiness from a deferred-probe correction.
