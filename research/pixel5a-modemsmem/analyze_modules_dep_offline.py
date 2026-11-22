@@ -30,8 +30,9 @@ def parse_dep(data):
         raise DependencyError("expected UTF-8 text")
     if len(data.encode("utf-8")) > MAX_BYTES:
         raise DependencyError("modules.dep too large")
+    # Full relative paths are authoritative. Equal basenames in different directories
+    # are valid; only exact path targets are accepted, never basename resolution.
     graph = {}
-    basenames = {}
     for num, raw in enumerate(data.splitlines(), 1):
         if not raw.strip():
             continue
@@ -41,10 +42,6 @@ def parse_dep(data):
         name = canonical(head.strip())
         if name in graph:
             raise DependencyError("duplicate module entry: " + name)
-        short = PurePosixPath(name).name
-        if short in basenames:
-            raise DependencyError("ambiguous basename: " + short)
-        basenames[short] = name
         deps = tuple(canonical(item) for item in rest.split())
         if len(deps) != len(set(deps)):
             raise DependencyError("duplicate dependencies: " + name)
@@ -73,18 +70,26 @@ def resolve(graph, targets):
             raise DependencyError("target not in graph: " + target)
     state = {}
     order = []
-    def visit(node):
-        if state.get(node) == 1:
-            raise DependencyError("dependency cycle at " + node)
-        if state.get(node) == 2:
-            return
-        state[node] = 1
-        for dep in graph[node]:
-            visit(dep)
-        state[node] = 2
-        order.append(node)
     for target in wanted:
-        visit(target)
+        if state.get(target) == 2:
+            continue
+        state[target] = 1
+        stack = [(target, iter(graph[target]))]
+        while stack:
+            node, deps = stack[-1]
+            try:
+                child = next(deps)
+            except StopIteration:
+                state[node] = 2
+                order.append(node)
+                stack.pop()
+                continue
+            if state.get(child) == 1:
+                raise DependencyError("dependency cycle at " + child)
+            if state.get(child) == 2:
+                continue
+            state[child] = 1
+            stack.append((child, iter(graph[child])))
     return order
 
 def report(data, targets):
