@@ -152,6 +152,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-host-only-modules-dep-resolver-test.py
 
+      - name: Guard Step 827 Android vendor module and modem manager readiness triggers
+        shell: bash
+        run: python3 tests/pixel5a-barbet-vendor-boot-trigger-readiness-test.py
+
       - name: Fetch public, exactly tagged AOSP text sources only
         shell: bash
         run: |
