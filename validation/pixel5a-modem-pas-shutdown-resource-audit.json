@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "step": 816,
+  "scope": "pinned_PAS_SCM_trusted_shutdown_error_and_resource_cleanup_source_not_runtime_rollback",
+  "sources": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "trusted_path": "drivers/soc/qcom/subsys-pil-tz.c",
+    "trusted_blob": "f17f9e57b0d1f671017032df9224ada0bbea15c2",
+    "loader_path": "drivers/soc/qcom/peripheral-loader.c",
+    "loader_blob": "c7920af7ab0c010c24078c72809a5d83667ce765",
+    "trusted_shutdown_lines": "722-769",
+    "subsys_shutdown_lines": "833-853",
+    "loader_shutdown_lines": "1419-1440"
+  },
+  "observed": {
+    "no_auth_returns_zero": true,
+    "shutdown_bus_scaling_vote_before_proxy_resources": true,
+    "bus_vote_failure_returns_directly": true,
+    "proxy_regulator_enable_failure_unvotes_bus": true,
+    "proxy_clock_enable_failure_unwinds_proxy_regulators_and_bus": true,
+    "scm_shutdown_command": "PAS_SHUTDOWN_CMD",
+    "scm_transport_result_field": "rc",
+    "scm_secure_return_field": "desc.ret[0]",
+    "post_scm_disables_proxy_clocks": true,
+    "post_scm_disables_proxy_regulators": true,
+    "post_scm_releases_bus_vote": true,
+    "scm_transport_failure_returns_rc_without_disabling_primary_clocks_regulators": true,
+    "scm_secure_nonzero_result_still_disables_primary_clocks_regulators": true,
+    "successful_transport_disables_primary_clocks_regulators": true,
+    "shutdown_error_returns_scm_result_when_transport_successful": true,
+    "loader_records_shutdown_failure_flag": true,
+    "loader_sends_AOP_off_after_shutdown_attempt": true,
+    "wrapper_discards_lower_shutdown_result": true,
+    "successful_rollback_proven": false,
+    "SCM_transport_failure_resource_state_verified": false,
+    "SCM_secure_error_resource_state_verified": false,
+    "modemsmem_134_barrier_verified": false,
+    "hardware_tested": false
+  },
+  "unknowns": [
+    "PAS_transport_error_vs_secure_status_actual_hardware_effect",
+    "primary_regulator_clock_ownership_after_transport_error",
+    "proxy_resource_cleanup_and_bus_vote_error_propagation",
+    "PIL_shutdown_fail_flag_impact_on_future_start",
+    "forced_shutdown_ack_and_SSR_generation",
+    "modemsmem_item134_ownership_ack_and_telephony_recovery"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "modem_start": false,
+    "smem_read": false,
+    "smem_write": false,
+    "flash": false
+  }
+}

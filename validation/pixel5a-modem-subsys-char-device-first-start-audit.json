@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "step": 809,
+  "scope": "pinned_kernel_subsystem_character_device_open_and_Android_SELinux_permission_chain_not_runtime_trace",
+  "sources": {
+    "kernel": {
+      "repository": "LineageOS/android_kernel_google_redbull",
+      "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+      "path": "drivers/soc/qcom/subsystem_restart.c",
+      "blob": "e304cb58b65037237b2a231a52dadb3bccd618c7",
+      "pil_path": "drivers/soc/qcom/subsys-pil-tz.c",
+      "pil_blob": "f17f9e57b0d1f671017032df9224ada0bbea15c2"
+    },
+    "android": {
+      "repository": "LineageOS/android_device_google_redbull",
+      "commit": "9fdf5ccfc9dd1ca22ca4ea657e414cb35e95b770",
+      "file_contexts_path": "sepolicy/vendor/qcom/common/file_contexts",
+      "file_contexts_blob": "f53709a48e090c7faa3af51da725688876747955",
+      "policy_path": "sepolicy/vendor/qcom/common/peripheral_manager.te",
+      "policy_blob": "edafb01e6199964607b294d44287e9fcbfeae79f",
+      "init_path": "init.hardware.rc",
+      "init_blob": "ec3c3edf7e72fb394bde8e9dc669e4a07ced854b"
+    }
+  },
+  "observed": {
+    "char_device_name_pattern": "subsys_%s",
+    "modem_device_path": "/dev/subsys_modem",
+    "modem_device_label": "modem_ssr_device",
+    "per_mgr_domain": "vendor_per_mgr",
+    "per_mgr_device_permission": "allow vendor_per_mgr modem_ssr_device:chr_file r_file_perms;",
+    "character_device_created_during_subsys_registration": true,
+    "character_open_calls_subsystem_get_with_fwname": true,
+    "character_open_selects_registered_subsystem_name": true,
+    "character_open_may_trigger_initial_subsystem_powerup": true,
+    "character_release_calls_subsystem_put": true,
+    "character_fops_contains_open_and_release_only": true,
+    "per_mgr_has_read_file_permissions_for_modem_device": true,
+    "per_mgr_is_intended_modem_boot_service_in_init": true,
+    "per_mgr_binary_actually_opens_subsys_modem": false,
+    "live_first_firmware_start_trace_captured": false,
+    "opening_device_proves_item134_published": false,
+    "selinux_permission_alone_proves_device_open": false,
+    "modem_pil_registration_alone_starts_firmware": false
+  },
+  "unknowns": [
+    "actual_pm_service_open_read_close_behavior",
+    "effective_runtime_device_permissions_and_SELinux",
+    "first_modem_open_or_other_first_subsystem_get_requester",
+    "when_modemsmem_probe_completed_relative_to_open",
+    "item134_original_owner_and_non_destructive_reuse",
+    "payload_memory_visibility_and_MPSS_acknowledgment",
+    "compiled_Barbet_vendor_boot_and_DTB",
+    "first_boot_recovery_and_live_telephony"
+  ],
+  "safety": {
+    "device_open": false,
+    "device_read": false,
+    "smem_read": false,
+    "smem_write": false,
+    "modem_start": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}

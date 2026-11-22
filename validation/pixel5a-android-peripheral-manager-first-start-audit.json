@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "step": 807,
+  "scope": "pinned_android_init_peripheral_manager_modem_start_and_item134_non_destructive_policy_source_only",
+  "android_source": {
+    "repository": "LineageOS/android_device_google_redbull",
+    "commit": "9fdf5ccfc9dd1ca22ca4ea657e414cb35e95b770",
+    "init_path": "init.hardware.rc",
+    "init_blob": "ec3c3edf7e72fb394bde8e9dc669e4a07ced854b",
+    "modem_script_path": "init.modem.sh",
+    "modem_script_blob": "75520c7055a56930ba4e7c1fab9fd7a2aefa1f5c",
+    "insmod_script_path": "init.insmod.sh",
+    "insmod_script_blob": "a222838cc855392838a69fbd9ea3951273078658",
+    "mpssrfs_path": "init.hardware.mpssrfs.rc.user",
+    "mpssrfs_blob": "f75a413c1a1865a758060ab9e5c1c3c5c05dbae4",
+    "peripheral_manager_policy_path": "sepolicy/vendor/qcom/common/peripheral_manager.te",
+    "peripheral_manager_policy_blob": "edafb01e6199964607b294d44287e9fcbfeae79f"
+  },
+  "kernel_source": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "modemsmem_path": "drivers/soc/qcom/modemsmem/modemsmem.c",
+    "modemsmem_blob": "428143562894e6d8ca7b656174c72ee4b096f510",
+    "header_path": "drivers/soc/qcom/modemsmem/modemsmem.h",
+    "header_blob": "a6b9d991fe7c023f44c21cc5c597746414c532a2",
+    "adsp_path": "techpack/audio/dsp/adsp-loader.c",
+    "adsp_blob": "a32acfd359092d4a8cdbcb2da804d0ec8601da0b"
+  },
+  "observed": {
+    "init_per_mgr_service_binary": "/vendor/bin/pm-service",
+    "init_per_mgr_service_name": "vendor.per_mgr",
+    "esim_done_triggers_per_mgr": true,
+    "esim_noneed_triggers_per_mgr": true,
+    "boot_completed_fallback_triggers_per_mgr": true,
+    "source_comment_describes_per_mgr_as_modem_boot": true,
+    "per_mgr_running_triggers_per_proxy": true,
+    "init_modem_script_started_on_boot": true,
+    "init_modem_script_is_identifier_property_publisher": true,
+    "init_modem_script_directly_starts_modem": false,
+    "init_modem_script_writes_smem134": false,
+    "insmod_script_sets_ready_unconditionally": true,
+    "ready_properties_prove_driver_probe_completed": false,
+    "peripheral_manager_policy_allows_modem_ssr_device_read": true,
+    "peripheral_manager_policy_allows_sysfs_ssr_read": true,
+    "peripheral_manager_binary_source_inspected": false,
+    "init_trigger_proves_subsystem_get_modem_call": false,
+    "first_MPSS_start_exact_call_trace_verified": false,
+    "modemsmem_accepts_EEXIST": true,
+    "modemsmem_unconditionally_zeros_existing_item": true,
+    "non_destructive_reuse_currently_implemented": false
+  },
+  "non_destructive_requirements": {
+    "mode": "requirements_only_not_implemented",
+    "deny_start_by_default": true,
+    "deny_write_to_existing_item_without_authoritative_owner_agreement": true,
+    "inspect_existing_item_without_mutation_only_with_authorized_mechanism": true,
+    "do_not_infer_stale_payload_safe_to_reuse": true,
+    "require_exact_64_byte_layout_and_owner_provenance": true,
+    "require_payload_visibility_and_consumer_acknowledgement": true,
+    "require_first_start_and_recovery_order_proof": true,
+    "require_manual_approval_before_any_device_operation": true
+  },
+  "unverified": [
+    "pm_service_and_pm_proxy_proprietary_implementation",
+    "actual_modem_start_kernel_call_origin",
+    "timing_of_per_mgr_vs_modemsmem_probe_completion",
+    "binary_vendor_boot_and_runtime_Android_services",
+    "item134_existing_owner_and_data_lifetime",
+    "safe_non_destructive_reuse_protocol",
+    "MPSS_payload_consumption_acknowledgement_mechanism",
+    "modem_restart_republication_safety",
+    "real_calls_SMS_mobile_data"
+  ],
+  "safety": {
+    "device_access": false,
+    "firmware_boot": false,
+    "smem_read": false,
+    "smem_write": false,
+    "flash": false,
+    "activate_drivers": false
+  },
+  "hardware_tested": false
+}

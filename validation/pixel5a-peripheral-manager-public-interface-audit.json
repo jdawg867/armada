@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "step": 812,
+  "scope": "bounded_public_interface_and_historical_policy_search_not_proprietary_redbull_runtime_trace",
+  "sources": {
+    "redbull_android": {
+      "repository": "LineageOS/android_device_google_redbull",
+      "commit": "9fdf5ccfc9dd1ca22ca4ea657e414cb35e95b770",
+      "init_path": "init.hardware.rc",
+      "init_blob": "ec3c3edf7e72fb394bde8e9dc669e4a07ced854b",
+      "policy_path": "sepolicy/vendor/qcom/common/peripheral_manager.te",
+      "policy_blob": "edafb01e6199964607b294d44287e9fcbfeae79f",
+      "contexts_path": "sepolicy/vendor/qcom/common/file_contexts",
+      "contexts_blob": "f53709a48e090c7faa3af51da725688876747955"
+    },
+    "redbull_kernel": {
+      "repository": "LineageOS/android_kernel_google_redbull",
+      "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+      "subsystem_restart_path": "drivers/soc/qcom/subsystem_restart.c",
+      "subsystem_restart_blob": "e304cb58b65037237b2a231a52dadb3bccd618c7"
+    },
+    "historical_comparison": {
+      "repository": "LineageOS/android_device_lge_bullhead",
+      "commit": "5cef16f959fe119986fe3d295d420e5f53f08d63",
+      "policy_path": "sepolicy/peripheral_manager.te",
+      "policy_blob": "343899d329b260e1f335a54ec441a16d5e9e9786"
+    }
+  },
+  "search_scope": [
+    "GitHub indexed code search: subsys_modem within redbull device tree",
+    "GitHub indexed code search: subsys_modem peripheral_manager",
+    "GitHub indexed code search: pm-service subsystem_get",
+    "Pinned Redbull init service, SELinux and kernel subsystem char-device handlers",
+    "Historical Bullhead Peripheral Manager policy as cross-device comparison only"
+  ],
+  "observed": {
+    "redbull_service_binary": "/vendor/bin/pm-service",
+    "redbull_service_name": "vendor.per_mgr",
+    "redbull_policy_domain": "vendor_per_mgr",
+    "redbull_device_type": "modem_ssr_device",
+    "redbull_device_node": "/dev/subsys_modem",
+    "kernel_char_device_open_handler": "subsys_device_open",
+    "kernel_char_device_get_call": "subsystem_get_with_fwname",
+    "kernel_character_open_can_trigger_subsystem_start": true,
+    "redbull_source_contains_service_definition": true,
+    "redbull_source_contains_selinux_read_grant": true,
+    "bullhead_historical_policy_has_per_mgr_ssr_chr_file_open_read": true,
+    "historical_bullhead_proves_redbull_behavior": false,
+    "github_search_proves_absence_of_implementation": false,
+    "public_redbull_pm_service_implementation_verified": false,
+    "proprietary_pm_service_actual_open_verified": false,
+    "publicly_verified_first_requester": false,
+    "first_modem_boot_runtime_verified": false,
+    "modemsmem_item134_ready_before_first_boot_verified": false
+  },
+  "unknowns": [
+    "installed_proprietary_pm_service_code_or_documented_call_flow",
+    "other_userspace_or_kernel_requesters_of_first_modem_start",
+    "effective_runtime_device_and_policy",
+    "first_open_vs_modemsmem_probe_and_payload_visibility",
+    "SMEM_item134_ownership_ack_reuse_and_reset",
+    "phone_calls_SMS_data_and_SSR_recovery"
+  ],
+  "safety": {
+    "hardware_tested": false,
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "modem_start": false,
+    "smem_read": false,
+    "smem_write": false,
+    "flash": false
+  }
+}

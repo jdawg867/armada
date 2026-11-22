@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "step": 823,
+  "scope": "bounded_public_dependency_artifact_search_and_pinned_archive_download_failure_not_live_modprobe",
+  "ci": {
+    "step822_commit": "7da0ed056d9937af721d528c694d49f40db15b1a",
+    "android_validation": {
+      "run": 44961612743,
+      "conclusion": "success"
+    },
+    "official_source": {
+      "run": 44961612700,
+      "conclusion": "success"
+    },
+    "arm64_compile": {
+      "run": 44961612745,
+      "conclusion": "failure",
+      "failed_step": "Retrieve exact pinned Linux source (never checkout into Armada)",
+      "failure_class": "HTTP 429 from GitHub archive",
+      "compile_attempted": false
+    },
+    "remediation": "same commit pinned codeload.github.com archive fallback with unchanged Linux 7.2.6 and ARM64 compile guards",
+    "remediation_success_verified": false
+  },
+  "source": {
+    "kernel_repo": "LineageOS/android_kernel_google_redbull",
+    "kernel_commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "kernel_depmod_script": "scripts/depmod.sh",
+    "kernel_depmod_script_url": "https://github.com/LineageOS/android_kernel_google_redbull/blob/929e7e2f3658867d51a1d423c7e000f5cf1d4043/scripts/depmod.sh",
+    "android_repo": "LineageOS/android_device_google_redbull",
+    "android_commit": "9fdf5ccfc9dd1ca22ca4ea657e414cb35e95b770",
+    "source_module_list": "modules.load",
+    "source_module_list_blob": "b116d1f234682a1f7e7275f36e6c7a2feb79ddb5"
+  },
+  "public_inspection": {
+    "searched_android_source_index_for_modules_dep": true,
+    "android_source_index_modules_dep_matches": 0,
+    "searched_pinned_kernel_source_index_for_modules_dep": true,
+    "kernel_source_matches_build_or_docs_not_generated_dependency_file": true,
+    "checked_source_probe_run": 44957899925,
+    "source_probe_artifact_names": [
+      "pixel5a-aosp-lineage-12l-comparison-metadata",
+      "pixel5a-lineage-module-projection-source-only",
+      "pixel5a-aosp-12l-source-metadata",
+      "pixel5a-aosp-lineage-12l-source-diff"
+    ],
+    "inspected_run_artifacts_contain_validated_vendor_modules_dep": false,
+    "actual_vendor_modules_dep_retrieved": false,
+    "public_dependency_metadata_exhaustively_searched": false,
+    "source_module_list_equivalent_to_dep_graph": false,
+    "kbuild_compile_order_equivalent_to_probe_order": false,
+    "modemsmem_item134_first_start_order_verified": false
+  },
+  "unknowns": [
+    "public_archived_stock_vendor_modules_dep_or_modules_dep_bin",
+    "actual_dependency_graph_of_pil_bus_modemsmem_modules",
+    "module_alias_softdep_metadata_and_first_stage_modprobe_resolution",
+    "runtime_bus_client_registration_and_modem_start_order",
+    "smem134_ownership_publishing_and_telephony",
+    "whether_codeload_fallback_succeeds_in_step823_ci"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "modem_start": false,
+    "smem_read": false,
+    "smem_write": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}

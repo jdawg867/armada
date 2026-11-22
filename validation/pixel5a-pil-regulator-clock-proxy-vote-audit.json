@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "step": 817,
+  "scope": "pinned_PIL_regulator_clock_proxy_vote_helper_control_flow_source_only",
+  "source": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "path": "drivers/soc/qcom/subsys-pil-tz.c",
+    "blob": "f17f9e57b0d1f671017032df9224ada0bbea15c2",
+    "reg_enable_lines": "455-515",
+    "reg_disable_lines": "517-533",
+    "clock_enable_lines": "535-555",
+    "clock_disable_lines": "557-563",
+    "proxy_vote_lines": "565-593",
+    "proxy_unvote_lines": "595-607"
+  },
+  "observed": {
+    "regulator_voltage_error_enters_unwind": true,
+    "regulator_load_error_enters_unwind": true,
+    "regulator_enable_error_enters_unwind": true,
+    "regulator_error_unwinds_prior_entries_reverse": true,
+    "regulator_cleanup_checks_reset_errors": false,
+    "regulator_disable_helper_returns_void": true,
+    "regulator_keep_proxy_regs_on_can_skip_enable_disable": true,
+    "clock_prepare_error_unwinds_previous_clocks_reverse": true,
+    "clock_disable_helper_returns_void": true,
+    "proxy_vote_acquires_bus_first": true,
+    "proxy_vote_regulator_failure_returns_without_explicit_bus_unvote": true,
+    "proxy_vote_clock_failure_disables_proxy_regulators": true,
+    "proxy_vote_clock_failure_explicit_bus_unvote": false,
+    "proxy_vote_success_path_has_bus_vote": true,
+    "proxy_unvote_helper_releases_bus_vote": true,
+    "bus_scaling_build_configuration_has_stub_path": true,
+    "bus_vote_leak_on_actual_pixel5a_verified": false,
+    "all_regulator_disable_operations_succeed_verified": false,
+    "modem_recovery_verified": false
+  },
+  "unknowns": [
+    "effective_compiled_MSM_bus_scaling_configuration",
+    "runtime_bus_client_and_vote_reference_model",
+    "regulator_clock_actual_acquisition_and_disable_results",
+    "whether_parent_loader_always_unvotes_after_proxy_vote_failure",
+    "PAS_shutdown_primary_resource_ownership_after_SCM_error",
+    "modemsmem_item134_ready_barrier_and_phone_telephony"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "smem_read": false,
+    "smem_write": false,
+    "modem_start": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}

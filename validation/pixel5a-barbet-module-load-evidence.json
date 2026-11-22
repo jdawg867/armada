@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "device": "Pixel 5a barbet",
+  "classification": "lineage_device_tree_module_loading_source_only_not_stock_android12l_verified",
+  "repos": {
+    "barbet": {
+      "repository": "LineageOS/android_device_google_barbet",
+      "commit": "24101a383bb1951952adcd6f62668338dd048f03",
+      "files": {
+        "init.insmod.barbet.cfg": "f2728df28091a374ff6bfa6e4e50f3695420e722",
+        "barbet/init.barbet.rc": "e90914410f21493621e2f6ac6c3e00e117ed9c9c",
+        "device-barbet.mk": "750a8be1c808ec4e861e2627059d7022d0507560"
+      }
+    },
+    "redbull": {
+      "repository": "LineageOS/android_device_google_redbull",
+      "commit": "9fdf5ccfc9dd1ca22ca4ea657e414cb35e95b770",
+      "files": {
+        "modules.load": "b116d1f234682a1f7e7275f36e6c7a2feb79ddb5",
+        "BoardConfig-common.mk": "a70253537c0da383ac0c96c9f02f526faba89ef4",
+        "BoardConfigLineage.mk": "73921b90f308b6adbf6ba6b0d31c563eedede37e",
+        "init.hardware.rc": "ec3c3edf7e72fb394bde8e9dc669e4a07ced854b",
+        "init.insmod.sh": "a222838cc855392838a69fbd9ea3951273078658"
+      }
+    }
+  },
+  "observed": {
+    "boot_module_list_contains_modemsmem": true,
+    "boot_module_list_contains_smem": true,
+    "boot_module_list_contains_subsys_pil_tz": true,
+    "board_config_distinguishes_first_stage_modules": true,
+    "barbet_config_first_action": "modprobe|-b *",
+    "barbet_config_sets_modules_ready": true,
+    "barbet_config_sets_devices_ready": true,
+    "init_hardware_starts_insmod_sh_at_init": true,
+    "init_hardware_waits_on_modules_ready": true,
+    "init_script_modprobe_uses_vendor_modules_load": true,
+    "init_script_does_not_check_modprobe_status": true,
+    "init_script_sets_ready_even_without_config": true,
+    "modemsmem_precedes_qpnp_regulator_in_modules_load": true,
+    "modemsmem_first_stage_boot_module_listed": true,
+    "modemsmem_platform_probe_completion_before_pas_unproven": true,
+    "modemsmem_publication_fence_before_modem_boot_unproven": true
+  },
+  "not_established": [
+    "lineage_tree_matches_exact_stock_android12l_partition_contents",
+    "first_stage_modemsmem_module_probe_success",
+    "module_list_order_implies_driver_probe_completion",
+    "init_ready_property_implies_modemsmem_probe_success",
+    "mpss_pil_tz_probe_or_firmware_start_after_modemsmem_probe",
+    "modemsmem_64_byte_publication_happens_before_modem_reads_it",
+    "actual_barbet_init_boot_trace_and_uevent_probe_order",
+    "qcom_smem_item134_owner_reinitialization_on_crash",
+    "mainline_linux_7_2_6_pas_equivalent_to_downstream_subsys_pil_tz",
+    "kernel_modem_calls_sms_mobile_data_ready"
+  ],
+  "safety": {
+    "allow_module_loading": false,
+    "allow_smem_publish": false,
+    "allow_driver_register": false,
+    "allow_pas_start": false,
+    "allow_device_flash": false
+  },
+  "hardware_verified": false
+}

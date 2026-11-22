@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "device": "Pixel 5a barbet",
+  "scope": "pinned_lineage_redbull_source_only_not_safe_to_port",
+  "source": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "path": "drivers/soc/qcom/modemsmem/modemsmem.c",
+    "blob": "428143562894e6d8ca7b656174c72ee4b096f510",
+    "header_path": "drivers/soc/qcom/modemsmem/modemsmem.h",
+    "header_blob": "a6b9d991fe7c023f44c21cc5c597746414c532a2"
+  },
+  "vendor_smem": {
+    "item": 134,
+    "bytes": 64,
+    "alloc_api": "qcom_smem_alloc",
+    "existing_item_errno": "-EEXIST",
+    "get_api": "qcom_smem_get",
+    "probe_overwrites_existing": true,
+    "clears_all_64_bytes": true,
+    "clearing_call": "memset_io",
+    "write_api": "writel_relaxed",
+    "existing_data_preserved": false,
+    "ownership_documented": false
+  },
+  "inputs": {
+    "platform_version": "socinfo_get_g_platform_version",
+    "platform_type": "socinfo_get_g_platform_type",
+    "platform_subtype": "socinfo_get_g_platform_subtype",
+    "modem_flag_path": "/chosen/cdt/cdb2",
+    "factory_bootmodes": [
+      "factory",
+      "ffbm-00",
+      "ffbm-01"
+    ],
+    "factory_tunable_sysfs": true,
+    "dsds_property": "dsds"
+  },
+  "lifecycle": {
+    "platform_driver_register": true,
+    "module_init": true,
+    "remove_callback": false,
+    "sysfs_create_group": true,
+    "sysfs_failure_fatal": false,
+    "sysfs_remove_group": false,
+    "allocation_failure_mapped_to_enomem": true
+  },
+  "unsafe_to_copy": [
+    "unconditional_zeroing_after_existing_allocation",
+    "no_proven_owner_for_vendor_item",
+    "no_remove_sysfs_cleanup",
+    "sysfs_create_failure_does_not_fail_probe",
+    "allocation_or_get_errors_collapsed_to_enomem",
+    "boot_mode_and_flag_properties_need_exact_vendor_contract",
+    "no_demonstrated_mpSS_start_order_dependency"
+  ],
+  "research_port": {
+    "allow_allocation": false,
+    "allow_existing_item_overwrite": false,
+    "allow_publication": false,
+    "allow_driver_activation": false,
+    "allow_modem_start": false,
+    "allow_factory_sysfs": false
+  },
+  "hardware_verified": false
+}

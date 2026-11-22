@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "step": 800,
+  "scope": "pinned_source_IPA_property_to_PIL_argument_not_runtime_dtb",
+  "source": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "ipa_path": "drivers/platform/msm/ipa/ipa_v3/ipa.c",
+    "ipa_blob": "f03dc32340af1e5b57ab0356b71c8700ff7e1bdb",
+    "ipa_header_path": "drivers/platform/msm/ipa/ipa_v3/ipa_i.h",
+    "ipa_header_blob": "62abd7c3e270dd24b0a5f3e0eebd7f21a55664e6",
+    "binding_path": "arch/arm64/boot/dts/vendor/bindings/platform/msm/ipa.txt"
+  },
+  "assignments": {
+    "gsi_property": "qcom,use-gsi-ipa-fw",
+    "gsi_target_resource": "ipa_drv_res->gsi_fw_file_name",
+    "gsi_context": "ipa3_ctx->gsi_fw_file_name",
+    "gsi_default": "ipa_fws",
+    "uc_property": "qcom,use-uc-ipa-fw",
+    "uc_target_resource": "ipa_drv_res->uc_fw_file_name",
+    "uc_context": "ipa3_ctx->uc_fw_file_name",
+    "uc_default": "ipa_uc",
+    "uses_of_property_read_string": true,
+    "copies_resource_strings_into_context": true,
+    "conditional_firmware_selection_uses_override_or_default": true,
+    "defaults_select_modem": false,
+    "lito_device_specific_override_observed_in_bounded_search": false,
+    "barbet_final_runtime_property_verified": false
+  },
+  "examples_other_soc": [
+    {
+      "path": "arch/arm64/boot/dts/vendor/qcom/scuba.dtsi",
+      "property": "qcom,use-gsi-ipa-fw",
+      "value": "scuba_ipa_fws"
+    },
+    {
+      "path": "arch/arm64/boot/dts/vendor/qcom/lagoon.dtsi",
+      "property": "qcom,use-gsi-ipa-fw",
+      "value": "lagoon_ipa_fws"
+    }
+  ],
+  "overlay_build_reference": {
+    "makefile_path": "arch/arm64/boot/dts/google/Makefile",
+    "makefile_blob": "852a844e147eba2dc9f2a2cf7b2483ff3e91894e",
+    "base": "qcom-base/lito-v2.dtb",
+    "google_overlay": "lito-v2-barbet-mp-overlay.dtbo",
+    "qcom_base_mapping_fully_verified": false,
+    "compiled_dtbo_inspected": false
+  },
+  "still_unverified": [
+    "exact_final_barbet_ipa_node_properties",
+    "complete_qcom_base_overlay_mapping",
+    "selected_runtime_barbet_variant",
+    "initial_MPSS_firmware_start_initiator",
+    "all_modem_start_routes_including_userspace",
+    "vendor_item134_publication_before_MPSS_start",
+    "stock_vendor_boot_and_runtime_trace",
+    "telephony_and_modem_recovery"
+  ],
+  "safety": {
+    "allow_smem_write": false,
+    "allow_modem_start": false,
+    "allow_driver_activation": false,
+    "allow_flash": false
+  },
+  "hardware_tested": false
+}

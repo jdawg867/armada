@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "step": 795,
+  "scope": "pinned_downstream_PIL_subsystem_software_paths_only",
+  "source": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "pil_path": "drivers/soc/qcom/subsys-pil-tz.c",
+    "pil_blob": "f17f9e57b0d1f671017032df9224ada0bbea15c2",
+    "ssr_path": "drivers/soc/qcom/subsystem_restart.c",
+    "ssr_blob": "e304cb58b65037237b2a231a52dadb3bccd618c7",
+    "peripheral_path": "drivers/soc/qcom/peripheral-loader.c",
+    "peripheral_blob": "c7920af7ab0c010c24078c72809a5d83667ce765"
+  },
+  "observed": {
+    "pil_probe_sets_powerup_to_subsys_powerup": true,
+    "pil_probe_registers_subsys": true,
+    "pil_subsys_powerup_calls_pil_boot": true,
+    "ssr_subsys_register_registers_device_and_list": true,
+    "subsystem_get_invokes_subsys_start_on_zero_refcount": true,
+    "subsys_start_calls_descriptor_powerup": true,
+    "subsystem_get_resolves_pon_depends_on": true,
+    "pon_depends_on_derived_from_device_tree_property": true,
+    "pil_probe_reads_qcom_smem_id_for_crash_reason": true,
+    "smem_id_equivalent_to_vendor_item_134": false,
+    "subsys_register_immediately_calls_pil_boot": false,
+    "source_only_module_list_position_proves_runtime_start": false
+  },
+  "gaps": [
+    "actual_barbet_modem_node_and_pon_depends_on_properties_not_yet_traced",
+    "all_callers_of_subsystem_get_modem_not_yet_traced",
+    "exact_stock_android12l_vendor_boot_and_module_load_order_unverified",
+    "module_registration_does_not_prove_probe_completion_or_modem_boot",
+    "no_vendor_item134_publication_completion_dependency_proven",
+    "crash_recovery_republication_and_lock_order_unverified",
+    "actual_voice_sms_data_and_device_validation_not_performed"
+  ],
+  "permissions": {
+    "allow_smem_publish": false,
+    "allow_driver_registration": false,
+    "allow_firmware_boot": false,
+    "allow_flash": false,
+    "allow_upstream_generic_kernel_patch": false
+  },
+  "hardware_tested": false
+}

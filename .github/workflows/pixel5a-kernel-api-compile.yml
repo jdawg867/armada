@@ -1,0 +1,276 @@
+name: Pixel 5a Linux 7.2.6 kernel API compile probe
+
+on:
+  pull_request:
+    branches: [development]
+    paths:
+      - "research/pixel5a-modemsmem/**"
+      - ".github/workflows/pixel5a-kernel-api-compile.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  kernel-headers:
+    name: Linux 7.2.6 ARM64 header and isolated Kbuild compile
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Enforce read-only modemsmem preflight source contract
+        shell: bash
+        run: python3 tests/pixel5a-kernel-readonly-preflight-test.py
+
+      - name: Vendor SMEM ownership is unverified (source-only negative tests)
+        shell: bash
+        run: python3 tests/pixel5a-vendor-ownership-audit-test.py
+
+      - name: Pixel 5a pinned downstream modemsmem write/lifecycle hazards (source-only)
+        shell: bash
+        run: python3 tests/pixel5a-downstream-modemsmem-write-audit-test.py
+
+      - name: Pixel 5a modem publication-order evidence (source-only)
+        shell: bash
+        run: python3 tests/pixel5a-modem-publication-order-test.py
+
+      - name: Pinned Pixel 5a Barbet first-stage and init module evidence (source-only)
+        shell: bash
+        run: python3 tests/pixel5a-barbet-module-load-evidence-test.py
+
+      - name: Official Pixel 5a Android 12L stock-build identity (no binary inspected)
+        shell: bash
+        run: python3 tests/pixel5a-stock-android12l-image-evidence-test.py
+
+      - name: Test exact Android 12L AOSP tag source probe without networking
+        shell: bash
+        run: python3 tests/pixel5a-aosp-12l-source-probe-test.py
+
+      - name: Verify 15-of-18 official AOSP tagged text evidence snapshot (not stock image)
+        shell: bash
+        run: python3 tests/pixel5a-aosp-12l-tag-result-test.py
+
+      - name: AOSP 12L vs pinned LineageOS text comparison offline tests
+        shell: bash
+        run: python3 tests/pixel5a-aosp-lineage-comparison-test.py
+
+      - name: Verify hosted AOSP vs Lineage source comparison snapshot (not hardware)
+        shell: bash
+        run: python3 tests/pixel5a-aosp-lineage-result-test.py
+
+      - name: Review AOSP-Lineage changed hunks (offline negative tests)
+        shell: bash
+        run: python3 tests/pixel5a-aosp-lineage-source-diff-test.py
+
+      - name: Verified AOSP-Lineage init and module packaging diff interpretation
+        shell: bash
+        run: python3 tests/pixel5a-aosp-lineage-diff-interpretation-test.py
+
+      - name: Pinned Lineage first-stage module projection offline regression tests
+        shell: bash
+        run: python3 tests/pixel5a-lineage-module-projection-test.py
+
+      - name: Verify source-only Lineage 329-module first-stage projection evidence
+        shell: bash
+        run: python3 tests/pixel5a-lineage-first-stage-evidence-test.py
+
+      - name: Verify downstream PIL subsystem start-trigger source evidence
+        shell: bash
+        run: python3 tests/pixel5a-downstream-pil-start-trigger-test.py
+
+      - name: Validate pinned Lito PIL modem DT and conditional subsystem caller
+        shell: bash
+        run: python3 tests/pixel5a-lito-modem-pil-dt-caller-test.py
+
+      - name: Verify Lito ADSP source selection and unproven modem branch
+        shell: bash
+        run: python3 tests/pixel5a-adsp-modem-loader-config-test.py
+
+      - name: Verify Barbet DT include graph and indirect modem caller source boundaries
+        shell: bash
+        run: python3 tests/pixel5a-barbet-dt-indirect-modem-caller-test.py
+
+      - name: Verify IPA default subsystem names and Barbet MP overlay source mapping
+        shell: bash
+        run: python3 tests/pixel5a-ipa-subsystem-name-barbet-overlay-test.py
+
+      - name: Verify IPA DT firmware-name override provenance and defaults
+        shell: bash
+        run: python3 tests/pixel5a-ipa-firmware-name-property-provenance-test.py
+
+      - name: Verify pinned Lito IPA source node and non-modem firmware defaults
+        shell: bash
+        run: python3 tests/pixel5a-lito-ipa-node-source-test.py
+
+      - name: Validate pinned Lito modem PIL binding and absent SMEM readiness fence
+        shell: bash
+        run: python3 tests/pixel5a-lito-modem-pil-binding-test.py
+
+      - name: Audit pinned modemsmem item134 reset and missing firmware start barrier
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-publication-first-request-test.py
+
+      - name: Verify SMEM allocator metadata barriers are not item134 payload readiness
+        shell: bash
+        run: python3 tests/pixel5a-smem-allocator-ownership-ordering-test.py
+
+      - name: Verify source-only SMEM provider deferral and fail-closed publication contract
+        shell: bash
+        run: python3 tests/pixel5a-smem-provider-publication-contract-test.py
+
+      - name: Check offline-only modem publication fail-closed state machine
+        shell: bash
+        run: python3 tests/pixel5a-modem-publication-state-model-test.py
+
+      - name: Guard pinned Android Peripheral Manager first-start and non-destructive SMEM policy
+        shell: bash
+        run: python3 tests/pixel5a-android-peripheral-manager-first-start-test.py
+
+      - name: Check pinned Android init Peripheral Manager event edges and readiness gaps
+        shell: bash
+        run: python3 tests/pixel5a-android-init-modem-start-event-graph-test.py
+
+      - name: Verify pinned modem SSR character device startup and permission boundaries
+        shell: bash
+        run: python3 tests/pixel5a-modem-subsys-char-device-first-start-test.py
+
+      - name: Verify pinned modem SSR ueventd DAC and SELinux evidence boundaries
+        shell: bash
+        run: python3 tests/pixel5a-modem-ssr-device-access-test.py
+
+      - name: Check pinned Peripheral Manager init identity and modem SSR access eligibility
+        shell: bash
+        run: python3 tests/pixel5a-peripheral-manager-init-identity-test.py
+
+      - name: Guard bounded public Peripheral Manager and subsystem SSR source conclusions
+        shell: bash
+        run: python3 tests/pixel5a-peripheral-manager-public-interface-test.py
+
+      - name: Guard pinned SSR device open-close and reference lifecycle semantics
+        shell: bash
+        run: python3 tests/pixel5a-modem-ssr-get-put-lifecycle-test.py
+
+      - name: Guard pinned SSR start stop and failure unwinding evidence
+        shell: bash
+        run: python3 tests/pixel5a-modem-ssr-start-stop-failure-test.py
+
+      - name: Guard pinned Lito PIL callback and loader failure rollback evidence
+        shell: bash
+        run: python3 tests/pixel5a-modem-pil-callback-rollback-test.py
+
+      - name: Guard Step 816 pinned PAS SCM shutdown error and resource ownership boundaries
+        shell: bash
+        run: python3 tests/pixel5a-modem-pas-shutdown-resource-test.py
+
+      - name: Guard pinned PIL regulator clock and proxy bus vote failure semantics
+        shell: bash
+        run: python3 tests/pixel5a-pil-regulator-clock-proxy-vote-test.py
+
+      - name: Guard pinned PIL proxy vote failure edge and missing unvote
+        shell: bash
+        run: python3 tests/pixel5a-pil-proxy-vote-error-edge-test.py
+
+      - name: Guard pinned Redbull bus config and Lito modem bus source selection
+        shell: bash
+        run: python3 tests/pixel5a-pil-modem-bus-scaling-source-selection-test.py
+
+      - name: Guard pinned Barbet MP modem bus DT and module-list projection
+        shell: bash
+        run: python3 tests/pixel5a-barbet-modem-bus-overlay-module-order-test.py
+
+      - name: Guard Step 821 Barbet MP and modprobe dependency source boundaries
+        shell: bash
+        run: python3 tests/pixel5a-barbet-mp-modprobe-dependency-boundary-test.py
+
+      - name: Guard Step 822 source-hash CI recheck and Kbuild dependency evidence limits
+        shell: bash
+        run: python3 tests/pixel5a-source-hash-and-modules-dependency-boundary-test.py
+
+      - name: Guard Step 823 public module dependency evidence and download failure classification
+        shell: bash
+        run: python3 tests/pixel5a-public-module-dependency-evidence-test.py
+
+      - name: Run host-only synthetic modules.dep topology and fail-closed tests
+        shell: bash
+        run: python3 tests/pixel5a-host-only-modules-dep-resolver-test.py
+
+      - name: Guard Step 827 Android vendor module and modem manager readiness triggers
+        shell: bash
+        run: python3 tests/pixel5a-barbet-vendor-boot-trigger-readiness-test.py
+
+      - name: Guard Step 828 item134 initialization without inferred modem start barrier
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-item134-first-start-barrier-test.py
+
+      - name: Guard Step 829 modemsmem reprobe re-clear and SSR source boundaries
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-reprobe-reclear-ssr-lifecycle-test.py
+
+      - name: Guard Step 830 SMEM allocator item134 publication and deferred probe boundaries
+        shell: bash
+        run: python3 tests/pixel5a-smem-allocator-item134-publication-defer-test.py
+
+      - name: Guard Step 831 SMEM deferred-probe error propagation evidence
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-deferred-probe-driver-core-test.py
+
+      - name: Provision ARM64 build prerequisites
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc-aarch64-linux-gnu bc bison flex libssl-dev libelf-dev
+
+      - name: Retrieve exact pinned Linux source (never checkout into Armada)
+        shell: bash
+        run: |
+          set -euo pipefail
+          PIN="500df175a7f9e6bc1a9c328590ca5150f84f9ff0"
+          mkdir -p "$RUNNER_TEMP/linux-src"
+          if ! curl -fL --retry 3 --retry-all-errors --max-time 300 \
+            "https://github.com/torvalds/linux/archive/${PIN}.tar.gz" \
+            -o "$RUNNER_TEMP/linux-source.tar.gz"; then
+            echo "Primary GitHub archive unavailable; retrying same pinned commit via codeload" >&2
+            rm -f "$RUNNER_TEMP/linux-source.tar.gz"
+            curl -fL --retry 3 --retry-all-errors --max-time 300 \
+              "https://codeload.github.com/torvalds/linux/tar.gz/${PIN}" \
+              -o "$RUNNER_TEMP/linux-source.tar.gz"
+          fi
+          tar -xzf "$RUNNER_TEMP/linux-source.tar.gz" -C "$RUNNER_TEMP/linux-src" --strip-components=1
+          KERNEL="$RUNNER_TEMP/linux-src"
+          test -f "$KERNEL/Makefile"
+          grep -Eq '^VERSION = 7$' "$KERNEL/Makefile"
+          grep -Eq '^PATCHLEVEL = 2$' "$KERNEL/Makefile"
+          grep -Eq '^SUBLEVEL = 6$' "$KERNEL/Makefile"
+          printf 'KERNEL=%s\n' "$KERNEL" >> "$GITHUB_ENV"
+
+      - name: Configure actual Linux 7.2.6 ARM64 build headers
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/kernel-out"
+          make -C "$KERNEL" O="$RUNNER_TEMP/kernel-out" \
+            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
+          make -C "$KERNEL" O="$RUNNER_TEMP/kernel-out" -j2 \
+            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules_prepare
+
+      - name: Compile real-kernel-header SMEM and Socinfo probe (never load)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC="$GITHUB_WORKSPACE/research/pixel5a-modemsmem"
+          test -f "$SRC/modemsmem_kernel_header_probe.c"
+          test -f "$SRC/kernel_smem_facade.h"
+          ! grep -Eq 'module_init\(|platform_driver_register\(|rproc_boot\(|request_firmware\(' "$SRC/modemsmem_kernel_header_probe.c"
+          # modules_prepare does not generate Module.symvers; modpost may warn
+          # about unresolved symbols. The acceptance check is actual ARM64
+          # compilation of the probe object using the pinned kernel headers.
+          make -C "$KERNEL" O="$RUNNER_TEMP/kernel-out" -j2 \
+            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
+            KBUILD_MODPOST_WARN=1 M="$SRC" modules
+          test -s "$SRC/modemsmem_kernel_header_probe.o"
+          file "$SRC/modemsmem_kernel_header_probe.o"
+          echo "PASS Linux 7.2.6 ARM64 kernel-header compile probe"
+          echo "No module is uploaded, installed, loaded, published or run on a phone."

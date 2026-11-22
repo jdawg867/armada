@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "step": 818,
+  "scope": "pinned_PIL_proxy_vote_error_edge_and_unvote_control_flow_not_live_bus_leak",
+  "sources": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "loader_path": "drivers/soc/qcom/peripheral-loader.c",
+    "loader_blob": "c7920af7ab0c010c24078c72809a5d83667ce765",
+    "tz_path": "drivers/soc/qcom/subsys-pil-tz.c",
+    "tz_blob": "f17f9e57b0d1f671017032df9224ada0bbea15c2",
+    "loader_wrapper_lines": "605-680",
+    "loader_boot_lines": "1279-1290,1381-1411",
+    "tz_proxy_lines": "565-607"
+  },
+  "observed": {
+    "tz_proxy_vote_acquires_bus_first": true,
+    "tz_regulator_error_returns_without_local_bus_unvote": true,
+    "tz_clock_error_unwinds_regs_but_no_local_bus_unvote": true,
+    "tz_proxy_unvote_callback_releases_bus": true,
+    "loader_proxy_vote_invokes_callback": true,
+    "loader_proxy_vote_wake_lock_relaxed_on_callback_error": true,
+    "loader_proxy_vote_enables_irq_even_if_callback_errors": true,
+    "loader_proxy_vote_notifies_even_if_callback_errors": true,
+    "loader_boot_failed_proxy_vote_jumps_to": "release_fw",
+    "loader_boot_err_boot_calls_unvote": true,
+    "loader_boot_failed_proxy_vote_bypasses_err_boot": true,
+    "loader_boot_release_fw_releases_firmware": true,
+    "loader_boot_out_releases_mmap_and_sends_aop_off_on_error": true,
+    "loader_boot_failed_proxy_vote_calls_unvote_directly": false,
+    "delayed_unvote_scheduled_for_failed_proxy_vote_in_boot_path": false,
+    "actual_lito_bus_vote_leak_verified": false,
+    "compiled_bus_scaling_config_verified": false,
+    "live_telephony_recovery_verified": false
+  },
+  "unknowns": [
+    "effective_MSM_BUS_SCALING_and_bus_client_configuration",
+    "whether_irq_or_external_actor_can_trigger_proxy_unvote_after_failed_callback",
+    "proxy_irq_and_notification_effects_when_vote_failed",
+    "resource_ownership_if_callback_returns_error_after_bus_vote",
+    "SMEM_item134_publication_and_first_modem_start_order",
+    "working_Pixel5a_calls_SMS_data_and_SSR_recovery"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "smem_read": false,
+    "smem_write": false,
+    "modem_start": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}

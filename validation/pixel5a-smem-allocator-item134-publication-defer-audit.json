@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "step": 830,
+  "scope": "pinned_SMEM_allocator_vs_modemsmem_item134_content_write_ownership_and_probe_error_boundary",
+  "ci": {
+    "previous_commit": "a4eaa70ae167123a1c7cb7ef371f92c6020c8aea",
+    "android_run": 44985869730,
+    "android_conclusion": "success",
+    "source_run": 44985869759,
+    "source_conclusion": "success",
+    "compile_run": 44985869813,
+    "compile_conclusion": "success"
+  },
+  "source": {
+    "kernel_repo": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "smem_c": "drivers/soc/qcom/smem.c",
+    "smem_c_blob": "de4d8aba7e366d5a3594731674dcfa310b3a8713",
+    "modemsmem_c": "drivers/soc/qcom/modemsmem/modemsmem.c",
+    "modemsmem_blob": "428143562894e6d8ca7b656174c72ee4b096f510"
+  },
+  "findings": {
+    "allocator_private_existing_item_returns_EEXIST": true,
+    "allocator_global_existing_item_returns_EEXIST": true,
+    "allocator_EEXIST_signals_content_fully_initialized": false,
+    "allocator_uses_hwspinlock_for_alloc": true,
+    "allocator_uses_hwspinlock_for_get": true,
+    "allocator_unlocks_after_allocation": true,
+    "allocator_unlocks_after_get": true,
+    "allocator_metadata_wmb_before_private_free_offset": true,
+    "allocator_metadata_wmb_before_global_allocated_flag": true,
+    "allocator_wmb_is_item134_content_publication_ack": false,
+    "modemsmem_retrieves_existing_item_after_EEXIST": true,
+    "modemsmem_unconditionally_zeroes_contents_outside_allocator_get_lock": true,
+    "modemsmem_populates_fields_after_zeroing": true,
+    "allocator_get_can_return_EPROBE_DEFER": true,
+    "allocator_alloc_can_return_EPROBE_DEFER": true,
+    "modemsmem_alloc_other_failure_maps_to_ENOMEM": true,
+    "modemsmem_get_ERROR_maps_to_ENOMEM": true,
+    "modemsmem_propagates_EPROBE_DEFER_to_platform_probe": false,
+    "modemsmem_explicit_remote_consumer_ack": false,
+    "actual_race_or_incorrect_phone_behavior_proven": false,
+    "live_device_tested": false
+  },
+  "unknowns": [
+    "whether_driver_probe_is_invoked_before_QCOM_SMEM_is_ready_on_stock_barbet",
+    "actual_platform_driver_probe_deferral_and_retry_behavior",
+    "content_publication_memory_ordering_required_by_modem_firmware_ABI",
+    "remote_modem_consumption_and_first_start_sequence",
+    "whether_EEXIST_happens_only_before_first_MPSS_start",
+    "SSR_reprobe_item134_republication_and_telephony_recovery"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "modem_start": false,
+    "smem_read": false,
+    "smem_write": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}

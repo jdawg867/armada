@@ -38,7 +38,7 @@ Local kernel research checkouts were retired after the relevant modifications an
 | Modem SMP2P | MPSS uses SMEM indices `435` and `428`; IPA inbound/outbound entries; IPCC mailbox | Inspected SM7250 DTS lacks MPSS SMP2P | Provider and modem lifecycle remain unimplemented |
 | IPA IOMMU | Downstream has separate AP, WLAN, UC context-bank devices and respective domains | Mainline IPA uses `ipa->dev` for IMEM/SMEM IOMMU maps and `gsi->dev = &pdev->dev` for GSI DMA; IPA binding allows 1–2 IOMMU specifiers | **Do not automatically put all three vendor SIDs into mainline IPA `iommus`** |
 | IPA versions and resources | Lito vendor IPA memory/IRQ/firmware descriptions need further reconciliation | SM6350 IPA example is **not** a validated drop-in; `qcom,sm7250-ipa` missing from inspected matching/binding | IPA enablement deferred |
-| Interconnect | RPMh IPA clock exists in mainline `clk-rpmh.c` | Local SM7250 ICC source is a research prototype, intentionally without provider registration/DT match | No BCM/QoS voting, power-domain enabling or ICC activation |
+| Interconnect | RPMh IPA clock exists in mainline `clk-rpmh.c` | Preserved SM7250 ICC prototype includes provider registration and OF matches; the saved build config leaves the driver disabled, and lifecycle/hardware safety remain unverified | No BCM/QoS voting, power-domain enabling or ICC activation |
 
 ## Integration checkpoints (not yet completed)
 
@@ -64,3 +64,7 @@ Keep prospective generic kernel fixes isolated from primary Armada integration; 
 ## Safety rules
 
 The present checklist and baseline GitHub Actions are **not** a hardware qualification gate. A green CI status can justify merging documentation or narrowly scoped tests; it does **not** authorize registration of unverified device-tree providers, SMMU stream programming, IPA/modem initialization, BCM/QoS votes, firmware writes, flashing or production image publication.
+
+## Smartphone daily-driver acceptance gate (November 2026)
+
+The Pixel 5a port must remain useful as a **phone**, not solely as a Linux development board. The authoritative machine-readable checklist is `validation/pixel5a-phone-capabilities.json`, validated by `tests/pixel5a-phone-readiness-test.py` in `.github/workflows/android-phone-validation.yml`. It covers voice/VoLTE, SMS, MMS, mobile data, controlled emergency-call test planning, connectivity, audio, power management and restore-to-Android safety, along with other handset hardware. Source-only CI checks evidence metadata and disallows unsupported readiness claims; it **does not** test these functions, make emergency calls, or certify them. `not_tested` is the expected status for all phone functions until explicitly approved device testing and associated evidence exist. Never modify modem/vendor firmware or flash the handset as a consequence of this gate alone.

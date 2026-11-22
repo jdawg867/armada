@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "kind": "verified_public_aosp_lineage_android12l_text_comparison",
+  "source_workflow_run_id": 43920100174,
+  "source_workflow_commit": "e6f6ebaf319e40cc44f2cd366a8a96074010bd8f",
+  "tags": [
+    "android-12.1.0_r1",
+    "android-12.1.0_r5",
+    "android-12.1.0_r7"
+  ],
+  "pairs_attempted": 15,
+  "pairs_compared": 15,
+  "pairs_unavailable": 0,
+  "unique_paths": [
+    {
+      "device": "barbet",
+      "path": "init.insmod.barbet.cfg",
+      "aosp_sha256": "a081d17fbfe8995aaf64ee8dfd4e528a13756d1deb3f660f22da55f044fe8383",
+      "lineage_sha256": "a081d17fbfe8995aaf64ee8dfd4e528a13756d1deb3f660f22da55f044fe8383",
+      "hunks_changed": 0,
+      "identical_bytes": true
+    },
+    {
+      "device": "barbet",
+      "path": "barbet/init.barbet.rc",
+      "aosp_sha256": "78a14c15c8c71b5d40c712009711636bbd8505e85419cfec92ec4e15e9bbef4e",
+      "lineage_sha256": "080e04c5474e2663cfe056062f08935dcb644f077a8680e867f4164772b66000",
+      "hunks_changed": 1,
+      "identical_bytes": false
+    },
+    {
+      "device": "redbull",
+      "path": "BoardConfig-common.mk",
+      "aosp_sha256": "27a623d774cb7818a892d340c9a36aee732f69f4d482b0a73fdf30757fbf5ff3",
+      "lineage_sha256": "028dd8dcff8f6f306ab2a09e41617c48ba2c2539c0cbb197861204af3090e581",
+      "hunks_changed": 24,
+      "identical_bytes": false
+    },
+    {
+      "device": "redbull",
+      "path": "init.hardware.rc",
+      "aosp_sha256": "5cf98b4bab2359a81f5ddf3b10db397f9ff0361ad850733226cc7ed30f21f294",
+      "lineage_sha256": "aa992f1b8481afed9ab20de181b76999b03da8910ae394f9795b34b44d81c8bf",
+      "hunks_changed": 13,
+      "identical_bytes": false
+    },
+    {
+      "device": "redbull",
+      "path": "init.insmod.sh",
+      "aosp_sha256": "d6ca82cf42232a1b1e934827e055c024f39f5fdc1def5905b6f131bbb62f0855",
+      "lineage_sha256": "d6ca82cf42232a1b1e934827e055c024f39f5fdc1def5905b6f131bbb62f0855",
+      "hunks_changed": 0,
+      "identical_bytes": true
+    }
+  ],
+  "missing_uncompared_aosp_module_list": "device/google/redbull/modules.load",
+  "missing_module_list_status": "HTTP 404 in official AOSP at r1,r5,r7, not a claim about stock vendor_boot",
+  "exact_stock_vendor_boot_verified": false,
+  "stock_module_loading_verified": false,
+  "modemsmem_probe_before_mpss_start_verified": false,
+  "hardware_tested": false,
+  "source_diff_content_reviewed": false,
+  "notes": "Hunk counts derived from SequenceMatcher line-opcodes, not line-by-line technical explanation. Files differing require actual diff inspection before attributing changes to modem behavior."
+}

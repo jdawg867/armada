@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "step": 799,
+  "classification": "pinned_source_IPA_argument_and_barbet_overlay_build_mapping_only",
+  "kernel": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043"
+  },
+  "ipa": {
+    "path": "drivers/platform/msm/ipa/ipa_v3/ipa.c",
+    "blob": "f03dc32340af1e5b57ab0356b71c8700ff7e1bdb",
+    "function": "ipa3_pil_load_ipa_fws",
+    "dynamic_argument_call": "subsystem_get(sub_sys)",
+    "default_gsi_name": "ipa_fws",
+    "default_uc_name": "ipa_uc",
+    "override_gsi_field": "ipa3_ctx->gsi_fw_file_name",
+    "override_uc_field": "ipa3_ctx->uc_fw_file_name",
+    "resolved_default_values_are_modem": false,
+    "possible_overrides_resolved": false,
+    "actual_barbet_runtime_argument_verified": false
+  },
+  "barbet_overlay": {
+    "makefile": "arch/arm64/boot/dts/google/Makefile",
+    "makefile_blob": "852a844e147eba2dc9f2a2cf7b2483ff3e91894e",
+    "name": "lito-v2-barbet-mp-overlay.dtbo",
+    "base": "qcom-base/lito-v2.dtb",
+    "entry": "arch/arm64/boot/dts/google/lito-v2-barbet-mp-overlay.dts",
+    "entry_blob": "12c699a75dd1e8d3815e98b0e0ba59e454f14c08",
+    "entry_includes": "lito-v2-barbet-mp.dtsi",
+    "board_include": "arch/arm64/boot/dts/google/lito-v2-barbet-mp.dtsi",
+    "board_include_blob": "277ae16bb06ebb5c945fe02a579298af45aba3ff",
+    "board_includes": "lito-barbet.dtsi",
+    "mp_build_mapping_found": true,
+    "full_preprocessed_dtb_verified": false,
+    "actual_device_overlay_variant_verified": false
+  },
+  "unverified": [
+    "ipa_gsi_fw_file_name_assignment_provenance",
+    "ipa_uc_fw_file_name_assignment_provenance",
+    "runtime_IPA_sub_sys_argument_on_pixel5a",
+    "complete_barbet_dt_overlay_preprocessor_expansion",
+    "qcom_base_lito_audio_include_mapping_in_final_dtb",
+    "actual_barbet_overlay_variant_in_boot_chain",
+    "all_nonliteral_modem_start_callers",
+    "MPSS_initial_boot_request_and_smem134_publication_order",
+    "stock_android12l_image_and_cellular_runtime"
+  ],
+  "safety": {
+    "smem_write": false,
+    "modem_start": false,
+    "driver_activation": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}

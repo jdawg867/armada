@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "target": "Google Pixel 5a (barbet / SM7250)",
+  "source_phase_only": true,
+  "modem_ready": false,
+  "sources": [
+    {
+      "id": "preserved_linux_patch",
+      "kind": "private_patch",
+      "repository": "jdawg867/linux-sm7250-armada-integration",
+      "branch": "feature/sm7250-source-snapshot",
+      "path": "patches/sm7250-linux-7.2.6-integration.patch",
+      "git_blob": "8c32955827e9bd17873b5660db4cfa0037e9585c",
+      "scope": "SMEM and reserved-memory nodes present; modem full stack not included"
+    },
+    {
+      "id": "modemsmem_rfc_2026",
+      "kind": "public_rfc",
+      "url": "https://lists.openwall.net/linux-kernel/2026/09/06/26",
+      "message_id": "20260906-modemsmem-v1-2-a3634b553841@ixit.cz",
+      "scope": "Proposed google,modemsmem driver for Pixel 3 through Pixel 5a; unmerged status not verified"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "reserved_memory",
+      "status": "partial_source_evidence",
+      "evidence": [
+        "preserved_linux_patch"
+      ],
+      "blocking": true,
+      "details": "SMEM, IPA/GSI and modem/WLAN carveouts transcribed, mapping and hardware checks pending"
+    },
+    {
+      "id": "modemsmem",
+      "status": "rfc_only",
+      "evidence": [
+        "modemsmem_rfc_2026"
+      ],
+      "blocking": true,
+      "details": "Pixel-specific SoC data in vendor-defined SMEM; verify downstream Pixel 5a DT overlay and modem firmware contract before porting"
+    },
+    {
+      "id": "remoteproc",
+      "status": "unverified",
+      "evidence": [],
+      "blocking": true,
+      "details": "Pixel 5a MPSS PAS/firmware boot/reset/interrupt sequence not verified"
+    },
+    {
+      "id": "smp2p_ipcc",
+      "status": "unverified",
+      "evidence": [],
+      "blocking": true,
+      "details": "MPSS SMEM indices 435/428 and IPCC SPI 229 are prior observations requiring exact vendor-file validation"
+    },
+    {
+      "id": "glink_qrtr",
+      "status": "unverified",
+      "evidence": [],
+      "blocking": true,
+      "details": "Modem control transport not established"
+    },
+    {
+      "id": "ipa_gsi_iommu",
+      "status": "unverified",
+      "evidence": [],
+      "blocking": true,
+      "details": "Mobile data path, IPA 4.7/GSI and SMMU SID ownership unverified"
+    },
+    {
+      "id": "telephony_userspace",
+      "status": "unverified",
+      "evidence": [],
+      "blocking": true,
+      "details": "SIM/network registration, calls, SMS/MMS, IMS/VoLTE and data sessions unverified"
+    },
+    {
+      "id": "android_recovery",
+      "status": "unverified",
+      "evidence": [],
+      "blocking": true,
+      "details": "Read-only inventory, recovery images and restore workflow must be independently established"
+    }
+  ]
+}

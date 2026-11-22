@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "kind": "pinned_lineage_first_stage_source_projection",
+  "scope": "source_only_not_generated_vendor_boot_or_runtime",
+  "repo": "LineageOS/android_device_google_redbull",
+  "commit": "9fdf5ccfc9dd1ca22ca4ea657e414cb35e95b770",
+  "board_blob": "a70253537c0da383ac0c96c9f02f526faba89ef4",
+  "lineage_board_blob": "73921b90f308b6adbf6ba6b0d31c563eedede37e",
+  "module_list_blob": "b116d1f234682a1f7e7275f36e6c7a2feb79ddb5",
+  "modem_pil_source": {
+    "repo": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "path": "drivers/soc/qcom/subsys-pil-tz.c",
+    "blob": "f17f9e57b0d1f671017032df9224ada0bbea15c2"
+  },
+  "list_total": 329,
+  "common_boot_eligibility_count": 219,
+  "lineage_boot_extra_count": 2,
+  "projected_boot_count": 220,
+  "projected_vendor_count": 109,
+  "watch": [
+    {
+      "name": "smem.ko",
+      "list_index_zero_based": 34,
+      "projected_boot_index_zero_based": 30
+    },
+    {
+      "name": "subsys-pil-tz.ko",
+      "list_index_zero_based": 53,
+      "projected_boot_index_zero_based": 47
+    },
+    {
+      "name": "modemsmem.ko",
+      "list_index_zero_based": 83,
+      "projected_boot_index_zero_based": 74
+    }
+  ],
+  "pil_before_modemsmem_in_source_list": true,
+  "source_loader_checks_modprobe_exit_status": false,
+  "smem_publication_before_mpss_proven": false,
+  "stock_vendor_boot_verified": false,
+  "driver_probe_completion_verified": false,
+  "actual_firmware_start_time_verified": false,
+  "hardware_tested": false,
+  "interpretation": "Projected LineageOS Make filter order only, not GNU Make build output or actual module/probe/firmware order."
+}

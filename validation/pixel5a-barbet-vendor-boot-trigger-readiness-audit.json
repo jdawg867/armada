@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "step": 827,
+  "scope": "pinned_Barbet_Redbull_init_boot_trigger_readiness_source_only_not_runtime_modem_barrier",
+  "ci_previous": {
+    "commit": "fd9848a94b20e837649e7eac944bfbc448974c83",
+    "android_validation": {
+      "id": 44972493641,
+      "conclusion": "success"
+    },
+    "source_probe": {
+      "id": 44972493617,
+      "conclusion": "success"
+    },
+    "arm64_compile": {
+      "id": 44972493620,
+      "conclusion": "success"
+    }
+  },
+  "sources": {
+    "redbull_repo": "LineageOS/android_device_google_redbull",
+    "redbull_commit": "9fdf5ccfc9dd1ca22ca4ea657e414cb35e95b770",
+    "hardware_rc": "init.hardware.rc",
+    "hardware_rc_blob": "ec3c3edf7e72fb394bde8e9dc669e4a07ced854b",
+    "insmod_sh": "init.insmod.sh",
+    "insmod_sh_blob": "a222838cc855392838a69fbd9ea3951273078658",
+    "init_modem_sh": "init.modem.sh",
+    "init_modem_sh_blob": "75520c7055a56930ba4e7c1fab9fd7a2aefa1f5c",
+    "barbet_repo": "LineageOS/android_device_google_barbet",
+    "barbet_commit": "24101a383bb1951952adcd6f62668338dd048f03",
+    "barbet_insmod_cfg": "init.insmod.barbet.cfg",
+    "barbet_insmod_cfg_blob": "f2728df28091a374ff6bfa6e4e50f3695420e722"
+  },
+  "observed": {
+    "early_init_starts_insmod_sh": true,
+    "insmod_service_disabled_oneshot": true,
+    "barbet_config_bulk_modprobe": true,
+    "barbet_config_ftm5_extra_modprobe": true,
+    "barbet_config_adsp_cdsp_sysfs_enable": true,
+    "insmod_shell_modprobe_status_checked": false,
+    "insmod_shell_ready_properties_unconditionally_set": true,
+    "hardware_rc_waits_for_both_ready_properties": true,
+    "hardware_rc_on_boot_starts_init_modem_sh": true,
+    "init_modem_sh_only_publishes_cdt_imei_meid_properties": true,
+    "hardware_rc_per_mgr_trigger_on_esim_done": true,
+    "hardware_rc_per_mgr_trigger_on_esim_noneed": true,
+    "hardware_rc_per_mgr_trigger_on_boot_complete": true,
+    "modem_start_directly_observed_in_init_modem_sh": false,
+    "ready_property_proves_module_probe_completion": false,
+    "ready_property_proves_item134_published": false,
+    "per_mgr_modem_start_runtime_order_verified": false,
+    "telephony_verified": false
+  },
+  "unknowns": [
+    "pinned_vendor_per_mgr_binary_behavior_and_first_modem_subsystem_get",
+    "effective_module_dependency_resolution_and_probe_completion",
+    "whether_vendor_init_scripts_publish_modemsmem_item134",
+    "first_PIL_modem_powerup_vs_item134_publish_and_ack",
+    "modem_restart_generation_republication_and_radio_recovery",
+    "real_call_SMS_mobile_data_and_SSR_functionality"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "modem_start": false,
+    "smem_read": false,
+    "smem_write": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}

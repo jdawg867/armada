@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "step": 803,
+  "scope": "pinned_downstream_modemsmem_initialization_and_bounded_modem_requesters_source_only",
+  "source": {
+    "repo": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "modemsmem_c": "drivers/soc/qcom/modemsmem/modemsmem.c",
+    "modemsmem_blob": "428143562894e6d8ca7b656174c72ee4b096f510",
+    "modemsmem_h": "drivers/soc/qcom/modemsmem/modemsmem.h",
+    "modemsmem_header_blob": "a6b9d991fe7c023f44c21cc5c597746414c532a2",
+    "dt": "arch/arm64/boot/dts/google/lito-redbull-common.dtsi",
+    "dt_blob": "9eea9dc7431c5ef6cc68f100789402c025b558ce",
+    "bam_dmux": "drivers/soc/qcom/bam_dmux.c",
+    "bam_dmux_blob": "c6ec3156c17e0b50f1405434a46d92054715b1fd",
+    "adsp_loader": "techpack/audio/dsp/adsp-loader.c",
+    "adsp_loader_blob": "a32acfd359092d4a8cdbcb2da804d0ec8601da0b"
+  },
+  "observed": {
+    "dt_declares_modemsmem_compatible": true,
+    "header_vendor_item_id": 134,
+    "structure_bytes": 64,
+    "probe_calls_qcom_smem_alloc": true,
+    "probe_accepts_EEXIST": true,
+    "probe_calls_qcom_smem_get_and_validates_size": true,
+    "probe_unconditionally_memset_io_64_bytes": true,
+    "probe_writes_version_socid_modemflag_and_flags": true,
+    "sysfs_create_failure_still_returns_success": true,
+    "explicit_smem_publication_completion_signal": false,
+    "explicit_dependency_on_PIL_start": false,
+    "modemsmem_module_registration_equal_probe_completion": false,
+    "bam_dmux_has_explicit_subsystem_restart_modem": true,
+    "bam_dmux_restart_is_first_boot_request": false,
+    "adsp_loader_has_conditional_literal_subsystem_get_modem": true,
+    "adsp_loader_request_verified_live": false,
+    "first_modem_start_requester_identified": false,
+    "correct_item134_existing_owner_and_reinit_policy_known": false,
+    "MPSS_start_after_item134_population_proven": false
+  },
+  "unknowns": [
+    "actual_SMEm_item134_existing_owner_and_consumers",
+    "whether_item134_is_preallocated_at_start",
+    "whether_zeroing_item134_during_restart_corrupts_modem_state",
+    "qcom_smem_alloc_and_get_runtime_return_status",
+    "ordering_between_modemsmem_probe_and_MPSS_firmware_start",
+    "required_memory_barrier_or_notification_protocol",
+    "all_real_first_boot_modem_start_requesters",
+    "stock_vendor_boot_and_final_DTB",
+    "hardware_telephony_and_restart_tests"
+  ],
+  "safety": {
+    "flash": false,
+    "smem_write": false,
+    "driver_load": false,
+    "modem_start": false
+  },
+  "hardware_tested": false
+}
