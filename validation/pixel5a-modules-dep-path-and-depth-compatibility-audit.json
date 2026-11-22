@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "step": 825,
+  "scope": "host_only_realistic_modules_dep_path_compatibility_not_modprobe_execution",
+  "ci_predecessor": {
+    "step824_commit": "85e0dd85a4e7cb0b298dbd276a1fb10f133063c1",
+    "android_validation": {
+      "id": 44966179724,
+      "status": "success"
+    },
+    "aosp_source": {
+      "id": 44966179743,
+      "status": "success"
+    },
+    "arm64_compile": {
+      "id": 44966179728,
+      "status": "success"
+    },
+    "all_three_success": true
+  },
+  "changes": {
+    "parser": "research/pixel5a-modemsmem/analyze_modules_dep_offline.py",
+    "test": "tests/pixel5a-host-only-modules-dep-resolver-test.py",
+    "duplicate_basename_distinct_paths_allowed": true,
+    "basename_only_targets_remain_rejected": true,
+    "topological_traversal_iterative": true,
+    "compressed_modules_xz_gz_zst_supported": true,
+    "nested_relative_paths_supported": true,
+    "dependency_cycles_rejected": true,
+    "missing_dependency_nodes_rejected": true,
+    "unsafe_or_noncanonical_paths_rejected": true,
+    "synthetic_long_chain_regression": true,
+    "synthetic_fixtures_not_stock_pixel5a_modules": true
+  },
+  "limitations": {
+    "real_stock_pixel5a_modules_dep_retrieved": false,
+    "real_modprobe_dependency_resolution_verified": false,
+    "modules_alias_softdep_blacklist_evaluated": false,
+    "driver_probe_order_verified": false,
+    "modemsmem_item134_ready_verified": false,
+    "modem_start_verified": false,
+    "phone_calls_sms_data_verified": false
+  },
+  "unknowns": [
+    "compiled_vendor_modules_dep_softdep_aliases",
+    "effective_modprobe_and_probe_order",
+    "PIL_bus_client_and_modemsmem_initialization",
+    "first_MPSS_start_relative_to_SMEM_item134",
+    "device_recovery_after_partial_bus_vote_failure",
+    "working_calls_SMS_mobile_data_and_SSR"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "smem_read": false,
+    "smem_write": false,
+    "modem_start": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}
