@@ -213,6 +213,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-smem-allocator-item134-publication-defer-test.py
 
+      - name: Guard Step 831 SMEM deferred-probe error propagation evidence
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-deferred-probe-driver-core-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
