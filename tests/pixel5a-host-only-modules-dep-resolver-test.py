@@ -132,27 +132,27 @@ class DependencyGraphTests(unittest.TestCase):
 
 
     def test_compressed_gzip_zstd_modules(self):
-        graph=dep.parse_dep("kernel/a.ko.zst: kernel/b.ko.gz\\nkernel/b.ko.gz:\\n")
+        graph=dep.parse_dep("kernel/a.ko.zst: kernel/b.ko.gz\nkernel/b.ko.gz:\n")
         self.assertEqual(dep.resolve(graph, ["kernel/a.ko.zst"]),
                          ["kernel/b.ko.gz", "kernel/a.ko.zst"])
 
     def test_deep_acyclic_chain_not_python_recursion(self):
         lines=["x/m0.ko:"]
         lines.extend("x/m%d.ko: x/m%d.ko" % (i, i-1) for i in range(1, 1700))
-        graph=dep.parse_dep("\\n".join(lines)+"\\n")
+        graph=dep.parse_dep("\n".join(lines)+"\n")
         order=dep.resolve(graph,["x/m1699.ko"])
         self.assertEqual(len(order),1700)
         self.assertEqual(order[0],"x/m0.ko")
         self.assertEqual(order[-1],"x/m1699.ko")
 
     def test_target_never_ambiguous_basename(self):
-        graph=dep.parse_dep("x/a.ko:\\ny/a.ko:\\n")
+        graph=dep.parse_dep("x/a.ko:\ny/a.ko:\n")
         with self.assertRaises(dep.DependencyError):dep.resolve(graph,["a.ko"])
 
     def test_duplicate_basename_exact_paths_cli(self):
         with tempfile.TemporaryDirectory() as tmp:
             p=Path(tmp)/"modules.dep"
-            p.write_text("x/a.ko:\\ny/a.ko: x/a.ko\\n")
+            p.write_text("x/a.ko:\ny/a.ko: x/a.ko\n")
             r=subprocess.run([sys.executable,str(SCRIPT),"--modules-dep",str(p),
                               "--target","y/a.ko"],capture_output=True,text=True)
             self.assertEqual(r.returncode,0,r.stderr)
