@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "step": 824,
+  "scope": "synthetic_modules_dep_topological_analysis_not_runtime_modules_or_vendor_dep_verified",
+  "ci_previous": {
+    "step823_commit": "de8a10d85aa37620b7fac14a07a28bdde8640025",
+    "android_validation": {
+      "id": 44965788145,
+      "conclusion": "success"
+    },
+    "android_source": {
+      "id": 44965788225,
+      "conclusion": "success"
+    },
+    "linux_arm64_compile": {
+      "id": 44965788177,
+      "conclusion": "success"
+    },
+    "download_fallback_was_available": true,
+    "download_fallback_used_in_successful_run_verified": false
+  },
+  "artifacts": {
+    "resolver": "research/pixel5a-modemsmem/analyze_modules_dep_offline.py",
+    "tests": "tests/pixel5a-host-only-modules-dep-resolver-test.py",
+    "synthetic_fixtures_only": true,
+    "actual_Pixel5a_modules_dep_available": false
+  },
+  "guarantees": {
+    "requires_explicit_local_modules_dep": true,
+    "reads_input_without_network": true,
+    "denies_symlink_input": true,
+    "requires_exact_relative_target_paths": true,
+    "rejects_bad_paths": true,
+    "rejects_duplicate_module_basenames": true,
+    "rejects_unknown_dependency_nodes": true,
+    "rejects_self_dependency": true,
+    "rejects_cycles": true,
+    "outputs_dependency_first_candidate_order": true,
+    "matches_real_modprobe_dependency_resolution_verified": false,
+    "reports_successful_module_insertion": false,
+    "reports_probe_completion": false,
+    "reports_modemsmem_item134_ready": false,
+    "reports_telephony_ready": false
+  },
+  "unknowns": [
+    "compiled_vendor_modules_dep_and_modules_softdep_for_stock_Pixel5a",
+    "modprobe_alias_blacklist_softdeps_and_reordering",
+    "loaded_kernel_modules_actual_probe_order",
+    "modem_first_start_and_bus_client_registration",
+    "modemsmem_item134_publication_and_acknowledgement",
+    "real_phone_call_SMS_mobile_data_and_SSR_recovery"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "modem_start": false,
+    "smem_read": false,
+    "smem_write": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}
