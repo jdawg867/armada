@@ -209,6 +209,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-modemsmem-reprobe-reclear-ssr-lifecycle-test.py
 
+      - name: Guard Step 830 SMEM allocator item134 publication and deferred probe boundaries
+        shell: bash
+        run: python3 tests/pixel5a-smem-allocator-item134-publication-defer-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
