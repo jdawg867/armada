@@ -156,6 +156,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-barbet-vendor-boot-trigger-readiness-test.py
 
+      - name: Guard Step 828 item134 initialization without inferred modem start barrier
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-item134-first-start-barrier-test.py
+
       - name: Fetch public, exactly tagged AOSP text sources only
         shell: bash
         run: |
