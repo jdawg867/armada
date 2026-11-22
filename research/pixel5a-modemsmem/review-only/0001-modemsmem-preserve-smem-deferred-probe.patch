@@ -1,0 +1,38 @@
+From: Armada OS source-only kernel review
+Subject: [PATCH RFC] soc: qcom: modemsmem: preserve deferred probe from SMEM provider
+
+When SMEM is not initialized, qcom_smem_alloc() may return
+-EPROBE_DEFER and qcom_smem_get() may return ERR_PTR(-EPROBE_DEFER).
+The original modemsmem probe collapses both into -ENOMEM, preventing
+the driver core from queuing the device for deferred probing.
+
+Preserve -EPROBE_DEFER only, retaining the original -ENOMEM behavior
+for all other allocation/get errors and size mismatch. Do not change
+existing-item (-EEXIST) handling or SMEM content initialization.
+
+Review-only candidate. Not compiled against the pinned redbull tree,
+not deployed on the Pixel 5a, and not sent upstream.
+
+--- a/drivers/soc/qcom/modemsmem/modemsmem.c
++++ b/drivers/soc/qcom/modemsmem/modemsmem.c
+@@ -175,14 +175,19 @@ static int modem_smem_probe(struct platform_device *pdev)
+ 			sizeof(struct modem_smem_type));
+ 	if (ret && ret != -EEXIST) {
+ 		dev_err(dev, "smem alloc fail\n");
++		if (ret == -EPROBE_DEFER)
++			return ret;
+ 		return -ENOMEM;
+ 	}
+ 
+ 	modem_smem = qcom_smem_get(QCOM_SMEM_HOST_ANY, SMEM_ID_VENDOR0, &size);
+-	if (IS_ERR(modem_smem) || size != sizeof(struct modem_smem_type)) {
++	if (IS_ERR(modem_smem)) {
+ 		dev_err(dev, "Get modem_smem pointer failed\n");
++		if (PTR_ERR(modem_smem) == -EPROBE_DEFER)
++			return -EPROBE_DEFER;
++		return -ENOMEM;
++	}
++	if (size != sizeof(struct modem_smem_type)) {
++		dev_err(dev, "Get modem_smem pointer failed\n");
+ 		return -ENOMEM;
+ 	}
