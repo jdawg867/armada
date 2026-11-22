@@ -110,19 +110,51 @@ def report(data, targets):
         "telephony_verified": False,
     }
 
+def read_metadata(path, label):
+    if path is None:
+        return None
+    if path.is_symlink() or not path.is_file() or path.stat().st_size > MAX_BYTES:
+        raise DependencyError(label + " must be a bounded, regular, non-symlink file")
+    return path.read_text(encoding="utf-8")
+
+def classify_sidecar(text, name):
+    if text is None:
+        return "not_supplied"
+    lines = [line.strip() for line in text.splitlines()
+             if line.strip() and not line.lstrip().startswith("#")]
+    if name == "softdep" and lines:
+        # modules.softdep may change insertion ordering, including pre/post
+        # dependencies not visible in modules.dep; never silently ignore it.
+        raise DependencyError("nonempty modules.softdep is unsupported: cannot infer modprobe ordering")
+    if name == "alias" and lines:
+        # Alias patterns do not affect exact-path dependency topology directly,
+        # but caller can never conclude actual modprobe alias resolution here.
+        return "present_not_interpreted"
+    return "empty"
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--modules-dep", type=Path, required=True,
                    help="existing local modules.dep; never fetches or loads modules")
     p.add_argument("--target", action="append", required=True,
                    help="exact relative module path present in modules.dep")
+    p.add_argument("--modules-softdep", type=Path, default=None,
+                   help="optional existing modules.softdep; fail closed if it defines rules")
+    p.add_argument("--modules-alias", type=Path, default=None,
+                   help="optional modules.alias; recorded but never resolved")
     args = p.parse_args(argv)
     try:
         if args.modules_dep.is_symlink() or not args.modules_dep.is_file():
             raise DependencyError("modules.dep must be a regular non-symlink file")
         if args.modules_dep.stat().st_size > MAX_BYTES:
             raise DependencyError("modules.dep too large")
+        softdep_status = classify_sidecar(read_metadata(args.modules_softdep, "modules.softdep"), "softdep")
+        alias_status = classify_sidecar(read_metadata(args.modules_alias, "modules.alias"), "alias")
         result = report(args.modules_dep.read_text(encoding="utf-8"), args.target)
+        result["modules_softdep_status"] = softdep_status
+        result["modules_alias_status"] = alias_status
+        result["softdep_alias_metadata_complete"] = (softdep_status != "not_supplied" and alias_status != "not_supplied")
+        result["modprobe_alias_softdep_blacklist_evaluated"] = False
     except (DependencyError, UnicodeError, OSError) as e:
         print("FAIL_CLOSED: " + str(e), file=sys.stderr)
         return 2
