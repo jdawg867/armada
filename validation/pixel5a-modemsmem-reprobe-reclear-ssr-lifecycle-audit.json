@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "step": 829,
+  "scope": "pinned_modemsmem_error_reinitialization_and_SSR_source_lifecycle_not_hardware",
+  "ci": {
+    "previous_commit": "d11e50c14f11937d49d4bb2195a9ed65a38acf62",
+    "android_run": 44980761594,
+    "android_conclusion": "success",
+    "source_run": 44980761608,
+    "source_conclusion": "success",
+    "compile_run": 44980761600,
+    "compile_conclusion": "success"
+  },
+  "sources": {
+    "kernel_repo": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "modemsmem_path": "drivers/soc/qcom/modemsmem/modemsmem.c",
+    "modemsmem_blob": "428143562894e6d8ca7b656174c72ee4b096f510",
+    "header_path": "drivers/soc/qcom/modemsmem/modemsmem.h",
+    "header_blob": "a6b9d991fe7c023f44c21cc5c597746414c532a2"
+  },
+  "observed": {
+    "probe_allocates_item134": true,
+    "accepts_existing_item_EEXIST": true,
+    "gets_existing_item_after_EEXIST": true,
+    "zeroes_item_unconditionally_after_get": true,
+    "sets_fields_after_zeroing": true,
+    "alloc_failure_returns_ENOMEM": true,
+    "get_error_or_wrong_size_returns_ENOMEM": true,
+    "sysfs_group_creation_error_logged": true,
+    "sysfs_group_failure_probe_returns_success": true,
+    "platform_driver_register_called": true,
+    "platform_driver_unregister_called_at_module_exit": true,
+    "explicit_ssr_notifier_registration_in_driver": false,
+    "explicit_restart_republication_callback_in_driver": false,
+    "existing_item_zeroing_proven_safe_for_live_modem": false,
+    "probe_reinvoked_during_ssr_verified": false,
+    "smem_readiness_acknowledgment_verified": false,
+    "live_modem_state_corruption_verified": false,
+    "telephony_function_verified": false
+  },
+  "risk_classification": {
+    "existing_item_reclear": "source_visible_possible_lifecycle_hazard_requires_boot_and_consumer_order_validation",
+    "sysfs_failure": "diagnostic_endpoint_failure_not_fatal_in_source",
+    "restart": "no_explicit_local_restart_handler_inspected_not_proof_of_failed_SSR"
+  },
+  "unknowns": [
+    "first_and_repeated_probe_behavior_on_actual_Pixel5a",
+    "whether_remote_modem_reads_item134_during_any_reinitialization",
+    "whether_kernel_bus_or_platform_device_rebinds_on_SSR",
+    "external_ssr_framework_republication_and_consumer_acknowledgment",
+    "recovery_call_SMS_cellular_data_after_modem_restart",
+    "safe_isolated_patch_and_firmware_ABI_compatibility"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "smem_read": false,
+    "smem_write": false,
+    "modem_start": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}
