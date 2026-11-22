@@ -3,6 +3,8 @@ name: Android phone port validation
 on:
   pull_request:
     branches: [development]
+  push:
+    branches: [review/kernel-modemsmem-probe-defer-832]
   workflow_dispatch:
 
 permissions:
@@ -321,6 +323,17 @@ jobs:
       - name: Check isolated Step 832 modemsmem RFC patch and synthetic fault mappings
         shell: bash
         run: python3 tests/pixel5a-modemsmem-review-patch-832-test.py
+
+      - name: Check Step 833 exact pinned upstream driver blob and full-source RFC patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          PIN="929e7e2f3658867d51a1d423c7e000f5cf1d4043"
+          SRC="$RUNNER_TEMP/modemsmem-pinned.c"
+          curl -fL --retry 3 --retry-all-errors --max-time 120 \
+            "https://raw.githubusercontent.com/LineageOS/android_kernel_google_redbull/${PIN}/drivers/soc/qcom/modemsmem/modemsmem.c" \
+            -o "$SRC"
+          python3 tests/pixel5a-modemsmem-full-pinned-source-patch-833-test.py --source-file "$SRC"
 
       - name: SM7250 ICC index validator (synthetic fixtures only)
         shell: bash
