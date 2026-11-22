@@ -125,10 +125,10 @@ def classify_sidecar(text, name):
     if name == "softdep" and lines:
         # modules.softdep may change insertion ordering, including pre/post
         # dependencies not visible in modules.dep; never silently ignore it.
-        raise DependencyError("nonempty modules.softdep is unsupported: cannot infer modprobe ordering")
+        raise DependencyError("nonempty modules.softdep is unsupported: cannot infer runtime ordering")
     if name == "alias" and lines:
         # Alias patterns do not affect exact-path dependency topology directly,
-        # but caller can never conclude actual modprobe alias resolution here.
+        # but caller can never conclude actual alias resolution here.
         return "present_not_interpreted"
     return "empty"
 
