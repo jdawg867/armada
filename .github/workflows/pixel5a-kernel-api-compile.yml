@@ -189,6 +189,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-source-hash-and-modules-dependency-boundary-test.py
 
+      - name: Guard Step 823 public module dependency evidence and download failure classification
+        shell: bash
+        run: python3 tests/pixel5a-public-module-dependency-evidence-test.py
+
       - name: Provision ARM64 build prerequisites
         run: |
           set -euo pipefail
