@@ -148,6 +148,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-public-module-dependency-evidence-test.py
 
+      - name: Run host-only synthetic modules.dep topology and fail-closed tests
+        shell: bash
+        run: python3 tests/pixel5a-host-only-modules-dep-resolver-test.py
+
       - name: Fetch public, exactly tagged AOSP text sources only
         shell: bash
         run: |
