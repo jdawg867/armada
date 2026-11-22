@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "step": 828,
+  "scope": "pinned_modemsmem_item134_probe_publication_without_proven_first_MPSS_barrier",
+  "ci": {
+    "step827_commit": "bded58acacaa68c24b872f559d0eee4ad700102c",
+    "android_validation": {
+      "id": 44973489923,
+      "conclusion": "success"
+    },
+    "aosp_source": {
+      "id": 44973489907,
+      "conclusion": "success"
+    },
+    "arm64_compile": {
+      "id": 44973489900,
+      "conclusion": "success"
+    }
+  },
+  "pinned_sources": {
+    "kernel_repo": "LineageOS/android_kernel_google_redbull",
+    "kernel_commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "modemsmem_source": "drivers/soc/qcom/modemsmem/modemsmem.c",
+    "modemsmem_source_blob": "428143562894e6d8ca7b656174c72ee4b096f510",
+    "modemsmem_header": "drivers/soc/qcom/modemsmem/modemsmem.h",
+    "modemsmem_header_blob": "a6b9d991fe7c023f44c21cc5c597746414c532a2",
+    "android_repo": "LineageOS/android_device_google_redbull",
+    "android_commit": "9fdf5ccfc9dd1ca22ca4ea657e414cb35e95b770",
+    "hardware_rc": "init.hardware.rc",
+    "hardware_rc_blob": "ec3c3edf7e72fb394bde8e9dc669e4a07ced854b",
+    "modem_script": "init.modem.sh",
+    "modem_script_blob": "75520c7055a56930ba4e7c1fab9fd7a2aefa1f5c"
+  },
+  "observed": {
+    "smem_id_symbol": "SMEM_ID_VENDOR0",
+    "smem_item_number": 134,
+    "modem_smem_version": 0,
+    "probe_uses_qcom_smem_alloc": true,
+    "probe_accepts_EEXIST": true,
+    "probe_uses_qcom_smem_get": true,
+    "probe_checks_expected_struct_size": true,
+    "probe_memset_io_zeroes_struct": true,
+    "probe_sets_version_platform_socinfo_fields": true,
+    "probe_conditionally_sets_modem_flag_from_cdt": true,
+    "probe_conditionally_sets_ftm_and_dsds_magic": true,
+    "probe_sysfs_group_failure_logged_but_probe_returns_zero": true,
+    "module_init_registers_platform_driver": true,
+    "module_init_implies_probe_completed": false,
+    "probe_publishes_a_ready_property": false,
+    "probe_signals_first_modem_start_barrier": false,
+    "android_init_waits_on_item134_ack": false,
+    "per_mgr_binary_start_order_proven": false,
+    "item134_modem_consumption_acknowledged": false,
+    "live_radio_recovery_verified": false
+  },
+  "unknowns": [
+    "effective_probe_success_and_platform_device_binding",
+    "whether_earlier_modem_boot_or_restart_races_item134_initialization",
+    "vendor_per_mgr_binary_and_modem_subsystem_get_request_timing",
+    "SMEM_item134_remote_consumer_contract_and_ack",
+    "SMEM_restart_republication_and_memory_ordering",
+    "real_calls_SMS_cellular_data_and_SSR_recovery"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "modem_start": false,
+    "smem_read": false,
+    "smem_write": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}
