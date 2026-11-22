@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "step": 826,
+  "scope": "offline_modules_alias_softdep_classification_not_modprobe_resolution_or_modem_probe",
+  "previous_ci": {
+    "step825_commit": "2db5330fbf4e3d9f91c986bd088e2e8a08bd1f34",
+    "initial_observation": "all_three_in_progress",
+    "android_run": 44972378419,
+    "source_run": 44972378457,
+    "compile_run": 44972378443
+  },
+  "implementation": {
+    "parser_path": "research/pixel5a-modemsmem/analyze_modules_dep_offline.py",
+    "tests_path": "tests/pixel5a-host-only-modules-dep-resolver-test.py",
+    "optional_softdep_file_supported": true,
+    "optional_alias_file_supported": true,
+    "real_softdep_rules_rejected": true,
+    "nonempty_aliases_recorded_not_interpreted": true,
+    "missing_metadata_distinguished_from_empty": true,
+    "sidecar_symlinks_rejected": true,
+    "exact_module_paths_required": true,
+    "existing_modules_dep_cycle_and_missing_dependency_protection": true,
+    "metadata_includes_modules_options_and_blacklist": false,
+    "real_modprobe_order_verified": false,
+    "modem_driver_probe_verified": false,
+    "item134_publication_verified": false,
+    "live_telephony_verified": false
+  },
+  "unknowns": [
+    "real_stock_vendor_modules_dep",
+    "real_stock_vendor_modules_softdep_and_modules_alias",
+    "vendor_modprobe_configuration_blacklists_and_options",
+    "effective_kernel_probe_completion_and_bus_client_registration",
+    "modemsmem_item134_publishing_before_first_modem_start",
+    "calls_SMS_mobile_data_and_SSR_recovery"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "smem_read": false,
+    "smem_write": false,
+    "modem_start": false,
+    "flash": false
+  },
+  "hardware_tested": false
+}
