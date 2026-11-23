@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "step": 835,
+  "scope": "isolated_pinned_redbull_4_19_modemsmem_cross_compile_only_not_hardware",
+  "review_branch": "review/kernel-modemsmem-probe-defer-832",
+  "draft_pr": 19,
+  "main_integration_branch": "feature/pixel5a-phone-function-gates",
+  "main_integration_draft_pr": 18,
+  "pinned_kernel": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "original_modemsmem_blob": "428143562894e6d8ca7b656174c72ee4b096f510"
+  },
+  "previous_observed_success": {
+    "workflow_run_id": 45268771455,
+    "job_id": 138033666995,
+    "job_conclusion": "success",
+    "step_832_patch_tests": "success",
+    "step_833_full_pinned_source_patch_validation": "success",
+    "step_834_host_C_error_branch": "success"
+  },
+  "compile_workflow": ".github/workflows/pixel5a-redbull-modemsmem-rfc-compile.yml",
+  "guards": {
+    "branch_push_only": true,
+    "workflow_dispatch": true,
+    "source_commit_pinned": true,
+    "source_blob_verified": true,
+    "exact_full_file_patch_verifier": true,
+    "patch_applied_only_to_runner_temporary_kernel": true,
+    "kernel_redbull_defconfig_requested": true,
+    "kbuild_aarch64_object_compile_requested": true,
+    "artifact_install": false,
+    "module_load": false,
+    "phone_flash": false,
+    "device_access": false,
+    "upstream_submission": false,
+    "merge": false
+  },
+  "unverified_at_commit": [
+    "complete pinned kernel source retrieved by new workflow",
+    "ARM64 object compile succeeded with runner GCC/toolchain",
+    "full driver functionality",
+    "Pixel5a device compatibility and modem startup",
+    "calling_SMS_mobile_data_and_SSR"
+  ],
+  "notes": "Workflow creation is not execution proof. Only mark compile successful if a completed GitHub Actions run confirms it."
+}
