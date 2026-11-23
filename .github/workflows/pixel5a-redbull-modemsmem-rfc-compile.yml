@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   pinned-downstream-kbuild:
-    name: Redbull 4.19 patched modemsmem object (compile only)
+    name: Redbull 4.19 baseline and patched modemsmem objects (compile only)
     if: ${{ github.event_name != 'pull_request' || github.head_ref == 'review/kernel-modemsmem-probe-defer-832' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 35
@@ -52,6 +52,33 @@ jobs:
           test -f "$KERNEL/arch/arm64/configs/redbull_defconfig"
           printf 'KERNEL=%s\n' "$KERNEL" >> "$GITHUB_ENV"
 
+      - name: Prepare pinned Redbull arm64 Kbuild configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/redbull-out"
+          make -C "$KERNEL" O="$RUNNER_TEMP/redbull-out" \
+            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- redbull_defconfig
+          make -C "$KERNEL" O="$RUNNER_TEMP/redbull-out" -j2 \
+            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
+
+      - name: Compile unmodified Redbull modemsmem ARM64 object (baseline)
+        shell: bash
+        run: |
+          set -euo pipefail
+          FILE="$KERNEL/drivers/soc/qcom/modemsmem/modemsmem.c"
+          test "$(git hash-object "$FILE")" = 428143562894e6d8ca7b656174c72ee4b096f510
+          make -C "$KERNEL" O="$RUNNER_TEMP/redbull-out" -j2 \
+            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
+            KCFLAGS="-Wno-error=missing-attributes" \
+            drivers/soc/qcom/modemsmem/modemsmem.o
+          OBJ="$RUNNER_TEMP/redbull-out/drivers/soc/qcom/modemsmem/modemsmem.o"
+          test -s "$OBJ"
+          file "$OBJ" | grep -Ei 'aarch64|ARM aarch64'
+          sha256sum "$OBJ"
+          cp "$OBJ" "$RUNNER_TEMP/modemsmem-baseline.o"
+          echo "PASS unmodified pinned Redbull modemsmem object compiled"
+
       - name: Verify exact kernel file and apply RFC patch with no other modifications
         shell: bash
         run: |
@@ -64,16 +91,6 @@ jobs:
           PATCH="$GITHUB_WORKSPACE/research/pixel5a-modemsmem/review-only/0001-modemsmem-preserve-smem-deferred-probe.patch"
           (cd "$KERNEL" && git apply --check "$PATCH" && git apply "$PATCH")
           test "$(git hash-object "$FILE")" != 428143562894e6d8ca7b656174c72ee4b096f510
-
-      - name: Prepare pinned Redbull arm64 Kbuild configuration
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/redbull-out"
-          make -C "$KERNEL" O="$RUNNER_TEMP/redbull-out" \
-            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- redbull_defconfig
-          make -C "$KERNEL" O="$RUNNER_TEMP/redbull-out" -j2 \
-            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
 
       - name: Compile patched modemsmem object with pinned downstream kernel
         shell: bash
@@ -89,5 +106,8 @@ jobs:
           test -s "$OBJ"
           file "$OBJ"
           file "$OBJ" | grep -Ei 'aarch64|ARM aarch64'
+          sha256sum "$RUNNER_TEMP/modemsmem-baseline.o" "$OBJ"
+          test -s "$RUNNER_TEMP/modemsmem-baseline.o"
+          echo "PASS baseline and RFC-patched Redbull ARM64 objects both compiled with identical compiler flags"
           echo "PASS pinned Redbull ARM64 modemsmem object compiled after isolated RFC patch"
           echo "No module was installed, loaded or run on a phone."
