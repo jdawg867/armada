@@ -1,0 +1,92 @@
+name: Pixel 5a pinned Redbull modemsmem RFC compile-only
+
+on:
+  push:
+    branches:
+      - review/kernel-modemsmem-probe-defer-832
+    paths:
+      - ".github/workflows/pixel5a-redbull-modemsmem-rfc-compile.yml"
+      - "research/pixel5a-modemsmem/review-only/**"
+      - "tests/pixel5a-modemsmem-full-pinned-source-patch-833-test.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pixel5a-redbull-modemsmem-rfc-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pinned-downstream-kbuild:
+    name: Redbull 4.19 patched modemsmem object (compile only)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install offline ARM64 build prerequisites
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            gcc-aarch64-linux-gnu make bc bison flex libssl-dev libelf-dev \
+            python3 git file curl ca-certificates
+
+      - name: Retrieve exact pinned downstream kernel revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          PIN=929e7e2f3658867d51a1d423c7e000f5cf1d4043
+          mkdir -p "$RUNNER_TEMP/redbull-src"
+          curl -fL --retry 3 --retry-all-errors --max-time 420 \
+            "https://codeload.github.com/LineageOS/android_kernel_google_redbull/tar.gz/${PIN}" \
+            -o "$RUNNER_TEMP/redbull-source.tar.gz"
+          tar -xzf "$RUNNER_TEMP/redbull-source.tar.gz" \
+            -C "$RUNNER_TEMP/redbull-src" --strip-components=1
+          KERNEL="$RUNNER_TEMP/redbull-src"
+          test -f "$KERNEL/Makefile"
+          grep -Eq '^VERSION = 4$' "$KERNEL/Makefile"
+          grep -Eq '^PATCHLEVEL = 19$' "$KERNEL/Makefile"
+          test -f "$KERNEL/arch/arm64/configs/redbull_defconfig"
+          printf 'KERNEL=%s\n' "$KERNEL" >> "$GITHUB_ENV"
+
+      - name: Verify exact kernel file and apply RFC patch with no other modifications
+        shell: bash
+        run: |
+          set -euo pipefail
+          FILE="$KERNEL/drivers/soc/qcom/modemsmem/modemsmem.c"
+          test -f "$FILE"
+          test "$(git hash-object "$FILE")" = 428143562894e6d8ca7b656174c72ee4b096f510
+          python3 tests/pixel5a-modemsmem-full-pinned-source-patch-833-test.py \
+            --source-file "$FILE"
+          PATCH="$GITHUB_WORKSPACE/research/pixel5a-modemsmem/review-only/0001-modemsmem-preserve-smem-deferred-probe.patch"
+          (cd "$KERNEL" && git apply --check "$PATCH" && git apply "$PATCH")
+          test "$(git hash-object "$FILE")" != 428143562894e6d8ca7b656174c72ee4b096f510
+
+      - name: Prepare pinned Redbull arm64 Kbuild configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/redbull-out"
+          make -C "$KERNEL" O="$RUNNER_TEMP/redbull-out" \
+            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- redbull_defconfig
+          make -C "$KERNEL" O="$RUNNER_TEMP/redbull-out" -j2 \
+            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
+
+      - name: Compile patched modemsmem object with pinned downstream kernel
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C "$KERNEL" O="$RUNNER_TEMP/redbull-out" -j2 \
+            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
+            drivers/soc/qcom/modemsmem/modemsmem.o
+          OBJ="$RUNNER_TEMP/redbull-out/drivers/soc/qcom/modemsmem/modemsmem.o"
+          test -s "$OBJ"
+          file "$OBJ"
+          file "$OBJ" | grep -Ei 'aarch64|ARM aarch64'
+          echo "PASS pinned Redbull ARM64 modemsmem object compiled after isolated RFC patch"
+          echo "No module was installed, loaded or run on a phone."
