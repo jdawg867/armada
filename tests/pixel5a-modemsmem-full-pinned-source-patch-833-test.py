@@ -67,7 +67,7 @@ def check(source):
         dest = root / REL
         dest.parent.mkdir(parents=True)
         dest.write_bytes(raw)
-        for arguments in ([ "--check", "--unsafe-paths"], ["--unsafe-paths"]):
+        for arguments in (["--check"], []):
             run = subprocess.run(["git", "apply", *arguments, str(PATCH)],
                                  cwd=root, capture_output=True, text=True)
             if run.returncode:
