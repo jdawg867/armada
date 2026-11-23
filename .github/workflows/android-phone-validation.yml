@@ -2,9 +2,7 @@ name: Android phone port validation
 
 on:
   pull_request:
-    branches: [development]
-  push:
-    branches: [review/kernel-modemsmem-probe-defer-832]
+    branches: [development, feature/pixel5a-phone-function-gates]
   workflow_dispatch:
 
 permissions:
@@ -17,6 +15,7 @@ concurrency:
 jobs:
   source-and-test-safety:
     name: Android phone / source-only baseline
+    if: ${{ github.event_name != 'pull_request' || github.base_ref == 'development' || github.head_ref == 'review/kernel-modemsmem-probe-defer-832' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
