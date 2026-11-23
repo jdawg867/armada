@@ -1,25 +1,23 @@
 name: Pixel 5a pinned Redbull modemsmem RFC compile-only
 
 on:
-  push:
+  pull_request:
     branches:
-      - review/kernel-modemsmem-probe-defer-832
-    paths:
-      - ".github/workflows/pixel5a-redbull-modemsmem-rfc-compile.yml"
-      - "research/pixel5a-modemsmem/review-only/**"
-      - "tests/pixel5a-modemsmem-full-pinned-source-patch-833-test.py"
+      - feature/pixel5a-phone-function-gates
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: pixel5a-redbull-modemsmem-rfc-${{ github.ref }}
+  group: pixel5a-redbull-modemsmem-rfc-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
   pinned-downstream-kbuild:
     name: Redbull 4.19 patched modemsmem object (compile only)
+    if: ${{ github.event_name != 'pull_request' || github.head_ref == 'review/kernel-modemsmem-probe-defer-832' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     steps:
