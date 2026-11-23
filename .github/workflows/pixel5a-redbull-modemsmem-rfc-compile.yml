@@ -108,6 +108,20 @@ jobs:
           file "$OBJ" | grep -Ei 'aarch64|ARM aarch64'
           sha256sum "$RUNNER_TEMP/modemsmem-baseline.o" "$OBJ"
           test -s "$RUNNER_TEMP/modemsmem-baseline.o"
+          # Both compiler invocations must produce distinct objects; otherwise
+          # this build has not demonstrated that the RFC changed machine output.
+          if cmp -s "$RUNNER_TEMP/modemsmem-baseline.o" "$OBJ"; then
+            echo "STOP: original and patched ARM64 objects are identical" >&2
+            exit 1
+          fi
+          # Ensure the patch did not silently remove or add defined C symbols.
+          aarch64-linux-gnu-nm --defined-only "$RUNNER_TEMP/modemsmem-baseline.o" \
+            | awk '{print $3}' | sort -u > "$RUNNER_TEMP/modemsmem-original.symbols"
+          aarch64-linux-gnu-nm --defined-only "$OBJ" \
+            | awk '{print $3}' | sort -u > "$RUNNER_TEMP/modemsmem-patched.symbols"
+          diff -u "$RUNNER_TEMP/modemsmem-original.symbols" \
+                  "$RUNNER_TEMP/modemsmem-patched.symbols"
+          echo "PASS distinct baseline and patched objects with matching defined symbol names"
           echo "PASS baseline and RFC-patched Redbull ARM64 objects both compiled with identical compiler flags"
           echo "PASS pinned Redbull ARM64 modemsmem object compiled after isolated RFC patch"
           echo "No module was installed, loaded or run on a phone."
