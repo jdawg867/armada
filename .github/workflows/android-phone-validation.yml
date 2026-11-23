@@ -331,6 +331,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-modemsmem-patched-error-path-834-c-test.py
 
+      - name: Step 840 compile exact reviewed C branch and exercise synthetic deferred retries
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-probe-retry-840-c-test.py
+
       - name: Check Step 833 exact pinned upstream driver blob and full-source RFC patch
         shell: bash
         run: |
