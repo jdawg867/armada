@@ -81,8 +81,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Pinned 4.19 module_init/module_exit aliases trigger GCC's
+          # missing-attributes diagnostic; retain all other Werror checks.
           make -C "$KERNEL" O="$RUNNER_TEMP/redbull-out" -j2 \
             ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
+            KCFLAGS="-Wno-error=missing-attributes" \
             drivers/soc/qcom/modemsmem/modemsmem.o
           OBJ="$RUNNER_TEMP/redbull-out/drivers/soc/qcom/modemsmem/modemsmem.o"
           test -s "$OBJ"
