@@ -335,6 +335,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-modemsmem-probe-retry-840-c-test.py
 
+      - name: Step 841 reject six wrong deferred-probe C mutations in host-only runtime
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-retry-mutation-841-test.py
+
       - name: Check Step 833 exact pinned upstream driver blob and full-source RFC patch
         shell: bash
         run: |
