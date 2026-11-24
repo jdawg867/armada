@@ -10,8 +10,10 @@ Preserve -EPROBE_DEFER only, retaining the original -ENOMEM behavior
 for all other allocation/get errors and size mismatch. Do not change
 existing-item (-EEXIST) handling or SMEM content initialization.
 
-Review-only candidate. Not compiled against the pinned redbull tree,
-not deployed on the Pixel 5a, and not sent upstream.
+Review-only candidate. Both original and patched modemsmem ARM64 objects
+compiled against the pinned Redbull 4.19 source in GitHub CI (run
+45324044445). This is compile-only evidence, not a boot or modem test.
+Not deployed on the Pixel 5a, merged, or sent upstream.
 
 --- a/drivers/soc/qcom/modemsmem/modemsmem.c
 +++ b/drivers/soc/qcom/modemsmem/modemsmem.c
