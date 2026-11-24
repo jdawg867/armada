@@ -2,7 +2,7 @@ name: Android phone port validation
 
 on:
   pull_request:
-    branches: [development]
+    branches: [development, feature/pixel5a-phone-function-gates]
   workflow_dispatch:
 
 permissions:
@@ -15,6 +15,7 @@ concurrency:
 jobs:
   source-and-test-safety:
     name: Android phone / source-only baseline
+    if: ${{ github.event_name != 'pull_request' || github.base_ref == 'development' || github.head_ref == 'review/kernel-modemsmem-probe-defer-832' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -317,6 +318,49 @@ jobs:
       - name: Guard Step 831 SMEM deferred-probe error propagation evidence
         shell: bash
         run: python3 tests/pixel5a-modemsmem-deferred-probe-driver-core-test.py
+
+      - name: Check isolated Step 832 modemsmem RFC patch and synthetic fault mappings
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-review-patch-832-test.py
+
+      - name: Guard Step 833 full-file verifier against unpinned and symlink source
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-full-pinned-source-833-negative-test.py
+
+      - name: Step 834 compile exact patched C error branch and run 10 host-only faults
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-patched-error-path-834-c-test.py
+
+      - name: Step 840 compile exact reviewed C branch and exercise synthetic deferred retries
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-probe-retry-840-c-test.py
+
+      - name: Step 841 reject six wrong deferred-probe C mutations in host-only runtime
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-retry-mutation-841-test.py
+
+      - name: Step 843 require explicit synthetic driver-core trigger before deferred retry
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-triggered-retry-843-c-test.py
+
+      - name: Step 844 reject four incorrect driver-core queue and retry mutations
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-trigger-mutation-844-test.py
+
+      - name: Step 845 guard review RFC compile evidence and no-phone readiness claims
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-review-evidence-845-test.py
+
+      - name: Check Step 833 exact pinned upstream driver blob and full-source RFC patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          PIN="929e7e2f3658867d51a1d423c7e000f5cf1d4043"
+          SRC="$RUNNER_TEMP/modemsmem-pinned.c"
+          curl -fL --retry 3 --retry-all-errors --max-time 120 \
+            "https://raw.githubusercontent.com/LineageOS/android_kernel_google_redbull/${PIN}/drivers/soc/qcom/modemsmem/modemsmem.c" \
+            -o "$SRC"
+          python3 tests/pixel5a-modemsmem-full-pinned-source-patch-833-test.py --source-file "$SRC"
 
       - name: SM7250 ICC index validator (synthetic fixtures only)
         shell: bash

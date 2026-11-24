@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "step": 832,
+  "scope": "isolated_RFC_kernel_patch_source_only_no_main_branch_change",
+  "main_branch": "feature/pixel5a-phone-function-gates",
+  "main_branch_head_at_fork": "6713bc09585b9eb9f2b7ece10ac5b33d1eb0ffbe",
+  "review_branch": "review/kernel-modemsmem-probe-defer-832",
+  "internal_draft_pr": 19,
+  "pinned_kernel": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "path": "drivers/soc/qcom/modemsmem/modemsmem.c",
+    "blob": "428143562894e6d8ca7b656174c72ee4b096f510"
+  },
+  "previous_ci": {
+    "android_validation": {
+      "id": 44989557432,
+      "conclusion": "success"
+    },
+    "aosp_source": {
+      "id": 44989557450,
+      "conclusion": "success"
+    },
+    "arm64_compile": {
+      "id": 44989557428,
+      "conclusion": "success"
+    }
+  },
+  "files": {
+    "patch": "research/pixel5a-modemsmem/review-only/0001-modemsmem-preserve-smem-deferred-probe.patch",
+    "test": "tests/pixel5a-modemsmem-review-patch-832-test.py"
+  },
+  "candidate": {
+    "alloc_defer_preserved": true,
+    "get_defer_preserved": true,
+    "eexist_unchanged": true,
+    "other_alloc_errors_remain_ENOMEM": true,
+    "other_get_errors_remain_ENOMEM": true,
+    "size_mismatch_remains_ENOMEM": true,
+    "item134_initialization_untouched": true,
+    "host_only_fault_cases_added": true,
+    "actual_kernel_patch_applied": false,
+    "actual_kernel_compilation_with_candidate_verified": false,
+    "actual_Pixel5a_module_load_verified": false,
+    "physical_phone_tested": false,
+    "upstream_submission_authorized": false,
+    "merge_authorized": false
+  },
+  "unknowns": [
+    "review_branch_CI_outcome",
+    "patch_applies_to_entire_pinned_upstream_source_file",
+    "build_in_pinned_kernel_and_possible_header_compatibility",
+    "stock_Barbet_SMEM_provider_deferral_occurrence",
+    "safe_Pixel5a_modem_start_and_telephony"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "smem_read": false,
+    "smem_write": false,
+    "modem_start": false,
+    "flash": false
+  }
+}

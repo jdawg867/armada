@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "step": 839,
+  "scope": "review_only_modemsmem_probe_defer_compile_gate_result",
+  "results_verified_by_github_tools": {
+    "pinned_redbull_compile": {
+      "run_id": 45279631503,
+      "job_id": 138060349101,
+      "conclusion": "success",
+      "all_job_steps_successful": true,
+      "steps_count": 10
+    },
+    "android_phone_source_only": {
+      "run_id": 45279631519,
+      "job_id": 138060349245,
+      "conclusion": "success",
+      "all_job_steps_successful": true,
+      "steps_count": 74
+    }
+  },
+  "pinned_source": {
+    "repository": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "driver_blob": "428143562894e6d8ca7b656174c72ee4b096f510"
+  },
+  "cross_compile": {
+    "architecture": "arm64",
+    "build_target": "drivers/soc/qcom/modemsmem/modemsmem.o",
+    "kernel_configuration": "redbull_defconfig",
+    "review_patch": "research/pixel5a-modemsmem/review-only/0001-modemsmem-preserve-smem-deferred-probe.patch",
+    "original_object_sha256": "479fc6c188832ed08a5ad449942f8d148cecd368e84e7d29d6cfa3f8876f5129",
+    "patched_object_sha256": "bf51bc16d707961e43802589e2b0e6198209d10e2435e3fc04de667cbacfb969",
+    "object_bytes_differ": true,
+    "defined_symbol_names_match": true,
+    "legacy_warnings_only": [
+      "missing-attributes at module_init alias",
+      "missing-attributes at module_exit alias"
+    ],
+    "warning_handling": "KCFLAGS=-Wno-error=missing-attributes; other warnings-as-errors retained"
+  },
+  "limitations": [
+    "Only ARM64 object compilation, not a linked kernel image or installable module test",
+    "The baseline and patched object SHA-256 values show difference, not runtime correctness",
+    "SMEM provider readiness and modem first-start timing remain unverified on device",
+    "Calls, SMS, mobile data, SSR handling, boot continuity and Android phone functionality not tested"
+  ],
+  "prohibited_actions_until_explicit_approval": [
+    "merge draft review PR 19",
+    "upstream submission of general Linux fix",
+    "modify Pixel 5a boot or vendor partitions",
+    "load kernel module or run modem hardware probes",
+    "alter main integration PR 18"
+  ],
+  "next_focus": "Maintain review-only patch, continue source-only readiness and test-boundary review; obtain explicit user authorization before any hardware test or upstream batch."
+}

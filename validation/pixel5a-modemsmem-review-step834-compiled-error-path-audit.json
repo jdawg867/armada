@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "step": 834,
+  "scope": "isolated_RFC_patch_host_only_exact_replacement_C_compilation_no_stock_kernel_build",
+  "baseline": {
+    "review_branch": "review/kernel-modemsmem-probe-defer-832",
+    "main_integration_branch": "feature/pixel5a-phone-function-gates",
+    "draft_review_pr": 19,
+    "draft_integration_pr": 18,
+    "pinned_kernel_commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "modemsmem_source_blob": "428143562894e6d8ca7b656174c72ee4b096f510"
+  },
+  "ci_observation": {
+    "previous_review_commit": "d75cb0e8af32948b7ba7299eb89ee4448964e264",
+    "pull_request_filtered_workflow_runs": [],
+    "combined_statuses": [],
+    "push_trigger_present_in_review_branch_workflow": true,
+    "all_GitHub_actions_runs_verified": false,
+    "ci_success_verified": false
+  },
+  "changes": {
+    "new_compiled_host_harness": "tests/pixel5a-modemsmem-patched-error-path-834-c-test.py",
+    "existing_full_pinned_source_gate": "tests/pixel5a-modemsmem-full-pinned-source-patch-833-test.py",
+    "unsafe_git_apply_override_removed": true,
+    "compiled_fixture_uses_exact_step833_replacement": true,
+    "compiler_flags": [
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-pedantic",
+      "-fsanitize=undefined"
+    ],
+    "simulated_cases": 10,
+    "full_driver_compiled": false,
+    "pinned_kernel_built_with_patch": false,
+    "phone_tested": false
+  },
+  "guards": {
+    "preserve_EPROBE_DEFER_from_alloc": true,
+    "preserve_EPROBE_DEFER_from_get": true,
+    "accept_EEXIST": true,
+    "other_allocator_errors_remain_ENOMEM": true,
+    "other_lookup_errors_remain_ENOMEM": true,
+    "size_mismatch_remains_ENOMEM": true,
+    "actual_source_modification_isolated_to_review_branch": true,
+    "no_upstream_submission": true,
+    "no_merge": true
+  },
+  "uncertainties": [
+    "whether review branch push workflow completed and its result",
+    "whether full source SHA verified successfully on CI",
+    "whether compiled host-only harness passes CI",
+    "whether pinned kernel build and driver probe are compatible",
+    "Pixel5a first_MPSS_start_and_SMEM134_ack_order",
+    "real_Pixel5a_telephony_and_SSR_behavior"
+  ],
+  "safety": {
+    "adb": false,
+    "device_open": false,
+    "device_read": false,
+    "smem_read": false,
+    "smem_write": false,
+    "modem_start": false,
+    "flash": false
+  }
+}

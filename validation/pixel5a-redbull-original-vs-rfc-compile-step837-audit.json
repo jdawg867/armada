@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "step": 837,
+  "scope": "pinned_redbull_original_vs_reviewed_patch_ARM64_Kbuild_object_comparison_only",
+  "pinned_source": {
+    "repo": "LineageOS/android_kernel_google_redbull",
+    "commit": "929e7e2f3658867d51a1d423c7e000f5cf1d4043",
+    "driver_path": "drivers/soc/qcom/modemsmem/modemsmem.c",
+    "original_blob": "428143562894e6d8ca7b656174c72ee4b096f510"
+  },
+  "baseline": {
+    "compile_run_id": 45275110594,
+    "android_validation_run_id": 45275110664,
+    "compile_result": "success",
+    "validation_result": "success"
+  },
+  "workflow": ".github/workflows/pixel5a-redbull-modemsmem-rfc-compile.yml",
+  "comparison": {
+    "baseline_compiled_first": true,
+    "reviewed_patch_applied_after_baseline": true,
+    "identical_cross_compiler_and_KCFLAGS": true,
+    "baseline_and_patch_objects_checked_for_nonempty": true,
+    "baseline_and_patch_objects_checked_for_ARM64": true,
+    "sha256s_printed": true,
+    "source_hash_and_patch_scope_reverified": true,
+    "source_Kbuild_output_under_runner_temp": true,
+    "actual_result_of_new_comparison_run_verified": false,
+    "kernel_image_or_module_build": false,
+    "hardware_tested": false
+  },
+  "limitations": [
+    "objects compiling does not prove runtime correctness",
+    "SHA256 output does not prove semantic or firmware correctness",
+    "no module installed or loaded on Pixel 5a",
+    "SMEM item134 first-start synchronization remains unverified"
+  ],
+  "safety": {
+    "phone_access": false,
+    "adb": false,
+    "modem_boot": false,
+    "smem_read": false,
+    "smem_write": false,
+    "flash": false,
+    "merge": false,
+    "upstream_submission": false
+  },
+  "review_pr": 19,
+  "integration_pr": 18
+}
