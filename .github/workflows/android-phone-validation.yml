@@ -343,6 +343,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-modemsmem-triggered-retry-843-c-test.py
 
+      - name: Step 844 reject four incorrect driver-core queue and retry mutations
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-trigger-mutation-844-test.py
+
       - name: Check Step 833 exact pinned upstream driver blob and full-source RFC patch
         shell: bash
         run: |
