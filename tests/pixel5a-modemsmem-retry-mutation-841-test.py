@@ -35,7 +35,7 @@ MUTATIONS = {
     ),
     "get_called_during_allocation_defer": (
         "\t\t\treturn ret;",
-        "\t\t\t(void)qcom_smem_get(QCOM_SMEM_HOST_ANY, SMEM_ID_VENDOR0, &size);\n\t\t\treturn ret;",
+        "\t\t\t{ (void)qcom_smem_get(QCOM_SMEM_HOST_ANY, SMEM_ID_VENDOR0, &size); return ret; }",
     ),
     "suppress_get_memory_error": (
         "if (IS_ERR(modem_smem)) {",
