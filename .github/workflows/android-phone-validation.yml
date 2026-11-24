@@ -347,6 +347,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-modemsmem-trigger-mutation-844-test.py
 
+      - name: Step 845 guard review RFC compile evidence and no-phone readiness claims
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-review-evidence-845-test.py
+
       - name: Check Step 833 exact pinned upstream driver blob and full-source RFC patch
         shell: bash
         run: |
