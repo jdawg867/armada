@@ -339,6 +339,10 @@ jobs:
         shell: bash
         run: python3 tests/pixel5a-modemsmem-retry-mutation-841-test.py
 
+      - name: Step 843 require explicit synthetic driver-core trigger before deferred retry
+        shell: bash
+        run: python3 tests/pixel5a-modemsmem-triggered-retry-843-c-test.py
+
       - name: Check Step 833 exact pinned upstream driver blob and full-source RFC patch
         shell: bash
         run: |
